@@ -74,8 +74,9 @@
 
 /* Table view:
    - Mimic table style of text notes.
-   - box-shadow fakes a border since position: sticky doesn't move borders. */
-.gallery-view-table {
+   - box-shadow fakes a border since position: sticky doesn't move borders.
+   - .table needed to override Bootstrap. */
+.table.gallery-view-table {
     margin: 0;
 }
 
@@ -83,7 +84,7 @@
     vertical-align: text-top;
 }
 
-.table.gallery-view-table thead th, /* Need .table to override Bootstrap. */
+.table.gallery-view-table thead th,
 .table.gallery-view-table tbody td {
     border: 1px solid #bfbfbf;
     padding: 0.4em;
