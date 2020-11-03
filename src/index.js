@@ -16,7 +16,7 @@ async function render() {
     }
 
     const view = parseView(renderNote);
-    const shownAttributes = parseShownAttributes(renderNote);
+    const attributeConfigs = AttributeConfig.fromNote(renderNote);
 
     let coverHeight;
     if (view === "board" || view === "gallery") {
@@ -34,16 +34,16 @@ async function render() {
 
             const groups = await groupNotes(notes, groupBy);
             const columnWidth = parseLabelInt(renderNote, "columnWidth", 1, 1000);
-            $view = await renderBoard(groups, columnWidth, coverHeight, shownAttributes);
+            $view = await renderBoard(groups, columnWidth, coverHeight, attributeConfigs);
             break;
 
         case "gallery":
             const columns = parseLabelInt(renderNote, "columns", 1, 20);
-            $view = await renderGallery(notes, columns, coverHeight, shownAttributes);
+            $view = await renderGallery(notes, columns, coverHeight, attributeConfigs);
             break;
 
         case "table":
-            $view = await renderTable(notes, shownAttributes);
+            $view = await renderTable(notes, attributeConfigs);
             break;
     }
 
@@ -55,18 +55,18 @@ function renderError(message) {
     api.$container.append($error);
 }
 
-async function renderBoard(groups, columnWidth, coverHeight, shownAttributes) {
+async function renderBoard(groups, columnWidth, coverHeight, attributeConfigs) {
     const $columns = await Promise.all(
-        groups.map(group => renderColumn(group, columnWidth, coverHeight, shownAttributes))
+        groups.map(group => renderColumn(group, columnWidth, coverHeight, attributeConfigs))
     );
     return $("<div class='collection-view-scroll collection-view-board'>").append(
         ...$columns
     );
 }
 
-async function renderColumn(group, columnWidth, coverHeight, shownAttributes) {
+async function renderColumn(group, columnWidth, coverHeight, attributeConfigs) {
     const $cards = await Promise.all(
-        group.notes.map(note => renderCard(note, coverHeight, false, shownAttributes))
+        group.notes.map(note => renderCard(note, coverHeight, false, attributeConfigs))
     );
 
     const $column = $("<div class='collection-view-column'>").append(
@@ -96,49 +96,49 @@ async function renderColumnHeader(group) {
     return $("<div class='collection-view-column-header'>").append($name, $count);
 }
 
-async function renderGallery(notes, columns, coverHeight, shownAttributes) {
+async function renderGallery(notes, columns, coverHeight, attributeConfigs) {
     const $grid = $("<div class='collection-view-grid'>");
     if (columns) {
         $grid.css("grid-template-columns", `repeat(${columns}, minmax(0, 1fr))`);
     }
 
     const $cards = await Promise.all(
-        notes.map(note => renderCard(note, coverHeight, true, shownAttributes))
+        notes.map(note => renderCard(note, coverHeight, true, attributeConfigs))
     );
 
     return $grid.append(...$cards);
 }
 
-async function renderTable(notes, shownAttributes) {
+async function renderTable(notes, attributeConfigs) {
     const $rows = await Promise.all(
-        notes.map(note => renderTableRow(note, shownAttributes))
+        notes.map(note => renderTableRow(note, attributeConfigs))
     )
     return $("<div class='collection-view-scroll'>").append(
         $("<table class='table table-bordered table-hover table-sm collection-view-table'>").append(
-            renderTableHeader(shownAttributes),
+            renderTableHeader(attributeConfigs),
             $("<tbody>").append(...$rows),
         )
     );
 }
 
-function renderTableHeader(shownAttributes) {
-    const $cells = shownAttributes.map(
-        shownAttribute => $("<th>").text(shownAttribute.name)
+function renderTableHeader(attributeConfigs) {
+    const $cells = attributeConfigs.map(
+        attributeConfig => $("<th>").text(attributeConfig.name)
     )
     return $("<thead>").append(
         $("<tr>").append($("<th>Title</th>"), ...$cells)
     );
 }
 
-async function renderTableRow(note, shownAttributes) {
+async function renderTableRow(note, attributeConfigs) {
     const $link = (await api.createNoteLink(note.noteId)).find("a");
     $link.addClass("stretched-link no-tooltip-preview");
 
     const $row = $("<tr>").append(
         $("<td>").append($("<strong>").append($link))
     );
-    for (const shownAttribute of shownAttributes) {
-        const $attribute = await renderShownAttribute(note, shownAttribute);
+    for (const attributeConfig of attributeConfigs) {
+        const $attribute = await renderShownAttribute(note, attributeConfig);
 
         const $cell = $("<td>");
         if ($attribute) {
@@ -150,10 +150,10 @@ async function renderTableRow(note, shownAttributes) {
     return $row;
 }
 
-async function renderCard(note, coverHeight, alwaysShowCover, shownAttributes) {
+async function renderCard(note, coverHeight, alwaysShowCover, attributeConfigs) {
     const [$cover, $info] = await Promise.all([
         renderCardCover(note, coverHeight, alwaysShowCover),
-        renderCardInfo(note, shownAttributes)
+        renderCardInfo(note, attributeConfigs)
     ]);
 
     const $card = $("<div class='collection-view-card'>");
@@ -184,15 +184,15 @@ async function renderCardCover(note, height, alwaysShow) {
     return $cover;
 }
 
-async function renderCardInfo(note, shownAttributes) {
+async function renderCardInfo(note, attributeConfigs) {
     const $info = $("<ul class='collection-view-card-info'>");
 
     const $link = (await api.createNoteLink(note.noteId)).find("a");
     $link.addClass("no-tooltip-preview stretched-link");
     $info.append($("<li>").append($("<strong>").append($link)));
 
-    for (const shownAttribute of shownAttributes) {
-        const $attribute = await renderShownAttribute(note, shownAttribute);
+    for (const attributeConfig of attributeConfigs) {
+        const $attribute = await renderShownAttribute(note, attributeConfig);
         if ($attribute) {
             $info.append($("<li>").append($attribute));
         }
@@ -201,8 +201,8 @@ async function renderCardInfo(note, shownAttributes) {
     return $info;
 }
 
-async function renderShownAttribute(note, shownAttribute) {
-    const attribute = note.getAttribute(undefined, shownAttribute.name);
+async function renderShownAttribute(note, attributeConfig) {
+    const attribute = note.getAttribute(undefined, attributeConfig.name);
     if (!attribute || !attribute.value) {
         return undefined;
     }
@@ -212,9 +212,9 @@ async function renderShownAttribute(note, shownAttribute) {
     }
 
     let number, total;
-    if (shownAttribute.totalName) {
+    if (attributeConfig.denominatorName) {
         number = parseFloat(attribute.value);
-        total = parseFloat(note.getLabelValue(shownAttribute.totalName));
+        total = parseFloat(note.getLabelValue(attributeConfig.denominatorName));
     }
     if (!isNaN(number) && !isNaN(total)) {
         return renderProgress(number, total);
@@ -283,19 +283,6 @@ function parseLabelInt(note, name, min, max) {
     return isNaN(number) ? undefined : clamp(number, min, max);
 }
 
-function parseShownAttributes(note) {
-    const values = note.getLabels("attribute").map(label => label.value);
-    return values.map(value => {
-        const names = value.split("/");
-
-        const shownAttribute = { name: names[0] };
-        if (names.length > 1) {
-            shownAttribute.totalName = names[1];
-        }
-        return shownAttribute;
-    });
-}
-
 async function getNotes(query) {
     const notes = await api.searchForNotes(query);
     notes.sort((a, b) => a.title.toLowerCase() < b.title.toLowerCase() ? -1 : 1);
@@ -354,6 +341,37 @@ async function getCoverUrl(note) {
 
 function clamp(number, min, max) {
     return isNaN(number) ? number : Math.max(min, Math.min(number, max));
+}
+
+/**
+ * Configuration for displayed attribute values.
+ */
+class AttributeConfig {
+    /**
+     * Returns an array of AttributeConfig objects based on a note's attribute
+     * labels.
+     */
+    static fromNote(note) {
+        const values = note.getLabels("attribute").map(label => label.value);
+        return values.map(value => new AttributeConfig(value));
+    }
+
+    constructor(string) {
+        const options = string.split(",");
+        this.name = options.shift();
+
+        options.forEach(option => {
+            const parts = option.split("=");
+            const key = parts.shift();
+            const value = parts.join("=");
+
+            switch (key) {
+                case "progressBar":
+                    this.denominatorName = value || undefined;
+                    break;
+            }
+        })
+    }
 }
 
 render();

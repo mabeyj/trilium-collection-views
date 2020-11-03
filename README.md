@@ -48,9 +48,11 @@ A plugin for [Trilium](https://github.com/zadam/trilium) that implements differe
 
 ## Configuration
 
+### View settings
+
 Views are configured by adding labels to the note rendering the view.
 
-### `view`
+#### `view`
 
 - Optional (default: `table`)
 - Single value
@@ -63,7 +65,7 @@ Selects which view to use. Possible values:
 
 Example: `#view=board`
 
-### `query`
+#### `query`
 
 - Required
 - Single value
@@ -72,7 +74,7 @@ A [search query](https://github.com/zadam/trilium/wiki/Search) that will be exec
 
 Example: `#query="#book #status=read"` would include all notes having a `book` label and a `status` label set to `read`.
 
-### `groupBy`
+#### `groupBy`
 
 - Board views only
 - Required
@@ -86,7 +88,7 @@ Determines the columns of the board view. The value of this label is an attribut
 
 Example: `#groupBy=status` would group notes by their values of the `status` label.
 
-### `columns`
+#### `columns`
 
 - Gallery views only
 - Optional (default: `4`)
@@ -96,7 +98,7 @@ Sets the number of columns in a gallery view.
 
 Example: `#columns=8`
 
-### `columnWidth`
+#### `columnWidth`
 
 - Board views only
 - Optional (default: `250`)
@@ -106,7 +108,7 @@ Sets the width of a board view's columns in pixels.
 
 Example: `#columnWidth=100`
 
-### `coverHeight`
+#### `coverHeight`
 
 - Board and gallery views only
 - Optional (default: `200`)
@@ -116,30 +118,19 @@ Sets the height of card cover images in pixels. Setting this to `0` hides cover 
 
 Example: `#coverHeight=500`
 
-### `attribute`
+#### `attribute`
 
 - Optional
 - Multiple values
 
-Specifies which note attributes will be displayed in the view.
+Configures which note attributes will be displayed in the view and how they should be formatted.
 
-- For board and gallery views, attributes will be displayed below note titles in cards.
-- For table views, attributes will be displayed as additional columns.
+* For board and gallery views, attributes appear underneath the cover image.
+* For table views, attributes appear as additional columns in the table.
 
-Attribute values can be displayed in a few different ways.
+The value of the `attribute` label is a comma-separated list. The first item in this list names the attribute to be displayed. Any remaining items are optional attribute settings which can either be flags (`settingName`) or key/value pairs (`settingName=value`). [#attribute-settings](See below) for a list of attribute settings.
 
-#### Text
-
-`#attribute=labelOrRelationName`
-
-This is the default display. Attribute values are shown as plain text.
-
-Set the value of the `attribute` label to a label or relation name.
-
-- If a label name is given, values for that label will be displayed.
-- If a relation name is given, the titles of target notes for that relation will be displayed.
-
-Example: `#attribute=status`
+By default, attribute values will be shown as plain text. For labels, the label's value will be shown. For relations, the titles of target notes will be shown.
 
 #### Badge
 
@@ -152,12 +143,14 @@ If a target note of a relation has certain badge labels defined, then a colored 
    - `badgeBackground`: The badge's background style (any CSS `background` value).
    - `badgeColor`: The badge's font color (any CSS color).
 
-#### Progress bar
+### Attribute settings
 
-`#attribute="numeratorLabelName/denominatorLabelName"`
+The value of the `attribute` label is a comma-separated list. The first item in the list is an attribute name. Any remaining items in the list are settings (described below) either in the form of a flag (`settingName`) or a key/value pair (`settingName=value`).
 
-Displays a progress bar based on two numeric labels.
+#### `progressBar`
 
-Set the value of the `attribute` label to two label names separated by `/`. The referenced labels must have numeric values.
+* `progressBar=denominatorLabelName`
 
-Example: `#attribute="completed/total"`
+Renders a progress bar using the attribute as the numerator and another attribute (named by this setting's value) as the denominator. Both attributes must be labels with numeric values.
+
+Example: `#attribute="completed,progressBar=total"`
