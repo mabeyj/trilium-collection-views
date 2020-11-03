@@ -150,8 +150,9 @@ The value of the `attribute` label is a comma-separated list. The first item in 
 #### `header`
 
 * Table views only
+* Optional (default: the attribute's name)
 
-Sets the text displayed in the header cell of the attribute's column. By default, the attribute name is displayed.
+Sets the text displayed in the header cell of the attribute's column.
 
 Examples:
 
@@ -160,6 +161,17 @@ Examples:
 
 #### `progressBar`
 
+* Optional
+
 Renders a progress bar using the attribute as the numerator and another attribute (named by this setting's value) as the denominator. Both attributes must be labels with numeric values.
 
 Example: `#attribute="completed,progressBar=total"`
+
+#### `width`
+
+* Table views only
+* Optional (default: `300` for note title, `0` for attributes)
+
+Sets the minimum width (in pixels) of the attribute's column. Columns may be resized proportionally since tables are set to 100% width.
+
+Example: `#attribute=status,width=100`

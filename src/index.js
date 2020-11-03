@@ -123,11 +123,17 @@ async function renderTable(notes, attributeConfigs) {
 
 function renderTableHeader(attributeConfigs) {
     const $cells = attributeConfigs.map(
-        attributeConfig => $("<th>").text(
-            attributeConfig.header !== undefined
-                ? attributeConfig.header
-                : attributeConfig.name
-        )
+        attributeConfig => {
+            const $cell = $("<th>").text(
+                attributeConfig.header !== undefined
+                    ? attributeConfig.header
+                    : attributeConfig.name
+            );
+            if (attributeConfig.width !== undefined) {
+                $cell.css("min-width", `${attributeConfig.width}px`);
+            }
+            return $cell;
+        }
     )
     return $("<thead>").append(
         $("<tr>").append($("<th>Title</th>"), ...$cells)
@@ -369,6 +375,11 @@ class AttributeConfig {
             const key = parts.shift();
             const value = parts.join("=");
 
+            let intValue = parseInt(value, 10);
+            if (isNaN(intValue)) {
+                intValue = undefined;
+            }
+
             switch (key) {
                 case "header":
                     this.header = value;
@@ -376,6 +387,10 @@ class AttributeConfig {
 
                 case "progressBar":
                     this.denominatorName = value;
+                    break;
+
+                case "width":
+                    this.width = clamp(intValue, 0, 1000);
                     break;
             }
         })
