@@ -129,9 +129,13 @@ function renderTableHeader(attributeConfigs) {
                     ? attributeConfig.header
                     : attributeConfig.name
             );
+            if (attributeConfig.align) {
+                $cell.css("text-align", attributeConfig.align);
+            }
             if (attributeConfig.width !== undefined) {
                 $cell.css("min-width", `${attributeConfig.width}px`);
             }
+
             return $cell;
         }
     )
@@ -153,6 +157,9 @@ async function renderTableRow(note, attributeConfigs) {
         const $cell = $("<td>");
         if ($attribute) {
             $cell.append($attribute);
+        }
+        if (attributeConfig.align) {
+            $cell.css("text-align", attributeConfig.align);
         }
 
         $row.append($cell);
@@ -381,8 +388,9 @@ class AttributeConfig {
             }
 
             switch (key) {
+                case "align":
                 case "header":
-                    this.header = value;
+                    this[key] = value;
                     break;
 
                 case "progressBar":

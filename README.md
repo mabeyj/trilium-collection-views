@@ -147,6 +147,15 @@ If a target note of a relation has certain badge labels defined, then a colored 
 
 The value of the `attribute` label is a comma-separated list. The first item in the list is an attribute name. Any remaining items in the list are settings (described below) either in the form of a flag (`settingName`) or a key/value pair (`settingName=value`).
 
+#### `align`
+
+* Table views only
+* Optional (default: `left`)
+
+Sets the text alignment of cells in the attribute's column. Can be any `text-align` value (e.g., `center`, `right`).
+
+Example: `#attribute="price,align=right"`
+
 #### `header`
 
 * Table views only
