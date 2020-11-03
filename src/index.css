@@ -1,8 +1,4 @@
 /* Scroll container: fills content area for scrolling in all directions. */
-.note-detail-render-content {
-    position: relative;
-}
-
 .gallery-view-scroll {
     position: absolute;
     top: 0;
@@ -10,6 +6,11 @@
     bottom: 0;
     left: 0;
     overflow: auto;
+}
+
+.note-book-content,
+.note-detail-render-content {
+    position: relative;
 }
 
 /* Board view */
