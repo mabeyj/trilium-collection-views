@@ -1,5 +1,5 @@
 /* Scroll container: fills content area for scrolling in all directions. */
-.gallery-view-scroll {
+.collection-view-scroll {
     position: absolute;
     top: 0;
     right: 0;
@@ -14,24 +14,24 @@
 }
 
 /* Board view */
-.gallery-view-board {
+.collection-view-board {
     display: flex;
 }
 
-.gallery-view-column-header .badge,
-.gallery-view-card .badge {
+.collection-view-column-header .badge,
+.collection-view-card .badge {
     white-space: normal;
     text-align: left;
 }
 
-.gallery-view-error {
+.collection-view-error {
     background: var(--accented-background-color);
     border-radius: 10px;
     padding: 8px;
     text-align: center;
 }
 
-.gallery-view-column {
+.collection-view-column {
     display: flex;
     flex-direction: column;
     min-width: 250px;
@@ -39,7 +39,7 @@
     margin-right: 15px;
 }
 
-.gallery-view-column-header {
+.collection-view-column-header {
     display: flex;
     background: var(--accented-background-color);
     border-radius: 10px;
@@ -47,28 +47,28 @@
     margin-bottom: 15px;
 }
 
-.gallery-view-column-header .badge {
+.collection-view-column-header .badge {
     font-size: inherit;
 }
 
-.gallery-view-column-name {
+.collection-view-column-name {
     flex-grow: 1;
 }
 
-.gallery-view-column-count {
+.collection-view-column-count {
     margin-left: 8px;
 }
 
-.gallery-view-column-cards {
+.collection-view-column-cards {
     flex-grow: 1;
     overflow: auto;
 }
 
-.gallery-view-column-cards .gallery-view-card {
+.collection-view-column-cards .collection-view-card {
     margin-bottom: 15px;
 }
 
-.gallery-view-column-cards :last-child {
+.collection-view-column-cards :last-child {
     margin-bottom: 0;
 }
 
@@ -76,27 +76,27 @@
    - Mimic table style of text notes.
    - box-shadow fakes a border since position: sticky doesn't move borders.
    - .table needed to override Bootstrap. */
-.table.gallery-view-table {
+.table.collection-view-table {
     margin: 0;
 }
 
-.gallery-view-table .badge {
+.collection-view-table .badge {
     vertical-align: text-top;
 }
 
-.table.gallery-view-table thead th,
-.table.gallery-view-table tbody td {
+.table.collection-view-table thead th,
+.table.collection-view-table tbody td {
     border: 1px solid #bfbfbf;
     padding: 0.4em;
     white-space: nowrap;
 }
 
-.gallery-view-table tr > :first-child {
+.collection-view-table tr > :first-child {
     position: sticky;
     left: 0;
 }
 
-.gallery-view-table thead th {
+.collection-view-table thead th {
     position: sticky;
     top: 0;
     background: var(--accented-background-color);
@@ -104,36 +104,36 @@
     z-index: 2;
 }
 
-.gallery-view-table thead th:first-child {
+.collection-view-table thead th:first-child {
     z-index: 3;
     box-shadow: 1px 0 #bfbfbf, 0 1px #bfbfbf;
 }
 
-.gallery-view-table tbody td:first-child {
+.collection-view-table tbody td:first-child {
     background: var(--main-background-color);
     box-shadow: 1px 0 #bfbfbf, -1px 0 #bfbfbf;
     min-width: 300px;
     white-space: normal;
 }
 
-.gallery-view-table tbody tr:hover td {
+.collection-view-table tbody tr:hover td {
     background: var(--ck-color-table-focused-cell-background);
 }
 
 /* Gallery view */
-.gallery-view-grid {
+.collection-view-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 15px;
 }
 
-.gallery-view-card {
+.collection-view-card {
     position: relative;
     background: var(--accented-background-color);
     border-radius: 10px;
 }
 
-.gallery-view-card-cover {
+.collection-view-card-cover {
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
@@ -141,37 +141,37 @@
     height: 200px;
 }
 
-.gallery-view-card-info {
+.collection-view-card-info {
     padding: 8px;
     margin: 0;
     list-style: none;
 }
 
-.gallery-view-card-info li,
-.gallery-view-progress-fraction {
+.collection-view-card-info li,
+.collection-view-progress-fraction {
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.gallery-view-progress {
+.collection-view-progress {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
 }
 
-.gallery-view-progress-fraction {
+.collection-view-progress-fraction {
     white-space: nowrap;
     margin-right: 8px;
 }
 
-.gallery-view-progress-number {
+.collection-view-progress-number {
     display: inline-block;
     min-width: 3ch;
     text-align: right;
 }
 
-.gallery-view-progress .progress {
+.collection-view-progress .progress {
     flex-grow: 1;
     min-width: 50px;
 }

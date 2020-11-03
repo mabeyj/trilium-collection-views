@@ -51,7 +51,7 @@ async function render() {
 }
 
 function renderError(message) {
-    const $error = $("<div class='gallery-view-error'>").html(message);
+    const $error = $("<div class='collection-view-error'>").html(message);
     api.$container.append($error);
 }
 
@@ -59,7 +59,7 @@ async function renderBoard(groups, columnWidth, coverHeight, shownAttributes) {
     const $columns = await Promise.all(
         groups.map(group => renderColumn(group, columnWidth, coverHeight, shownAttributes))
     );
-    return $("<div class='gallery-view-scroll gallery-view-board'>").append(
+    return $("<div class='collection-view-scroll collection-view-board'>").append(
         ...$columns
     );
 }
@@ -69,9 +69,9 @@ async function renderColumn(group, columnWidth, coverHeight, shownAttributes) {
         group.notes.map(note => renderCard(note, coverHeight, false, shownAttributes))
     );
 
-    const $column = $("<div class='gallery-view-column'>").append(
+    const $column = $("<div class='collection-view-column'>").append(
         await renderColumnHeader(group),
-        $("<div class='gallery-view-column-cards'>").append(...$cards),
+        $("<div class='collection-view-column-cards'>").append(...$cards),
     );
     if (columnWidth) {
         $column.width(columnWidth).css("min-width", `${columnWidth}px`);
@@ -80,24 +80,24 @@ async function renderColumn(group, columnWidth, coverHeight, shownAttributes) {
 }
 
 async function renderColumnHeader(group) {
-    const $name = $("<div class='gallery-view-column-name'>");
+    const $name = $("<div class='collection-view-column-name'>");
     if (group.relatedNote) {
         $name.append(await renderRelatedNoteTitle(group.relatedNote.noteId));
     } else {
         $name.append(group.name || $("<span class='text-muted'>None</span>"));
     }
 
-    const $count = $("<div class='gallery-view-column-count'>").append(
+    const $count = $("<div class='collection-view-column-count'>").append(
         $("<span class='badge badge-secondary'>").append(
             numberFormat.format(group.notes.length)
         )
     );
 
-    return $("<div class='gallery-view-column-header'>").append($name, $count);
+    return $("<div class='collection-view-column-header'>").append($name, $count);
 }
 
 async function renderGallery(notes, columns, coverHeight, shownAttributes) {
-    const $grid = $("<div class='gallery-view-grid'>");
+    const $grid = $("<div class='collection-view-grid'>");
     if (columns) {
         $grid.css("grid-template-columns", `repeat(${columns}, minmax(0, 1fr))`);
     }
@@ -113,8 +113,8 @@ async function renderTable(notes, shownAttributes) {
     const $rows = await Promise.all(
         notes.map(note => renderTableRow(note, shownAttributes))
     )
-    return $("<div class='gallery-view-scroll'>").append(
-        $("<table class='table table-bordered table-hover table-sm gallery-view-table'>").append(
+    return $("<div class='collection-view-scroll'>").append(
+        $("<table class='table table-bordered table-hover table-sm collection-view-table'>").append(
             renderTableHeader(shownAttributes),
             $("<tbody>").append(...$rows),
         )
@@ -156,7 +156,7 @@ async function renderCard(note, coverHeight, alwaysShowCover, shownAttributes) {
         renderCardInfo(note, shownAttributes)
     ]);
 
-    const $card = $("<div class='gallery-view-card'>");
+    const $card = $("<div class='collection-view-card'>");
     if ($cover) {
         $card.append($cover);
     }
@@ -174,7 +174,7 @@ async function renderCardCover(note, height, alwaysShow) {
         return undefined;
     }
 
-    const $cover = $("<div class='gallery-view-card-cover'>");
+    const $cover = $("<div class='collection-view-card-cover'>");
     if (url) {
         $cover.css("background-image", `url("${url}")`);
     }
@@ -185,7 +185,7 @@ async function renderCardCover(note, height, alwaysShow) {
 }
 
 async function renderCardInfo(note, shownAttributes) {
-    const $info = $("<ul class='gallery-view-card-info'>");
+    const $info = $("<ul class='collection-view-card-info'>");
 
     const $link = (await api.createNoteLink(note.noteId)).find("a");
     $link.addClass("no-tooltip-preview stretched-link");
@@ -247,17 +247,17 @@ function renderProgress(number, total) {
     const percentWidth = `${clamp(percent, 0, 100)}%`;
     const percentText = `${Math.round(percent)}%`;
 
-    const $fraction = $("<div class='gallery-view-progress-fraction'>").append(
-        $("<span class='gallery-view-progress-number'>").text(numberFormat.format(number)),
+    const $fraction = $("<div class='collection-view-progress-fraction'>").append(
+        $("<span class='collection-view-progress-number'>").text(numberFormat.format(number)),
         " / ",
-        $("<span class='gallery-view-progress-number'>").text(numberFormat.format(total))
+        $("<span class='collection-view-progress-number'>").text(numberFormat.format(total))
     );
 
     const $bar = $("<div class='progress'>").append(
         $("<div class='progress-bar'>").width(percentWidth).text(percentText)
     );
 
-    return $("<div class='gallery-view-progress'>").append($fraction, $bar);
+    return $("<div class='collection-view-progress'>").append($fraction, $bar);
 }
 
 function parseQuery(note) {
