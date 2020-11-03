@@ -225,7 +225,7 @@ async function renderShownAttribute(note, attributeConfig) {
     }
 
     if (attribute.type === "relation") {
-        return await renderRelatedNoteTitle(attribute.value);
+        return await renderRelatedNoteTitle(attribute.value, attributeConfig);
     }
 
     let number, total;
@@ -234,13 +234,13 @@ async function renderShownAttribute(note, attributeConfig) {
         total = parseFloat(note.getLabelValue(attributeConfig.denominatorName));
     }
     if (!isNaN(number) && !isNaN(total)) {
-        return renderProgress(number, total);
+        return renderProgress(number, total, attributeConfig);
     }
 
     return attribute.value;
 }
 
-async function renderRelatedNoteTitle(noteId) {
+async function renderRelatedNoteTitle(noteId, attributeConfig) {
     const note = await api.getNote(noteId);
 
     const background = note.getLabelValue("badgeBackground");
@@ -249,7 +249,8 @@ async function renderRelatedNoteTitle(noteId) {
         return note.title;
     }
 
-    const $badge = $("<span class='badge badge-secondary'>").text(note.title);
+    const text = attributeConfig.affix(note.title);
+    const $badge = $("<span class='badge badge-secondary'>").text(text);
     if (background) {
         $badge.css("background", background);
     }
@@ -259,16 +260,27 @@ async function renderRelatedNoteTitle(noteId) {
     return $badge;
 }
 
-function renderProgress(number, total) {
+function renderProgress(number, total, attributeConfig) {
     const percent = 100 * number / total;
     const percentWidth = `${clamp(percent, 0, 100)}%`;
     const percentText = `${Math.round(percent)}%`;
 
-    const $fraction = $("<div class='collection-view-progress-fraction'>").append(
-        $("<span class='collection-view-progress-number'>").text(numberFormat.format(number)),
+    const $fraction = $("<div class='collection-view-progress-fraction'>");
+    if (attributeConfig.prefix) {
+        $fraction.append(attributeConfig.prefix);
+    }
+    $fraction.append(
+        $("<span class='collection-view-progress-number'>").text(
+            numberFormat.format(number)
+        ),
         " / ",
-        $("<span class='collection-view-progress-number'>").text(numberFormat.format(total))
+        $("<span class='collection-view-progress-number'>").text(
+            numberFormat.format(total)
+        ),
     );
+    if (attributeConfig.suffix) {
+        $fraction.append(attributeConfig.suffix);
+    }
 
     const $bar = $("<div class='progress'>").append(
         $("<div class='progress-bar'>").width(percentWidth).text(percentText)
@@ -390,6 +402,8 @@ class AttributeConfig {
             switch (key) {
                 case "align":
                 case "header":
+                case "prefix":
+                case "suffix":
                     this[key] = value;
                     break;
 
@@ -402,6 +416,13 @@ class AttributeConfig {
                     break;
             }
         })
+    }
+
+    /**
+     * Returns a string affixed with the configured prefix and suffix.
+     */
+    affix(string) {
+        return `${this.prefix || ""}${string}${this.suffix || ""}`;
     }
 }
 

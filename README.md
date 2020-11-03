@@ -168,6 +168,17 @@ Examples:
 * `#attribute="price,header=Price (in dollars)"`
 * `#attribute="status,header="` (empty header cell)
 
+#### `prefix`
+
+* Optional
+
+Adds a string in front of the attribute's value.
+
+Examples:
+
+* `#attribute="price,prefix=$"`
+* `#attribute="total,prefix=Total: "`
+
 #### `progressBar`
 
 * Optional
@@ -175,6 +186,17 @@ Examples:
 Renders a progress bar using the attribute as the numerator and another attribute (named by this setting's value) as the denominator. Both attributes must be labels with numeric values.
 
 Example: `#attribute="completed,progressBar=total"`
+
+#### `suffix`
+
+* Optional
+
+Adds a string behind the attribute's value.
+
+Examples:
+
+* `#attribute="weight,suffix=kg"`
+* `#attribute="price,suffix= CAD"`
 
 #### `width`
 
