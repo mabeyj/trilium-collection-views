@@ -268,7 +268,7 @@ function parseQuery(note) {
 function parseView(note) {
     let view = note.getLabelValue("view");
     if (!view || !["board", "gallery", "table"].includes(view)) {
-        return "gallery";
+        return "table";
     }
     return view;
 }
