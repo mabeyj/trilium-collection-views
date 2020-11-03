@@ -41,6 +41,10 @@ async function render() {
             const columns = parseLabelInt(renderNote, "columns", 1, 20);
             $view = await renderGallery(notes, columns, coverHeight, shownAttributes);
             break;
+
+        case "table":
+            $view = await renderTable(notes, shownAttributes);
+            break;
     }
 
     api.$container.append($view);
@@ -55,7 +59,9 @@ async function renderBoard(groups, columnWidth, coverHeight, shownAttributes) {
     const $columns = await Promise.all(
         groups.map(group => renderColumn(group, columnWidth, coverHeight, shownAttributes))
     );
-    return $("<div class='gallery-view-board'>").append(...$columns);
+    return $("<div class='gallery-view-scroll gallery-view-board'>").append(
+        ...$columns
+    );
 }
 
 async function renderColumn(group, columnWidth, coverHeight, shownAttributes) {
@@ -101,6 +107,47 @@ async function renderGallery(notes, columns, coverHeight, shownAttributes) {
     );
 
     return $grid.append(...$cards);
+}
+
+async function renderTable(notes, shownAttributes) {
+    const $rows = await Promise.all(
+        notes.map(note => renderTableRow(note, shownAttributes))
+    )
+    return $("<div class='gallery-view-scroll'>").append(
+        $("<table class='table table-bordered table-hover table-sm gallery-view-table'>").append(
+            renderTableHeader(shownAttributes),
+            $("<tbody>").append(...$rows),
+        )
+    );
+}
+
+function renderTableHeader(shownAttributes) {
+    const $cells = shownAttributes.map(
+        shownAttribute => $("<th>").text(shownAttribute.name)
+    )
+    return $("<thead>").append(
+        $("<tr>").append($("<th>Title</th>"), ...$cells)
+    );
+}
+
+async function renderTableRow(note, shownAttributes) {
+    const $link = (await api.createNoteLink(note.noteId)).find("a");
+    $link.addClass("stretched-link no-tooltip-preview");
+
+    const $row = $("<tr>").append(
+        $("<td>").append($("<strong>").append($link))
+    );
+    for (const shownAttribute of shownAttributes) {
+        const $attribute = await renderShownAttribute(note, shownAttribute);
+
+        const $cell = $("<td>");
+        if ($attribute) {
+            $cell.append($attribute);
+        }
+
+        $row.append($cell);
+    }
+    return $row;
 }
 
 async function renderCard(note, coverHeight, alwaysShowCover, shownAttributes) {
