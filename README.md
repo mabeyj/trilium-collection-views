@@ -147,9 +147,18 @@ If a target note of a relation has certain badge labels defined, then a colored 
 
 The value of the `attribute` label is a comma-separated list. The first item in the list is an attribute name. Any remaining items in the list are settings (described below) either in the form of a flag (`settingName`) or a key/value pair (`settingName=value`).
 
-#### `progressBar`
+#### `header`
 
-* `progressBar=denominatorLabelName`
+* Table views only
+
+Sets the text displayed in the header cell of the attribute's column. By default, the attribute name is displayed.
+
+Examples:
+
+* `#attribute="price,header=Price (in dollars)"`
+* `#attribute="status,header="` (empty header cell)
+
+#### `progressBar`
 
 Renders a progress bar using the attribute as the numerator and another attribute (named by this setting's value) as the denominator. Both attributes must be labels with numeric values.
 

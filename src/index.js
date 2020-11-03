@@ -123,7 +123,11 @@ async function renderTable(notes, attributeConfigs) {
 
 function renderTableHeader(attributeConfigs) {
     const $cells = attributeConfigs.map(
-        attributeConfig => $("<th>").text(attributeConfig.name)
+        attributeConfig => $("<th>").text(
+            attributeConfig.header !== undefined
+                ? attributeConfig.header
+                : attributeConfig.name
+        )
     )
     return $("<thead>").append(
         $("<tr>").append($("<th>Title</th>"), ...$cells)
@@ -366,8 +370,12 @@ class AttributeConfig {
             const value = parts.join("=");
 
             switch (key) {
+                case "header":
+                    this.header = value;
+                    break;
+
                 case "progressBar":
-                    this.denominatorName = value || undefined;
+                    this.denominatorName = value;
                     break;
             }
         })
