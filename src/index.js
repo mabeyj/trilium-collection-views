@@ -31,10 +31,13 @@ async function render() {
                 renderError("This note must define a <code>groupBy</code> attribute.");
                 return;
             }
+            const groupConfig = new AttributeConfig(groupBy);
 
-            const groups = await groupNotes(notes, groupBy);
+            const groups = await groupNotes(notes, groupConfig.name);
             const columnWidth = parseLabelInt(renderNote, "columnWidth", 1, 1000);
-            $view = await renderBoard(groups, columnWidth, coverHeight, attributeConfigs);
+            $view = await renderBoard(
+                groups, columnWidth, coverHeight, groupConfig, attributeConfigs
+            );
             break;
 
         case "gallery":
@@ -55,22 +58,28 @@ function renderError(message) {
     api.$container.append($error);
 }
 
-async function renderBoard(groups, columnWidth, coverHeight, attributeConfigs) {
+async function renderBoard(
+    groups, columnWidth, coverHeight, groupConfig, attributeConfigs
+) {
     const $columns = await Promise.all(
-        groups.map(group => renderColumn(group, columnWidth, coverHeight, attributeConfigs))
+        groups.map(group => renderColumn(
+            group, columnWidth, coverHeight, groupConfig, attributeConfigs
+        ))
     );
     return $("<div class='collection-view-scroll collection-view-board'>").append(
         ...$columns
     );
 }
 
-async function renderColumn(group, columnWidth, coverHeight, attributeConfigs) {
+async function renderColumn(
+    group, columnWidth, coverHeight, groupConfig, attributeConfigs
+) {
     const $cards = await Promise.all(
         group.notes.map(note => renderCard(note, coverHeight, false, attributeConfigs))
     );
 
     const $column = $("<div class='collection-view-column'>").append(
-        await renderColumnHeader(group),
+        await renderColumnHeader(group, groupConfig),
         $("<div class='collection-view-column-cards'>").append(...$cards),
     );
     if (columnWidth) {
@@ -79,12 +88,12 @@ async function renderColumn(group, columnWidth, coverHeight, attributeConfigs) {
     return $column;
 }
 
-async function renderColumnHeader(group) {
+async function renderColumnHeader(group, groupConfig) {
     const $name = $("<div class='collection-view-column-name'>");
-    if (group.relatedNote) {
-        $name.append(await renderRelatedNoteTitle(group.relatedNote.noteId));
+    if (group.name) {
+        $name.append(renderValue(group.name, groupConfig, group.relatedNote));
     } else {
-        $name.append(group.name || $("<span class='text-muted'>None</span>"));
+        $name.append($("<span class='text-muted'>None</span>"));
     }
 
     const $count = $("<div class='collection-view-column-count'>").append(
@@ -152,15 +161,15 @@ async function renderTableRow(note, attributeConfigs) {
         $("<td>").append($("<strong>").append($link))
     );
     for (const attributeConfig of attributeConfigs) {
-        const $attribute = await renderShownAttribute(note, attributeConfig);
+        const $values = await renderAttributes(note, attributeConfig);
 
         const $cell = $("<td>");
-        if ($attribute) {
-            $cell.append($attribute);
-        }
         if (attributeConfig.align) {
             $cell.css("text-align", attributeConfig.align);
         }
+        $values.forEach(($value, i) => {
+            $cell.append($value);
+        })
 
         $row.append($cell);
     }
@@ -209,48 +218,84 @@ async function renderCardInfo(note, attributeConfigs) {
     $info.append($("<li>").append($("<strong>").append($link)));
 
     for (const attributeConfig of attributeConfigs) {
-        const $attribute = await renderShownAttribute(note, attributeConfig);
-        if ($attribute) {
-            $info.append($("<li>").append($attribute));
+        const $values = await renderAttributes(note, attributeConfig);
+        for (const $value of $values) {
+            $info.append($("<li>").append($value));
         }
     }
 
     return $info;
 }
 
-async function renderShownAttribute(note, attributeConfig) {
-    const attribute = note.getAttribute(undefined, attributeConfig.name);
-    if (!attribute || !attribute.value) {
-        return undefined;
-    }
+/**
+ * Renders all values of the given note's attributes sharing the same name
+ * according to the given attribute configuration, returning an array of
+ * elements.
+ */
+async function renderAttributes(note, attributeConfig) {
+    const attributes = note.getAttributes(undefined, attributeConfig.name);
 
-    if (attribute.type === "relation") {
-        return await renderRelatedNoteTitle(attribute.value, attributeConfig);
-    }
-
-    let number, total;
+    let denominator;
     if (attributeConfig.denominatorName) {
-        number = parseFloat(attribute.value);
-        total = parseFloat(note.getLabelValue(attributeConfig.denominatorName));
-    }
-    if (!isNaN(number) && !isNaN(total)) {
-        return renderProgress(number, total, attributeConfig);
+        denominator = note.getLabelValue(attributeConfig.denominatorName);
     }
 
-    return attribute.value;
+    const $values = [];
+    for (const attribute of attributes) {
+        let relatedNote;
+        if (attribute.type === "relation") {
+            relatedNote = await api.getNote(attribute.value);
+        }
+
+        let value = attribute.value;
+        if (relatedNote) {
+            value = relatedNote.title;
+        }
+
+        let $value;
+        if (denominator) {
+            $value = renderProgressBar(value, denominator, attributeConfig);
+        }
+        if (!$value) {
+            $value = renderValue(value, attributeConfig, relatedNote);
+        }
+
+        $values.push($value);
+    }
+
+    return $values;
 }
 
-async function renderRelatedNoteTitle(noteId, attributeConfig) {
-    const note = await api.getNote(noteId);
+/**
+ * Renders a value formatted according to the given attribute configuration,
+ * returning an element. An optional note may be passed for badge styling.
+ */
+function renderValue(value, attributeConfig, note) {
+    value = attributeConfig.affix(value);
 
-    const background = note.getLabelValue("badgeBackground");
-    const color = note.getLabelValue("badgeColor");
-    if (!background && !color) {
-        return note.title;
+    if (attributeConfig.badge) {
+        return renderBadge(value, attributeConfig, note);
     }
 
-    const text = attributeConfig.affix(note.title);
-    const $badge = $("<span class='badge badge-secondary'>").text(text);
+    return value;
+}
+
+/**
+ * Renders a string as a badge, returning an element.
+ *
+ * Badge styles are taken from the given note (optional, its badgeBackground and
+ * badgeColor attributes), then the given attribute configuration, then
+ * Bootstrap's default.
+ */
+function renderBadge(string, attributeConfig, note) {
+    let background = attributeConfig.badgeBackground;
+    let color = attributeConfig.badgeColor;
+    if (note) {
+        background = note.getLabelValue("badgeBackground") || background;
+        color = note.getLabelValue("badgeColor") || color;
+    }
+
+    const $badge = $("<span class='badge badge-secondary'>").text(string);
     if (background) {
         $badge.css("background", background);
     }
@@ -260,8 +305,18 @@ async function renderRelatedNoteTitle(noteId, attributeConfig) {
     return $badge;
 }
 
-function renderProgress(number, total, attributeConfig) {
-    const percent = 100 * number / total;
+function renderProgressBar(numerator, denominator, attributeConfig) {
+    numerator = parseFloat(numerator);
+    denominator = parseFloat(denominator);
+    if (isNaN(numerator) || isNaN(denominator)) {
+        return undefined;
+    }
+
+    let percent = 0;
+    if (denominator !== 0) {
+        percent = 100 * numerator / denominator;
+    }
+
     const percentWidth = `${clamp(percent, 0, 100)}%`;
     const percentText = `${Math.round(percent)}%`;
 
@@ -271,11 +326,11 @@ function renderProgress(number, total, attributeConfig) {
     }
     $fraction.append(
         $("<span class='collection-view-progress-number'>").text(
-            numberFormat.format(number)
+            numberFormat.format(numerator)
         ),
         " / ",
         $("<span class='collection-view-progress-number'>").text(
-            numberFormat.format(total)
+            numberFormat.format(denominator)
         ),
     );
     if (attributeConfig.suffix) {
@@ -318,14 +373,14 @@ async function getNotes(query) {
     return notes;
 }
 
-async function groupNotes(notes, groupBy) {
+async function groupNotes(notes, name) {
     const types = {
         none: [],
         label: {},
         relation: {}
     };
     for (const note of notes) {
-        const attribute = note.getAttribute(undefined, groupBy);
+        const attribute = note.getAttribute(undefined, name);
         if (!attribute || !attribute.value) {
             types.none.push(note);
             continue;
@@ -400,12 +455,22 @@ class AttributeConfig {
             }
 
             switch (key) {
+                case "badge":
+                    this.badge = true;
+                    break;
+
                 case "align":
                 case "header":
                 case "prefix":
                 case "suffix":
                     this[key] = value;
                     break;
+
+                case "badgeBackground":
+                case "badgeColor":
+                    this.badge = true;
+                    this[key] = value;
+                    break
 
                 case "progressBar":
                     this.denominatorName = value;

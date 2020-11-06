@@ -156,6 +156,40 @@ Sets the text alignment of cells in the attribute's column. Can be any `text-ali
 
 Example: `#attribute="price,align=right"`
 
+#### `badge`
+
+* Optional
+
+Renders this attribute's value as a badge.
+
+Badge colors can be customized in two ways:
+
+* The [`badgeBackground`](#badgeBackground) and [`badgeColor`](#badgeColor) attribute settings.
+
+* If this attribute is a relation, notes targeted by this relation can set the `badgeBackground` and `badgeColor` attributes.
+
+Example: `#attribute="status,badge"`
+
+#### `badgeBackground`
+
+* Optional
+
+Sets the background style of badges for this attribute. Any CSS `background` style can be set. If set, the [`badge`](#badge) setting is implicitly enabled.
+
+If this attribute is a relation, notes targeted by this relation can set the `badgeBackground` attribute to override this style.
+
+Example: `#attribute="status,badgeBackground=red"`
+
+#### `badgeColor`
+
+* Optional
+
+Sets the text color of badges for this attribute. Any CSS color can be set. If set, the [`badge`](#badge) setting is implicitly enabled.
+
+If this attribute is a relation, notes targeted by this relation can set the `badgeColor` attribute to override this style.
+
+Example: `#attribute="status,badgeColor=black"`
+
 #### `header`
 
 * Table views only
