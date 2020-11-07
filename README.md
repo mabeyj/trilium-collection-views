@@ -111,7 +111,7 @@ Example: `#columnWidth=100`
 #### `coverHeight`
 
 - Board and gallery views only
-- Optional (default: `200`)
+- Optional (default: `120`)
 - Single value
 
 Sets the height of card cover images in pixels. Setting this to `0` hides cover images.
