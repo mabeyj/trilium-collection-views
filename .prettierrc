@@ -1,2 +1,7 @@
-tabWidth: 4
-trailingComma: none
+overrides:
+  - files:
+      - "*.js"
+      - "*.css"
+    options:
+      tabWidth: 4
+      trailingComma: none

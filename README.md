@@ -125,8 +125,8 @@ Example: `#coverHeight=500`
 
 Configures which note attributes will be displayed in the view and how they should be formatted.
 
-* For board and gallery views, attributes appear underneath the cover image.
-* For table views, attributes appear as additional columns in the table.
+- For board and gallery views, attributes appear underneath the cover image.
+- For table views, attributes appear as additional columns in the table.
 
 The value of the `attribute` label is a comma-separated list. The first item in this list names the attribute to be displayed. Any remaining items are optional attribute settings which can either be flags (`settingName`) or key/value pairs (`settingName=value`). [#attribute-settings](See below) for a list of attribute settings.
 
@@ -149,8 +149,8 @@ The value of the `attribute` label is a comma-separated list. The first item in 
 
 #### `align`
 
-* Table views only
-* Optional (default: `left`)
+- Table views only
+- Optional (default: `left`)
 
 Sets the text alignment of cells in the attribute's column. Can be any `text-align` value (e.g., `center`, `right`).
 
@@ -158,21 +158,21 @@ Example: `#attribute="price,align=right"`
 
 #### `badge`
 
-* Optional
+- Optional
 
 Renders this attribute's value as a badge.
 
 Badge colors can be customized in two ways:
 
-* The [`badgeBackground`](#badgeBackground) and [`badgeColor`](#badgeColor) attribute settings.
+- The [`badgeBackground`](#badgeBackground) and [`badgeColor`](#badgeColor) attribute settings.
 
-* If this attribute is a relation, notes targeted by this relation can set the `badgeBackground` and `badgeColor` attributes.
+- If this attribute is a relation, notes targeted by this relation can set the `badgeBackground` and `badgeColor` attributes.
 
 Example: `#attribute="status,badge"`
 
 #### `badgeBackground`
 
-* Optional
+- Optional
 
 Sets the background style of badges for this attribute. Any CSS `background` style can be set. If set, the [`badge`](#badge) setting is implicitly enabled.
 
@@ -182,7 +182,7 @@ Example: `#attribute="status,badgeBackground=red"`
 
 #### `badgeColor`
 
-* Optional
+- Optional
 
 Sets the text color of badges for this attribute. Any CSS color can be set. If set, the [`badge`](#badge) setting is implicitly enabled.
 
@@ -192,30 +192,30 @@ Example: `#attribute="status,badgeColor=black"`
 
 #### `header`
 
-* Table views only
-* Optional (default: the attribute's name)
+- Table views only
+- Optional (default: the attribute's name)
 
 Sets the text displayed in the header cell of the attribute's column.
 
 Examples:
 
-* `#attribute="price,header=Price (in dollars)"`
-* `#attribute="status,header="` (empty header cell)
+- `#attribute="price,header=Price (in dollars)"`
+- `#attribute="status,header="` (empty header cell)
 
 #### `prefix`
 
-* Optional
+- Optional
 
 Adds a string in front of the attribute's value.
 
 Examples:
 
-* `#attribute="price,prefix=$"`
-* `#attribute="total,prefix=Total: "`
+- `#attribute="price,prefix=$"`
+- `#attribute="total,prefix=Total: "`
 
 #### `progressBar`
 
-* Optional
+- Optional
 
 Renders a progress bar using the attribute as the numerator and another attribute (named by this setting's value) as the denominator. Both attributes must be labels with numeric values.
 
@@ -223,19 +223,19 @@ Example: `#attribute="completed,progressBar=total"`
 
 #### `suffix`
 
-* Optional
+- Optional
 
 Adds a string behind the attribute's value.
 
 Examples:
 
-* `#attribute="weight,suffix=kg"`
-* `#attribute="price,suffix= CAD"`
+- `#attribute="weight,suffix=kg"`
+- `#attribute="price,suffix= CAD"`
 
 #### `width`
 
-* Table views only
-* Optional (default: `300` for note title, `0` for attributes)
+- Table views only
+- Optional (default: `300` for note title, `0` for attributes)
 
 Sets the minimum width (in pixels) of the attribute's column. Columns may be resized proportionally since tables are set to 100% width.
 
