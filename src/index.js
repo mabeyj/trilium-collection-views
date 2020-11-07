@@ -58,7 +58,9 @@ function renderError(message) {
  */
 async function getNotes(query) {
     const notes = await api.searchForNotes(query);
-    notes.sort((a, b) => a.title.toLowerCase() < b.title.toLowerCase() ? -1 : 1);
+    notes.sort((a, b) =>
+        a.title.toLowerCase() < b.title.toLowerCase() ? -1 : 1
+    );
     return notes;
 }
 
@@ -100,7 +102,9 @@ async function groupNotes(notes, name) {
             notes: groupNotes
         });
     }
-    groups.sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1);
+    groups.sort((a, b) =>
+        a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
+    );
     if (types.none.length) {
         groups.push({ notes: types.none });
     }
@@ -144,7 +148,7 @@ class Config {
         this.parseColumnWidth(note.getLabelValue("columnWidth"));
         this.parseCoverHeight(note.getLabelValue("coverHeight"));
         this.parseAttributes(
-            note.getLabels("attribute").map(label => label.value)
+            note.getLabels("attribute").map((label) => label.value)
         );
     }
 
@@ -187,7 +191,7 @@ class Config {
     }
 
     parseAttributes(values) {
-        this.attributes = values.map(value => new AttributeConfig(value));
+        this.attributes = values.map((value) => new AttributeConfig(value));
     }
 }
 
@@ -199,7 +203,7 @@ class AttributeConfig {
         const options = string.split(",");
         this.name = options.shift();
 
-        options.forEach(option => {
+        options.forEach((option) => {
             const parts = option.split("=");
             const key = parts.shift();
             const value = parts.join("=");
@@ -225,7 +229,7 @@ class AttributeConfig {
                 case "badgeColor":
                     this.badge = true;
                     this[key] = value;
-                    break
+                    break;
 
                 case "progressBar":
                     this.denominatorName = value;
@@ -235,7 +239,7 @@ class AttributeConfig {
                     this.width = clamp(intValue, 0, 1000);
                     break;
             }
-        })
+        });
     }
 
     /**
@@ -256,7 +260,7 @@ class View {
 
     async renderCards(notes, showEmptyCovers) {
         return await Promise.all(
-            notes.map(note => this.renderCard(note, showEmptyCovers))
+            notes.map((note) => this.renderCard(note, showEmptyCovers))
         );
     }
 
@@ -275,7 +279,7 @@ class View {
     }
 
     async renderCardCover(note, showEmpty) {
-        const {coverHeight} = this.config;
+        const { coverHeight } = this.config;
 
         if (coverHeight === 0) {
             return undefined;
@@ -322,7 +326,7 @@ class View {
 
     async renderCardAttributeValues(note, attributeConfig) {
         const $values = await this.renderAttributeValues(note, attributeConfig);
-        return $values.map($value => $("<li>").append($value));
+        return $values.map(($value) => $("<li>").append($value));
     }
 
     /**
@@ -352,7 +356,11 @@ class View {
 
             let $value;
             if (denominator) {
-                $value = this.renderProgressBar(value, denominator, attributeConfig);
+                $value = this.renderProgressBar(
+                    value,
+                    denominator,
+                    attributeConfig
+                );
             }
             if (!$value) {
                 $value = this.renderValue(value, attributeConfig, relatedNote);
@@ -373,7 +381,7 @@ class View {
 
         let percent = 0;
         if (denominator !== 0) {
-            percent = 100 * numerator / denominator;
+            percent = (100 * numerator) / denominator;
         }
 
         const percentWidth = `${clamp(percent, 0, 100)}%`;
@@ -390,17 +398,22 @@ class View {
             " / ",
             $("<span class='collection-view-progress-number'>").text(
                 numberFormat.format(denominator)
-            ),
+            )
         );
         if (attributeConfig.suffix) {
             $fraction.append(attributeConfig.suffix);
         }
 
         const $bar = $("<div class='progress'>").append(
-            $("<div class='progress-bar'>").width(percentWidth).text(percentText)
+            $("<div class='progress-bar'>")
+                .width(percentWidth)
+                .text(percentText)
         );
 
-        return $("<div class='collection-view-progress'>").append($fraction, $bar);
+        return $("<div class='collection-view-progress'>").append(
+            $fraction,
+            $bar
+        );
     }
 
     /**
@@ -454,23 +467,23 @@ class BoardView extends View {
     }
 
     async render() {
-        return $("<div class='collection-view-scroll collection-view-board'>").append(
-            ...await this.renderColumns()
-        );
+        return $(
+            "<div class='collection-view-scroll collection-view-board'>"
+        ).append(...(await this.renderColumns()));
     }
 
     async renderColumns() {
         return await Promise.all(
-            this.groups.map(group => this.renderColumn(group))
+            this.groups.map((group) => this.renderColumn(group))
         );
     }
 
     async renderColumn(group) {
-        const {columnWidth} = this.config;
+        const { columnWidth } = this.config;
 
         const $column = $("<div class='collection-view-board-column'>").append(
             this.renderColumnHeader(group),
-            await this.renderColumnCards(group),
+            await this.renderColumnCards(group)
         );
         if (columnWidth) {
             $column.width(columnWidth).css("min-width", `${columnWidth}px`);
@@ -481,7 +494,7 @@ class BoardView extends View {
     renderColumnHeader(group) {
         return $("<div class='collection-view-board-column-header'>").append(
             this.renderColumnName(group),
-            this.renderColumnCount(group),
+            this.renderColumnCount(group)
         );
     }
 
@@ -490,7 +503,9 @@ class BoardView extends View {
         if (group.name) {
             $name.append(
                 this.renderValue(
-                    group.name, this.config.groupBy, group.relatedNote
+                    group.name,
+                    this.config.groupBy,
+                    group.relatedNote
                 )
             );
         } else {
@@ -509,7 +524,7 @@ class BoardView extends View {
 
     async renderColumnCards(group) {
         return $("<div class='collection-view-board-column-cards'>").append(
-            ...await this.renderCards(group.notes, false)
+            ...(await this.renderCards(group.notes, false))
         );
     }
 }
@@ -524,15 +539,16 @@ class GalleryView extends View {
     }
 
     async render() {
-        const {columns} = this.config;
+        const { columns } = this.config;
 
         const $gallery = $("<div class='collection-view-gallery'>");
         if (columns) {
             $gallery.css(
-                "grid-template-columns", `repeat(${columns}, minmax(0, 1fr))`
+                "grid-template-columns",
+                `repeat(${columns}, minmax(0, 1fr))`
             );
         }
-        $gallery.append(...await this.renderCards(this.notes, true));
+        $gallery.append(...(await this.renderCards(this.notes, true)));
         return $gallery;
     }
 }
@@ -548,10 +564,9 @@ class TableView extends View {
 
     async render() {
         return $("<div class='collection-view-scroll'>").append(
-            $("<table class='table table-bordered table-hover table-sm collection-view-table'>").append(
-                this.renderHeader(),
-                await this.renderBody(),
-            )
+            $(
+                "<table class='table table-bordered table-hover table-sm collection-view-table'>"
+            ).append(this.renderHeader(), await this.renderBody())
         );
     }
 
@@ -562,8 +577,8 @@ class TableView extends View {
     }
 
     renderHeaderCells() {
-        return this.config.attributes.map(
-            attributeConfig => this.renderHeaderCell(attributeConfig)
+        return this.config.attributes.map((attributeConfig) =>
+            this.renderHeaderCell(attributeConfig)
         );
     }
 
@@ -583,12 +598,12 @@ class TableView extends View {
     }
 
     async renderBody() {
-        return $("<tbody>").append(...await this.renderRows());
+        return $("<tbody>").append(...(await this.renderRows()));
     }
 
     async renderRows() {
         return await Promise.all(
-            this.notes.map(note => this.renderRow(note))
+            this.notes.map((note) => this.renderRow(note))
         );
     }
 
@@ -605,7 +620,7 @@ class TableView extends View {
     async renderTitleCell(note) {
         const $link = (await api.createNoteLink(note.noteId)).find("a");
         $link.addClass("stretched-link no-tooltip-preview");
-        return $("<td>").append($("<strong>").append($link))
+        return $("<td>").append($("<strong>").append($link));
     }
 
     async renderAttributeCell(note, attributeConfig) {
@@ -614,7 +629,7 @@ class TableView extends View {
             $cell.css("text-align", attributeConfig.align);
         }
         $cell.append(
-            ...await this.renderAttributeCellValues(note, attributeConfig)
+            ...(await this.renderAttributeCellValues(note, attributeConfig))
         );
         return $cell;
     }
@@ -627,11 +642,11 @@ class TableView extends View {
             $valuesWithBreaks.push($value);
             if (
                 typeof $value === "string" &&
-                typeof $values[i+1] === "string"
+                typeof $values[i + 1] === "string"
             ) {
                 $valuesWithBreaks.push($("<br>"));
             }
-        })
+        });
         return $valuesWithBreaks;
     }
 }
