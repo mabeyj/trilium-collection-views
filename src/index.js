@@ -72,17 +72,31 @@ async function groupNotes(notes, name) {
         relation: {}
     };
     for (const note of notes) {
-        const attribute = note.getAttribute(undefined, name);
-        if (!attribute || !attribute.value) {
-            types.none.push(note);
-            continue;
+        const attributes = note.getAttributes(undefined, name);
+
+        let addToNone = !attributes.length;
+        const added = { label: {}, relation: {} };
+
+        for (const attribute of attributes) {
+            if (!attribute.value) {
+                addToNone = true;
+                continue;
+            }
+            if (added[attribute.type][attribute.value]) {
+                continue;
+            }
+
+            const groups = types[attribute.type];
+            if (!groups[attribute.value]) {
+                groups[attribute.value] = [];
+            }
+            groups[attribute.value].push(note);
+            added[attribute.type][attribute.value] = true;
         }
 
-        const groups = types[attribute.type];
-        if (!groups[attribute.value]) {
-            groups[attribute.value] = [];
+        if (addToNone) {
+            types.none.push(note);
         }
-        groups[attribute.value].push(note);
     }
 
     const groups = [];
