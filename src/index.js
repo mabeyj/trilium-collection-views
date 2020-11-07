@@ -16,6 +16,7 @@ async function render() {
         renderError("No notes found.");
         return;
     }
+    sortNotes(notes);
 
     let $view;
     switch (config.view) {
@@ -55,11 +56,7 @@ function renderError(message) {
  * Executes a search query and returns the resulting array of notes.
  */
 async function getNotes(query) {
-    const notes = await api.searchForNotes(query);
-    notes.sort((a, b) =>
-        a.title.toLowerCase() < b.title.toLowerCase() ? -1 : 1
-    );
-    return notes;
+    return await api.searchForNotes(query);
 }
 
 /**
@@ -114,13 +111,29 @@ async function groupNotes(notes, name) {
             notes: groupNotes
         });
     }
-    groups.sort((a, b) =>
-        a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
-    );
+
+    groups.sort((a, b) => {
+        const nameA = getSortableValue(a.name, a.relatedNote);
+        const nameB = getSortableValue(b.name, b.relatedNote);
+        return nameA < nameB ? -1 : 1;
+    });
+
     if (types.none.length) {
         groups.push({ notes: types.none });
     }
+
     return groups;
+}
+
+/**
+ * Sorts an array of notes.
+ */
+function sortNotes(notes) {
+    notes.sort((a, b) => {
+        const titleA = getSortableValue(a.title, a);
+        const titleB = getSortableValue(b.title, b);
+        return titleA < titleB ? -1 : 1;
+    });
 }
 
 /**
@@ -132,6 +145,19 @@ async function getCoverUrl(note) {
     const $content = $(parser.parseFromString(content, "text/html"));
     const $image = $content.find("body > figure:first-child > img").first();
     return $image.attr("src") || undefined;
+}
+
+/**
+ * Returns the sortable value: the sortableTitle value of any related note
+ * overrides the value itself for sorting purposes.
+ */
+function getSortableValue(value, relatedNote) {
+    let sortableTitle;
+    if (relatedNote) {
+        sortableTitle = relatedNote.getLabelValue("sortableTitle");
+    }
+
+    return (sortableTitle || value).toLowerCase();
 }
 
 /**
