@@ -1,4 +1,8 @@
 /* Scroll container: fills content area for scrolling in all directions. */
+.note-book-content,
+.note-detail-render-content {
+    position: relative;
+}
 .collection-view-scroll {
     position: absolute;
     top: 0;
@@ -8,22 +12,7 @@
     overflow: auto;
 }
 
-.note-book-content,
-.note-detail-render-content {
-    position: relative;
-}
-
-/* Board view */
-.collection-view-board {
-    display: flex;
-}
-
-.collection-view-column-header .badge,
-.collection-view-card .badge {
-    white-space: normal;
-    text-align: left;
-}
-
+/* Error */
 .collection-view-error {
     background: var(--accented-background-color);
     border-radius: 10px;
@@ -31,45 +20,46 @@
     text-align: center;
 }
 
-.collection-view-column {
+/* Board view */
+.collection-view-board {
+    display: flex;
+}
+.collection-view-board-column {
     display: flex;
     flex-direction: column;
     min-width: 250px;
     width: 250px;
     margin-right: 15px;
 }
-
-.collection-view-column-header {
+.collection-view-board-column-header {
     display: flex;
     background: var(--accented-background-color);
     border-radius: 10px;
     padding: 8px;
     margin-bottom: 15px;
 }
-
-.collection-view-column-header .badge {
-    font-size: inherit;
-}
-
-.collection-view-column-name {
+.collection-view-board-column-name {
     flex-grow: 1;
 }
-
-.collection-view-column-count {
+.collection-view-board-column-count {
     margin-left: 8px;
 }
-
-.collection-view-column-cards {
+.collection-view-board-column-cards {
     flex-grow: 1;
     overflow: auto;
 }
-
-.collection-view-column-cards .collection-view-card {
+.collection-view-board-column-cards .collection-view-card {
     margin-bottom: 15px;
 }
-
-.collection-view-column-cards :last-child {
+.collection-view-board-column-cards :last-child {
     margin-bottom: 0;
+}
+
+/* Gallery view */
+.collection-view-gallery {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
 }
 
 /* Table view:
@@ -79,23 +69,16 @@
 .table.collection-view-table {
     margin: 0;
 }
-
-.collection-view-table .badge {
-    vertical-align: text-top;
-}
-
 .table.collection-view-table thead th,
 .table.collection-view-table tbody td {
     border: 1px solid #bfbfbf;
     padding: 0.4em;
     white-space: nowrap;
 }
-
 .collection-view-table tr > :first-child {
     position: sticky;
     left: 0;
 }
-
 .collection-view-table thead th {
     position: sticky;
     top: 0;
@@ -103,36 +86,26 @@
     box-shadow: 0 1px #bfbfbf, 0 -1px #bfbfbf;
     z-index: 2;
 }
-
 .collection-view-table thead th:first-child {
     z-index: 3;
     box-shadow: 1px 0 #bfbfbf, 0 1px #bfbfbf;
 }
-
 .collection-view-table tbody td:first-child {
     background: var(--main-background-color);
     box-shadow: 1px 0 #bfbfbf, -1px 0 #bfbfbf;
     min-width: 300px;
     white-space: normal;
 }
-
 .collection-view-table tbody tr:hover td {
     background: var(--ck-color-table-focused-cell-background);
 }
 
-/* Gallery view */
-.collection-view-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 15px;
-}
-
+/* Cards */
 .collection-view-card {
     position: relative;
     background: var(--accented-background-color);
     border-radius: 10px;
 }
-
 .collection-view-card-cover {
     background-position: center;
     background-repeat: no-repeat;
@@ -140,37 +113,47 @@
     border-bottom: 1px solid rgba(0, 0, 0, 25%);
     height: 200px;
 }
-
-.collection-view-card-info {
+.collection-view-card-attributes {
     padding: 8px;
     margin: 0;
     list-style: none;
 }
-
-.collection-view-card-info li,
-.collection-view-progress-fraction {
+.collection-view-card-attributes li {
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+/* Badges */
+.collection-view-board-column-header .badge,
+.collection-view-card .badge {
+    white-space: normal;
+    text-align: left;
+}
+.collection-view-board-column-header .badge {
+    font-size: inherit;
+}
+.collection-view-table .badge {
+    vertical-align: text-top;
+}
+
+/* Progress bars */
 .collection-view-progress {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
 }
-
 .collection-view-progress-fraction {
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
     margin-right: 8px;
 }
-
 .collection-view-progress-number {
     display: inline-block;
     min-width: 3ch;
     text-align: right;
 }
-
 .collection-view-progress .progress {
     flex-grow: 1;
     min-width: 50px;
