@@ -82,11 +82,35 @@ Example: `#query="#book #status=read"` would include all notes having a `book` l
 
 Determines the columns of the board view. The value of this label is an attribute name.
 
-- If a label is referenced, notes are grouped by the values of that label.
+- If the attribute is a label, then notes are grouped by their values for that label.
+- If the attribute is a relation, then notes are grouped by the notes targeted by the relation.
 
-- If a relation is referenced, notes are grouped by the target notes of that relation. Column headers will display the titles of target notes ([badges](#badge) are supported).
+Columns are sorted by the specified attribute, implementing the similar sorting as the [`sort` attribute](#sort).
 
-Example: `#groupBy=status` would group notes by their values of the `status` label.
+Column headers format values the same way as the [`attribute` attribute](#attribute). `groupBy` accepts most [attribute settings](#Attribute-settings) as well.
+
+Examples:
+
+- `#groupBy=status` would group notes by their values of the `status` label.
+- `#groupBy=status,badge` would additionally format column headers as badges.
+
+#### `sort`
+
+- Optional
+- Single value
+
+Sorts notes in the view. The value of this label is a comma-separated list of attribute names. Attribute names can be prefixed with `!` to sort values in descending order.
+
+- If an attribute is a label, then notes are sorted by their values for that label.
+- If an attribute is a relation, then notes are sorted by the titles of notes targeted by the relation.
+
+Values are sorted alphabetically and case-insensitively.
+
+Notes are sorted by their titles last, and this is the default sort when no sorting is specified.
+
+Custom sorting can be achieved by defining a `sortableTitle` label on a note. Whenever a note's title is compared, its `sortableTitle` will be used instead if it is defined.
+
+Example: `#sort="type,!price"` would sort notes by their `type` values first, then by `price` (in reverse order), then by their titles.
 
 #### `columns`
 
@@ -192,6 +216,7 @@ Example: `#attribute="status,badgeColor=black"`
 
 #### `boolean`
 
+- Not supported by [`groupBy`](#groupBy)
 - Optional
 
 Renders the attribute's value as a checkbox.
@@ -241,6 +266,7 @@ Example: `#attribute="price,precision=2"`
 
 #### `progressBar`
 
+- Not supported by [`groupBy`](#groupBy)
 - Optional
 
 Renders a progress bar using the attribute as the numerator and another attribute (named by this setting's value) as the denominator. Both attributes must be labels with numeric values.

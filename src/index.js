@@ -16,7 +16,7 @@ async function render() {
         renderError("No notes found.");
         return;
     }
-    sortNotes(notes);
+    await sortNotes(notes, config.sort);
 
     let $view;
     switch (config.view) {
@@ -128,11 +128,37 @@ async function groupNotes(notes, name) {
 /**
  * Sorts an array of notes.
  */
-function sortNotes(notes) {
+async function sortNotes(notes, sorts) {
+    const sortableValues = {};
+    for (const note of notes) {
+        sortableValues[note.noteId] = {};
+        for (const sort of sorts) {
+            const value = await getSortableAttributeValue(note, sort.name);
+            sortableValues[note.noteId][sort.name] = value;
+        }
+    }
+
     notes.sort((a, b) => {
+        for (const sort of sorts) {
+            const valueA = sortableValues[a.noteId][sort.name];
+            const valueB = sortableValues[b.noteId][sort.name];
+            if (valueA < valueB) {
+                return sort.descending ? 1 : -1;
+            }
+            if (valueA > valueB) {
+                return sort.descending ? -1 : 1;
+            }
+        }
+
         const titleA = getSortableValue(a.title, a);
         const titleB = getSortableValue(b.title, b);
-        return titleA < titleB ? -1 : 1;
+        if (titleA < titleB) {
+            return -1;
+        }
+        if (titleA > titleB) {
+            return 1;
+        }
+        return 0;
     });
 }
 
@@ -148,8 +174,28 @@ async function getCoverUrl(note) {
 }
 
 /**
- * Returns the sortable value: the sortableTitle value of any related note
- * overrides the value itself for sorting purposes.
+ * Returns the sortable value of an attribute of some note.
+ *
+ * If the attribute is a relation, then the related note's sortableTitle or
+ * title is returned. Otherwise, the attribute's value is returned.
+ */
+async function getSortableAttributeValue(note, name) {
+    const attribute = note.getAttribute(undefined, name);
+    if (!attribute) {
+        return "";
+    }
+
+    let relatedNote;
+    if (attribute.type === "relation") {
+        relatedNote = await api.getNote(attribute.value);
+    }
+
+    const value = relatedNote ? relatedNote.title : attribute.value;
+    return getSortableValue(value, relatedNote);
+}
+
+/**
+ * Returns the given value or the sortableTitle of an optional related note.
  */
 function getSortableValue(value, relatedNote) {
     let sortableTitle;
@@ -189,6 +235,7 @@ class Config {
         this.parseView(note.getLabelValue("view"));
         this.parseQuery(note.getLabelValue("query"));
         this.parseGroupBy(note.getLabelValue("groupBy"));
+        this.parseSort(note.getLabelValue("sort"));
         this.parseColumns(note.getLabelValue("columns"));
         this.parseColumnWidth(note.getLabelValue("columnWidth"));
         this.parseCoverHeight(note.getLabelValue("coverHeight"));
@@ -221,6 +268,23 @@ class Config {
         }
 
         this.groupBy = new AttributeConfig(value);
+    }
+
+    parseSort(value) {
+        if (!value) {
+            this.sort = [];
+            return;
+        }
+
+        this.sort = value.split(",").map((name) => {
+            let descending = false;
+            if (name.startsWith("!")) {
+                descending = true;
+                name = name.slice(1);
+            }
+
+            return { name, descending };
+        });
     }
 
     parseColumns(value) {
