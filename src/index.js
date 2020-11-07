@@ -148,6 +148,13 @@ function clamp(number, min, max) {
 }
 
 /**
+ * Returns true if the given value is a string or checkbox element.
+ */
+function isStringOrCheckbox($value) {
+    return typeof $value === "string" || $($value).is(":checkbox");
+}
+
+/**
  * View configuration read from a note's attributes.
  */
 class Config {
@@ -227,6 +234,7 @@ class AttributeConfig {
 
             switch (key) {
                 case "badge":
+                case "boolean":
                 case "number":
                     this[key] = true;
                     break;
@@ -374,7 +382,9 @@ class View {
             }
 
             let $value;
-            if (denominator) {
+            if (attributeConfig.boolean) {
+                $value = this.renderBoolean(value);
+            } else if (denominator) {
                 $value = this.renderProgressBar(
                     value,
                     denominator,
@@ -389,6 +399,19 @@ class View {
         }
 
         return $values;
+    }
+
+    renderBoolean(value) {
+        const $checkbox = $(
+            "<input class='collection-view-checkbox' type='checkbox' disabled>"
+        );
+        if (
+            !value ||
+            !["n", "no", "f", "false"].includes(value.toLowerCase())
+        ) {
+            $checkbox.attr("checked", true);
+        }
+        return $checkbox;
     }
 
     renderProgressBar(numerator, denominator, attributeConfig) {
@@ -679,8 +702,8 @@ class TableView extends View {
         $values.forEach(($value, i) => {
             $valuesWithBreaks.push($value);
             if (
-                typeof $value === "string" &&
-                typeof $values[i + 1] === "string"
+                isStringOrCheckbox($value) &&
+                isStringOrCheckbox($values[i + 1])
             ) {
                 $valuesWithBreaks.push($("<br>"));
             }

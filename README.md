@@ -190,6 +190,16 @@ If this attribute is a relation, notes targeted by this relation can set the `ba
 
 Example: `#attribute="status,badgeColor=black"`
 
+#### `boolean`
+
+- Optional
+
+Renders the attribute's value as a checkbox.
+
+If the value is `f`, `false`, `n`, or `no` (case-insensitive), then the checkbox will be unchecked. Otherwise (including empty values), the checkbox will be checked.
+
+Example: `#attribute="done,boolean"`
+
 #### `header`
 
 - Table views only

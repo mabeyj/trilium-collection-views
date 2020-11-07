@@ -136,6 +136,12 @@
     vertical-align: text-top;
 }
 
+/* Checkboxes */
+.collection-view-checkbox {
+    width: var(--ck-todo-list-checkmark-size);
+    height: var(--ck-todo-list-checkmark-size);
+}
+
 /* Progress bars */
 .collection-view-progress {
     display: flex;
