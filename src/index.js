@@ -227,7 +227,8 @@ class AttributeConfig {
 
             switch (key) {
                 case "badge":
-                    this.badge = true;
+                case "number":
+                    this[key] = true;
                     break;
 
                 case "align":
@@ -246,6 +247,11 @@ class AttributeConfig {
 
                 case "progressBar":
                     this.denominatorName = value;
+                    break;
+
+                case "precision":
+                    this.number = true;
+                    this.precision = clamp(intValue, 0, 20);
                     break;
 
                 case "width":
@@ -434,6 +440,18 @@ class View {
      * returning an element. An optional note may be passed for badge styling.
      */
     renderValue(value, attributeConfig, note) {
+        if (attributeConfig.number) {
+            const float = parseFloat(value);
+            if (!isNaN(float)) {
+                const options = {};
+                if (attributeConfig.precision !== undefined) {
+                    options.minimumFractionDigits = options.maximumFractionDigits =
+                        attributeConfig.precision;
+                }
+
+                value = new Intl.NumberFormat(undefined, options).format(float);
+            }
+        }
         if (attributeConfig.repeat) {
             const int = parseInt(value, 10);
             if (!isNaN(int) && int >= 0) {

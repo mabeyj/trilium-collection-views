@@ -202,6 +202,14 @@ Examples:
 - `#attribute="price,header=Price (in dollars)"`
 - `#attribute="status,header="` (empty header cell)
 
+#### `number`
+
+- Optional
+
+Formats the attribute's value as a number.
+
+Example: `#attribute="price,number"`
+
 #### `prefix`
 
 - Optional
@@ -212,6 +220,14 @@ Examples:
 
 - `#attribute="price,prefix=$"`
 - `#attribute="total,prefix=Total: "`
+
+#### `precision`
+
+- Optional (default: up to 3 digits)
+
+Sets the number of digits displayed after the decimal point when the attribute's value is formatted as a number. If set, the [`number`](#number) setting is implicitly enabled.
+
+Example: `#attribute="price,precision=2"`
 
 #### `progressBar`
 
