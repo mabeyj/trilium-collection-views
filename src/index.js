@@ -7,15 +7,13 @@ async function render() {
     const config = new Config(api.originEntity);
 
     if (!config.query) {
-        this.renderError(
-            "This note must define a <code>query</code> attribute."
-        );
+        renderError("This note must define a <code>query</code> attribute.");
         return;
     }
 
     const notes = await getNotes(config.query);
     if (!notes.length) {
-        this.renderError("No notes found.");
+        renderError("No notes found.");
         return;
     }
 
@@ -23,7 +21,7 @@ async function render() {
     switch (config.view) {
         case "board":
             if (!config.groupBy) {
-                this.renderError(
+                renderError(
                     "This note must define a <code>groupBy</code> attribute."
                 );
                 return;
