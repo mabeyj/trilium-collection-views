@@ -233,6 +233,7 @@ class AttributeConfig {
                 case "align":
                 case "header":
                 case "prefix":
+                case "repeat":
                 case "suffix":
                     this[key] = value;
                     break;
@@ -433,6 +434,13 @@ class View {
      * returning an element. An optional note may be passed for badge styling.
      */
     renderValue(value, attributeConfig, note) {
+        if (attributeConfig.repeat) {
+            const int = parseInt(value, 10);
+            if (!isNaN(int) && int >= 0) {
+                value = attributeConfig.repeat.repeat(clamp(int, 0, 1000));
+            }
+        }
+
         value = attributeConfig.affix(value);
 
         if (attributeConfig.badge) {

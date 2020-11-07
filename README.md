@@ -221,6 +221,14 @@ Renders a progress bar using the attribute as the numerator and another attribut
 
 Example: `#attribute="completed,progressBar=total"`
 
+#### `repeat`
+
+- Optional
+
+Renders the value as a string repeated depending on the attribute's numeric value.
+
+Example: `#attribute="rating,repeat=⭐"`
+
 #### `suffix`
 
 - Optional
