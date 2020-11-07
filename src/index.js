@@ -614,9 +614,25 @@ class TableView extends View {
             $cell.css("text-align", attributeConfig.align);
         }
         $cell.append(
-            ...await this.renderAttributeValues(note, attributeConfig)
+            ...await this.renderAttributeCellValues(note, attributeConfig)
         );
         return $cell;
+    }
+
+    async renderAttributeCellValues(note, attributeConfig) {
+        const $values = await this.renderAttributeValues(note, attributeConfig);
+
+        const $valuesWithBreaks = [];
+        $values.forEach(($value, i) => {
+            $valuesWithBreaks.push($value);
+            if (
+                typeof $value === "string" &&
+                typeof $values[i+1] === "string"
+            ) {
+                $valuesWithBreaks.push($("<br>"));
+            }
+        })
+        return $valuesWithBreaks;
     }
 }
 
