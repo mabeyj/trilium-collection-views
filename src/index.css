@@ -37,6 +37,7 @@ body {
 }
 .collection-view-board-column-header {
     display: flex;
+    position: relative;
     background: var(--accented-background-color);
     border-radius: 10px;
     padding: 8px;

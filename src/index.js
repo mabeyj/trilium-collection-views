@@ -633,9 +633,14 @@ class BoardView extends View {
     async renderColumn(group) {
         const { columnWidth } = this.config;
 
-        const $column = $("<div class='collection-view-board-column'>").append(
+        const [$header, $cards] = await Promise.all([
             this.renderColumnHeader(group),
-            await this.renderColumnCards(group)
+            this.renderColumnCards(group)
+        ]);
+
+        const $column = $("<div class='collection-view-board-column'>").append(
+            $header,
+            $cards
         );
         if (columnWidth) {
             $column.width(columnWidth).css("min-width", `${columnWidth}px`);
@@ -643,27 +648,33 @@ class BoardView extends View {
         return $column;
     }
 
-    renderColumnHeader(group) {
+    async renderColumnHeader(group) {
         return $("<div class='collection-view-board-column-header'>").append(
-            this.renderColumnName(group),
+            await this.renderColumnName(group),
             this.renderColumnCount(group)
         );
     }
 
-    renderColumnName(group) {
+    async renderColumnName(group) {
         const $name = $("<div class='collection-view-board-column-name'>");
-        if (group.name) {
-            $name.append(
-                this.renderValue(
-                    group.name,
-                    this.config.groupBy,
-                    group.relatedNote
-                )
-            );
-        } else {
-            $name.append($("<span class='text-muted'>None</span>"));
+        if (!group.name) {
+            return $name.append($("<span class='text-muted'>None</span>"));
         }
-        return $name;
+
+        let $value = this.renderValue(
+            group.name,
+            this.config.groupBy,
+            group.relatedNote
+        );
+        if (group.relatedNote) {
+            $value = (await api.createNoteLink(group.relatedNote.noteId))
+                .find("a")
+                .addClass("stretched-link no-tooltip-preview")
+                .empty()
+                .append($value);
+        }
+
+        return $name.append($value);
     }
 
     renderColumnCount(group) {
