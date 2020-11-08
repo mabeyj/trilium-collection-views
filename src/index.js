@@ -536,15 +536,16 @@ class View {
             $fraction.append(attributeConfig.suffix);
         }
 
-        const $bar = $("<div class='progress'>").append(
-            $("<div class='progress-bar'>")
-                .width(percentWidth)
-                .text(percentText)
-        );
+        const $bar = $("<div class='progress-bar'>")
+            .width(percentWidth)
+            .text(percentText);
+        if (percent >= 100) {
+            $bar.addClass("bg-success");
+        }
 
         return $("<div class='collection-view-progress'>").append(
             $fraction,
-            $bar
+            $("<div class='progress'>").append($bar)
         );
     }
 
