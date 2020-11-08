@@ -220,13 +220,6 @@ function clamp(number, min, max) {
 }
 
 /**
- * Returns true if the given value is a string or checkbox element.
- */
-function isStringOrCheckbox($value) {
-    return typeof $value === "string" || $($value).is(":checkbox");
-}
-
-/**
  * View configuration read from a note's attributes.
  */
 class Config {
@@ -800,17 +793,24 @@ class TableView extends View {
     async renderAttributeCellValues(note, attributeConfig) {
         const $values = await this.renderAttributeValues(note, attributeConfig);
 
-        const $valuesWithBreaks = [];
+        let separator;
+        if (attributeConfig.badge) {
+            separator = " ";
+        } else if (!attributeConfig.denominatorName) {
+            separator = $("<br>");
+        }
+        if (!separator) {
+            return $values;
+        }
+
+        const $separatedValues = [];
         $values.forEach(($value, i) => {
-            $valuesWithBreaks.push($value);
-            if (
-                isStringOrCheckbox($value) &&
-                isStringOrCheckbox($values[i + 1])
-            ) {
-                $valuesWithBreaks.push($("<br>"));
+            if (i) {
+                $separatedValues.push(separator);
             }
+            $separatedValues.push($value);
         });
-        return $valuesWithBreaks;
+        return $separatedValues;
     }
 }
 
