@@ -167,10 +167,16 @@ async function sortNotes(notes, sorts) {
  */
 async function getCoverUrl(note) {
     const content = await note.getContent();
-    const parser = new DOMParser();
-    const $content = $(parser.parseFromString(content, "text/html"));
-    const $image = $content.find("body > figure:first-child > img").first();
-    return $image.attr("src") || undefined;
+    if (!content.startsWith("<figure")) {
+        return undefined;
+    }
+
+    const match = content.match(/src="([^"]+)"/);
+    if (!match) {
+        return undefined;
+    }
+
+    return match[1] || undefined;
 }
 
 /**
