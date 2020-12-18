@@ -1,7 +1,8 @@
 overrides:
   - files:
       - "*.js"
-      - "*.css"
+      - "*.json"
+      - "*.ts"
     options:
       tabWidth: 4
-      trailingComma: none
+      useTabs: true
