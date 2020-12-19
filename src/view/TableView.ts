@@ -1,5 +1,8 @@
 import { AttributeConfig, ViewConfig } from "collection-views/config";
 import { View } from "collection-views/view/View";
+import { staggeredRender } from "collection-views/dom";
+
+const initialRenderSize = 25;
 
 /**
  * Renders a table view. Rows are notes. Columns are attributes.
@@ -61,16 +64,11 @@ export class TableView extends View {
 	 * Returns an element for rendering the table body.
 	 */
 	async renderBody(): Promise<JQuery> {
-		return $("<tbody>").append(...(await this.renderRows()));
-	}
-
-	/**
-	 * Returns elements for rendering rows in the table body.
-	 */
-	async renderRows(): Promise<JQuery[]> {
-		return await Promise.all(
-			this.notes.map((note) => this.renderRow(note))
+		const $body = $("<tbody>");
+		await staggeredRender($body, initialRenderSize, this.notes, (note) =>
+			this.renderRow(note)
 		);
+		return $body;
 	}
 
 	/**

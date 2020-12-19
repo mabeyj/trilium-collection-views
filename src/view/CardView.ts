@@ -7,19 +7,6 @@ import { AttributeConfig } from "collection-views/config";
  */
 export abstract class CardView extends View {
 	/**
-	 * Returns elements for rendering cards for the given notes, optionally
-	 * showing empty covers for notes without a cover.
-	 */
-	async renderCards(
-		notes: NoteShort[],
-		showEmptyCovers: boolean
-	): Promise<JQuery[]> {
-		return await Promise.all(
-			notes.map((note) => this.renderCard(note, showEmptyCovers))
-		);
-	}
-
-	/**
 	 * Returns an element for rendering a card for the given note, optionally
 	 * showing an empty cover if the note does not have one.
 	 */

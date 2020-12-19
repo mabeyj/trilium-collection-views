@@ -2,6 +2,9 @@ import { ViewConfig } from "collection-views/config";
 import { Group } from "collection-views/notes";
 import { numberFormat } from "collection-views/math";
 import { CardView } from "collection-views/view/CardView";
+import { staggeredRender } from "collection-views/dom";
+
+const initialRenderSize = 10;
 
 /**
  * Renders a board view. Notes are grouped by an attribute's value into columns.
@@ -112,8 +115,10 @@ export class BoardView extends CardView {
 	 * notes.
 	 */
 	async renderColumnCards(group: Group): Promise<JQuery> {
-		return $("<div class='collection-view-board-column-cards'>").append(
-			...(await this.renderCards(group.notes, false))
+		const $cards = $("<div class='collection-view-board-column-cards'>");
+		await staggeredRender($cards, initialRenderSize, group.notes, (note) =>
+			this.renderCard(note, false)
 		);
+		return $cards;
 	}
 }

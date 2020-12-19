@@ -1,5 +1,8 @@
 import { CardView } from "collection-views/view/CardView";
 import { ViewConfig } from "collection-views/config";
+import { staggeredRender } from "collection-views/dom";
+
+const initialRenderSize = 20;
 
 /**
  * Renders a gallery view. Notes are rendered as cards in a grid.
@@ -25,7 +28,9 @@ export class GalleryView extends CardView {
 				`repeat(${columns}, minmax(0, 1fr))`
 			);
 		}
-		$gallery.append(...(await this.renderCards(this.notes, true)));
+		await staggeredRender($gallery, initialRenderSize, this.notes, (note) =>
+			this.renderCard(note, true)
+		);
 		return $gallery;
 	}
 }
