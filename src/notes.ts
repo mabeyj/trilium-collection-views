@@ -132,8 +132,18 @@ export async function sortNotes(
 
 	notes.sort((a, b) => {
 		for (const sortAttribute of sortAttributes) {
-			const valueA = sortableValues[a.noteId][sortAttribute.name];
-			const valueB = sortableValues[b.noteId][sortAttribute.name];
+			let valueA: number | string =
+				sortableValues[a.noteId][sortAttribute.name];
+			let valueB: number | string =
+				sortableValues[b.noteId][sortAttribute.name];
+
+			const floatA = parseFloat(valueA);
+			const floatB = parseFloat(valueB);
+			if (!isNaN(floatA) && !isNaN(floatB)) {
+				valueA = floatA;
+				valueB = floatB;
+			}
+
 			if (valueA < valueB) {
 				return sortAttribute.descending ? 1 : -1;
 			}
