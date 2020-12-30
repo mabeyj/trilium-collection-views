@@ -22,6 +22,24 @@ export function parseOptionalInt(
 }
 
 /**
+ * Returns a number parsed from some arbitrary value or NaN if the value is not
+ * numeric.
+ *
+ * Unlike parseFloat, strings with a non-numeric suffix (e.g., dates) are
+ * considered NaN.
+ */
+export function parseFloatStrict(value: any): number {
+	if (typeof value === "string") {
+		value = value.trim();
+		if (!value.match(/^[+-]?\d*(\.\d+)?$/)) {
+			return NaN;
+		}
+	}
+
+	return parseFloat(value);
+}
+
+/**
  * Returns a number clamped between two values (inclusive) or undefined if not
  * a number.
  */

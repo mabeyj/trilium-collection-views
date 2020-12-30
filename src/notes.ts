@@ -1,3 +1,5 @@
+import { parseFloatStrict } from "collection-views/math";
+
 export interface Group {
 	name?: string;
 	relatedNote: NoteShort | null;
@@ -137,8 +139,8 @@ export async function sortNotes(
 			let valueB: number | string =
 				sortableValues[b.noteId][sortAttribute.name];
 
-			const floatA = parseFloat(valueA);
-			const floatB = parseFloat(valueB);
+			const floatA = parseFloatStrict(valueA);
+			const floatB = parseFloatStrict(valueB);
 			if (!isNaN(floatA) && !isNaN(floatB)) {
 				valueA = floatA;
 				valueB = floatB;
