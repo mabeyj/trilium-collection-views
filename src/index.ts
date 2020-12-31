@@ -3,6 +3,12 @@ import { renderError } from "collection-views/dom";
 import { groupNotes, sortNotes } from "collection-views/notes";
 import { TableView, GalleryView, BoardView } from "collection-views/view";
 
+const descriptions = {
+	[ViewType.Board]: "Board view",
+	[ViewType.Gallery]: "Gallery view",
+	[ViewType.Table]: "Table view",
+};
+
 /**
  * Reads configuration and renders the entire view.
  */
@@ -15,6 +21,13 @@ async function render(): Promise<void> {
 	const config = new ViewConfig(api.originEntity);
 	if (!config.query) {
 		renderError("This note must define a <code>query</code> attribute.");
+		return;
+	}
+
+	if (!api.$container.parent(".note-detail-render-content").length) {
+		api.$container.append(
+			$("<em>").text(descriptions[config.view] || "Collection view")
+		);
 		return;
 	}
 
