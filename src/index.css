@@ -3,6 +3,10 @@ body {
 }
 
 /* Scroll container: fills content area for scrolling in all directions. */
+.note-detail.type-render,
+.note-detail-render {
+    height: 100%;
+}
 .note-book-content,
 .note-detail-render-content {
     position: relative;
