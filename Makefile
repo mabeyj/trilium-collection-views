@@ -20,5 +20,5 @@ dist/index.css: node_modules src/index.css
 dist/index.js: node_modules $(TYPESCRIPT_FILES)
 	$(WEBPACK)
 
-node_modules: package.json
+node_modules: package.json package-lock.json
 	npm install
