@@ -1,56 +1,89 @@
-# Trilium collection views
+# Collection Views
 
-A plugin for [Trilium](https://github.com/zadam/trilium) that implements different ways of viewing collections of notes.
+An extension for [Trilium Notes](https://github.com/zadam/trilium) that implements different ways of viewing collections of notes.
 
 - **Board view:** Displays notes in a Kanban board. Notes are grouped by some attribute and listed in columns.
 - **Gallery view:** Displays notes in a grid.
 - **Table view:** Displays notes in a table.
 
+## Table of contents
+
+- [Screenshots](#screenshots)
+  - [Board view](#board-view)
+  - [Gallery view](#gallery-view)
+  - [Table view](#table-view)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+  - [Render Note attributes](#render-note-attributes)
+    - [`view`](#view)
+    - [`query`](#query)
+    - [`groupBy`](#groupby)
+    - [`sort`](#sort)
+    - [`columns`](#columns)
+    - [`columnWidth`](#columnwidth)
+    - [`coverHeight`](#coverheight)
+    - [`attribute`](#attribute)
+  - [Attribute settings](#attribute-settings)
+    - [`align`](#align)
+    - [`badge`](#badge)
+    - [`badgeBackground`](#badgebackground)
+    - [`badgeColor`](#badgecolor)
+    - [`boolean`](#boolean)
+    - [`header`](#header)
+    - [`number`](#number)
+    - [`prefix`](#prefix)
+    - [`precision`](#precision)
+    - [`progressBar`](#progressbar)
+    - [`repeat`](#repeat)
+    - [`suffix`](#suffix)
+    - [`width`](#width)
+  - [Covers](#covers)
+  - [Custom badge colors](#custom-badge-colors)
+  - [Custom sorting](#custom-sorting)
+
 ## Screenshots
 
 ### Board view
 
+![Board view screenshot](docs/board-view.png)
+
 ### Gallery view
+
+![Gallery view screenshot](docs/gallery-view.png)
 
 ### Table view
 
+![Table view screenshot](docs/table-view.png)
+
 ## Installation
 
-1. Create an empty code note:
+1. Download `collection-views.zip` from the [Releases](https://github.com/mabeyj/trilium-collection-views/releases) page.
 
-   - **Type:** HTML
+2. Import `collection-views.zip` into your tree: right-click a parent note, then select "Import into note".
 
-2. Add a child note for the CSS:
+3. Reload the frontend (Menu → Reload frontend).
 
-   - **Type:** CSS
-   - Copy the contents of [index.css](src/index.css) and paste it into this note.
-   - Add the `#appCss` label to this note.
-
-3. Add a child note for the JavaScript code:
-
-   - **Type:** JS frontend
-   - Copy the contents of [index.js](src/index.js) and paste it into this note.
-
-4. Reload the frontend (Menu → Reload frontend).
+Upgrading involves the same steps. Import the zip file into the same parent note to replace the old files.
 
 ## Usage
 
 1. Create a note that will render a view:
 
    - **Type:** Render Note
-   - Add a `renderNote` relation targeting the plugin's HTML note.
+   - Add a `renderNote` relation targeting the Collection Views note.
 
 2. Add a [`query` label](#query) to the Render Note with a [search query](https://github.com/zadam/trilium/wiki/Search) as its value. This will be executed by Trilium's search engine, and the resulting notes will be displayed in the view.
 
 3. Optionally, add a [`view` label](#view) to the Render Note to select which type of view to use. By default, the table view will be used.
 
-4. Optionally, [add labels](#configuration) to configure the view.
+4. Optionally, [add labels](#configuration) to the Render Note to configure the view.
 
 ## Configuration
 
-### View settings
+### Render Note attributes
 
-Views are configured by adding labels to the note rendering the view.
+Views are configured by adding labels to the Render Note.
 
 #### `view`
 
@@ -72,7 +105,12 @@ Example: `#view=board`
 
 A [search query](https://github.com/zadam/trilium/wiki/Search) that will be executed using Trilium's search engine. The notes returned by this search are the notes that will be included in the view.
 
-Example: `#query="#book #status=read"` would include all notes having a `book` label and a `status` label set to `read`.
+The substring `$title` will be replaced with the Render Note's title before executing the search.
+
+Examples:
+
+- `#query="#book #status=read"` would include all notes having a `book` label and a `status` label set to `read`.
+- `#query="~parent.title=$title"` would include all notes having a `parent` relation targeting a note having the same title as the Render Note itself.
 
 #### `groupBy`
 
@@ -85,9 +123,9 @@ Determines the columns of the board view. The value of this label is an attribut
 - If the attribute is a label, then notes are grouped by their values for that label.
 - If the attribute is a relation, then notes are grouped by the notes targeted by the relation.
 
-Columns are sorted by the specified attribute, implementing the similar sorting as the [`sort` attribute](#sort).
+Columns are sorted by the specified attribute. [Custom sorting](#custom-sorting) is supported.
 
-Column headers format values the same way as the [`attribute` attribute](#attribute). `groupBy` accepts most [attribute settings](#Attribute-settings) as well.
+This attribute supports most [attribute settings](#Attribute-settings) for formatting the values displayed in column headers.
 
 Examples:
 
@@ -106,9 +144,7 @@ Sorts notes in the view. The value of this label is a comma-separated list of at
 
 Values are sorted alphabetically and case-insensitively.
 
-Notes are sorted by their titles last, and this is the default sort when no sorting is specified.
-
-Custom sorting can be achieved by defining a `sortableTitle` label on a note. Whenever a note's title is compared, its `sortableTitle` will be used instead if it is defined.
+Notes are sorted by their titles last, and this is the default sort when no sorting is specified. [Custom sorting](#custom-sorting) is supported.
 
 Example: `#sort="type,!price"` would sort notes by their `type` values first, then by `price` (in reverse order), then by their titles.
 
@@ -152,31 +188,20 @@ Configures which note attributes will be displayed in the view and how they shou
 - For board and gallery views, attributes appear underneath the cover image.
 - For table views, attributes appear as additional columns in the table.
 
-The value of the `attribute` label is a comma-separated list. The first item in this list names the attribute to be displayed. Any remaining items are optional attribute settings which can either be flags (`settingName`) or key/value pairs (`settingName=value`). [#attribute-settings](See below) for a list of attribute settings.
-
 By default, attribute values will be shown as plain text. For labels, the label's value will be shown. For relations, the titles of target notes will be shown.
 
-#### Badge
-
-`#attribute=relationName`
-
-If a target note of a relation has certain badge labels defined, then a colored badge will be displayed.
-
-1. Set the value of the `attribute` label to a relation name.
-2. Add one or more of the following labels to notes targeted by the relation:
-   - `badgeBackground`: The badge's background style (any CSS `background` value).
-   - `badgeColor`: The badge's font color (any CSS color).
+[Attribute settings](#Attribute-settings) control how the attribute values are formatted.
 
 ### Attribute settings
 
-The value of the `attribute` label is a comma-separated list. The first item in the list is an attribute name. Any remaining items in the list are settings (described below) either in the form of a flag (`settingName`) or a key/value pair (`settingName=value`).
+Labels that support attribute settings ([`#attribute`](#attribute) and [`#groupBy`](#groupBy)) have a value that is a comma-separated list. The first item in the list is an attribute name. Any remaining items in the list are settings (described below) either in the form of a flag (`settingName`) or a key/value pair (`settingName=value`).
 
 #### `align`
 
 - Table views only
 - Optional (default: `left`)
 
-Sets the text alignment of cells in the attribute's column. Can be any `text-align` value (e.g., `center`, `right`).
+Sets the text alignment of cells in the attribute's column. This can by any CSS `text-align` value such as `center` or `right`.
 
 Example: `#attribute="price,align=right"`
 
@@ -190,7 +215,7 @@ Badge colors can be customized in two ways:
 
 - The [`badgeBackground`](#badgeBackground) and [`badgeColor`](#badgeColor) attribute settings.
 
-- If this attribute is a relation, notes targeted by this relation can set the `badgeBackground` and `badgeColor` attributes.
+- If this attribute is a relation, notes targeted by this relation can set the `badgeBackground` and `badgeColor` attributes. See [custom badge colors](#Custom-badge-colors).
 
 Example: `#attribute="status,badge"`
 
@@ -200,7 +225,7 @@ Example: `#attribute="status,badge"`
 
 Sets the background style of badges for this attribute. Any CSS `background` style can be set. If set, the [`badge`](#badge) setting is implicitly enabled.
 
-If this attribute is a relation, notes targeted by this relation can set the `badgeBackground` attribute to override this style.
+If this attribute is a relation, notes targeted by this relation can set the `badgeBackground` attribute to override this style. See [custom badge colors](#Custom-badge-colors).
 
 Example: `#attribute="status,badgeBackground=red"`
 
@@ -208,9 +233,9 @@ Example: `#attribute="status,badgeBackground=red"`
 
 - Optional
 
-Sets the text color of badges for this attribute. Any CSS color can be set. If set, the [`badge`](#badge) setting is implicitly enabled.
+Sets the font color of badges for this attribute. Any CSS color can be set. If set, the [`badge`](#badge) setting is implicitly enabled.
 
-If this attribute is a relation, notes targeted by this relation can set the `badgeColor` attribute to override this style.
+If this attribute is a relation, notes targeted by this relation can set the `badgeColor` attribute to override this style. See [custom badge colors](#Custom-badge-colors).
 
 Example: `#attribute="status,badgeColor=black"`
 
@@ -221,7 +246,12 @@ Example: `#attribute="status,badgeColor=black"`
 
 Renders the attribute's value as a checkbox.
 
-If the value is `f`, `false`, `n`, or `no` (case-insensitive), then the checkbox will be unchecked. Otherwise (including empty values), the checkbox will be checked.
+The checkbox will be checked unless the attribute's value is one of the following (case-insensitive):
+
+- `f` or `false`
+- `n` or `no`
+
+If the attribute's value is empty, the checkbox will also be checked.
 
 Example: `#attribute="done,boolean"`
 
@@ -235,13 +265,13 @@ Sets the text displayed in the header cell of the attribute's column.
 Examples:
 
 - `#attribute="price,header=Price (in dollars)"`
-- `#attribute="status,header="` (empty header cell)
+- `#attribute="status,header="` will display an empty header cell.
 
 #### `number`
 
 - Optional
 
-Formats the attribute's value as a number.
+Formats the attribute's value as a number (inserting thousands separators).
 
 Example: `#attribute="price,number"`
 
@@ -269,7 +299,7 @@ Example: `#attribute="price,precision=2"`
 - Not supported by [`groupBy`](#groupBy)
 - Optional
 
-Renders a progress bar using the attribute as the numerator and another attribute (named by this setting's value) as the denominator. Both attributes must be labels with numeric values.
+Renders a progress bar using the attribute's value as the numerator and another attribute's value (named by this setting's value) as the denominator. Both attributes must be labels with numeric values.
 
 Example: `#attribute="completed,progressBar=total"`
 
@@ -300,3 +330,27 @@ Examples:
 Sets the minimum width (in pixels) of the attribute's column. Columns may be resized proportionally since tables are set to 100% width.
 
 Example: `#attribute=status,width=100`
+
+### Covers
+
+The board and gallery views display an optional cover image for each note. The first image found in the note's contents is used as the cover.
+
+### Custom badge colors
+
+When an attribute is a relation, its badge colors can be customized by adding certain labels to the note targeted by the relation:
+
+- `badgeBackground` can be any CSS `background` value, such as colors or gradients, to set the badge's background style.
+
+- `badgeColor` can be any CSS `color` value to set the badge's font color.
+
+![Screenshot showing these labels defined and the result.](docs/custom-badge-colors.png)
+
+### Custom sorting
+
+Custom sorting is achieved by defining a `sortableTitle` label on a note. When notes are sorted by their titles, their `sortableTitle` is used for comparison if it is defined, otherwise their actual title is used.
+
+This is useful in a couple ways:
+
+- Ignoring leading articles like "The", "A", or "An". For example, a note titled "The Example" with `#sortableTitle=Example` would appear under E instead of T.
+
+- Numeric sorting. Alphanumerically, "Note 10" would be sorted before "Note 2". If you set `#sortableTitle="Note 02"` on Note 2, then it will appear in numeric order above Note 10.
