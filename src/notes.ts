@@ -18,7 +18,7 @@ export async function getCoverUrl(
 	note: NoteShort
 ): Promise<string | undefined> {
 	const content = await note.getContent();
-	if (!content.startsWith("<figure")) {
+	if (!content.includes("<img")) {
 		return undefined;
 	}
 
