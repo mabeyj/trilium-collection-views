@@ -1,0 +1,47 @@
+.collection-view-board {
+	display: flex;
+}
+
+.collection-view-board-column {
+	display: flex;
+	flex-direction: column;
+	min-width: 250px;
+	width: 250px;
+	margin-right: 10px;
+}
+
+.collection-view-board-column-header {
+	display: flex;
+	position: relative;
+	background: var(--accented-background-color);
+	border-radius: 10px;
+	padding: 8px;
+	margin-bottom: 10px;
+}
+
+.collection-view-board-column-header .badge {
+	white-space: normal;
+	text-align: left;
+	font-size: inherit;
+}
+
+.collection-view-board-column-name {
+	flex-grow: 1;
+}
+
+.collection-view-board-column-count {
+	margin-left: 8px;
+}
+
+.collection-view-board-column-cards {
+	flex-grow: 1;
+	overflow: auto;
+}
+
+.collection-view-board-column-cards .collection-view-card {
+	margin-bottom: 10px;
+}
+
+.collection-view-board-column-cards :last-child {
+	margin-bottom: 0;
+}

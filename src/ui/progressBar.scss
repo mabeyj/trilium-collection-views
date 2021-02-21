@@ -1,0 +1,24 @@
+.collection-view-progress {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.collection-view-progress-fraction {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin-right: 8px;
+}
+
+.collection-view-progress-number {
+	display: inline-block;
+	min-width: 3ch;
+	text-align: right;
+}
+
+.collection-view-progress .progress {
+	flex-grow: 1;
+	min-width: 50px;
+}

@@ -1,0 +1,23 @@
+// A container that fills the entire note content area and scrolls in all
+// directions.
+
+.collection-view-scroll {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	overflow: auto;
+}
+
+// Override Trilium styles so that positioning will work:
+
+.note-detail.type-render,
+.note-detail-render {
+	height: 100%;
+}
+
+.note-book-content,
+.note-detail-render-content {
+	position: relative;
+}

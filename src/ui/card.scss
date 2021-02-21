@@ -1,0 +1,29 @@
+.collection-view-card {
+	position: relative;
+	background: var(--accented-background-color);
+	border-radius: 10px;
+}
+
+.collection-view-card-cover {
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	border-bottom: 1px solid rgba(0, 0, 0, 25%);
+	height: 120px;
+}
+
+.collection-view-card-attributes {
+	padding: 8px;
+	margin: 0;
+	list-style: none;
+}
+
+.collection-view-card-attributes li {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.collection-view-card .badge {
+	white-space: normal;
+	text-align: left;
+}

@@ -1,0 +1,13 @@
+body {
+	--collection-view-table-border-color: #bfbfbf;
+}
+
+@import "./ui/card.scss";
+@import "./ui/checkbox.scss";
+@import "./ui/error.scss";
+@import "./ui/progressBar.scss";
+@import "./ui/scroll.scss";
+
+@import "./view/BoardView.scss";
+@import "./view/GalleryView.scss";
+@import "./view/TableView.scss";

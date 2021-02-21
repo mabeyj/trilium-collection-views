@@ -1,10 +1,11 @@
 PRETTIER := node_modules/.bin/prettier
 WEBPACK := node_modules/.bin/webpack
 
+SCSS_FILES := $(shell find src -name "*.scss")
 TYPESCRIPT_FILES := $(shell find src -name "*.ts")
 
 .PHONY: build
-build: dist/index.css dist/index.js
+build: dist
 
 .PHONY: clean
 clean:
@@ -14,11 +15,9 @@ clean:
 format:
 	$(PRETTIER) --write src "*.{js,json,md}"
 
-dist/index.css: node_modules src/index.css
-	cp src/index.css dist/index.css
-
-dist/index.js: node_modules $(TYPESCRIPT_FILES)
+dist: node_modules $(SCSS_FILES) $(TYPESCRIPT_FILES)
 	$(WEBPACK)
+	touch $@
 
 node_modules: package.json package-lock.json
 	npm install
