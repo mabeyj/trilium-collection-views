@@ -1,5 +1,6 @@
 import { AttributeConfig, ViewConfig } from "collection-views/config";
 import { clamp, numberFormat } from "collection-views/math";
+import { appendChildren } from "collection-views/dom";
 import { isFalsy } from "collection-views/boolean";
 
 /**
@@ -12,7 +13,7 @@ export abstract class View {
 		this.config = config;
 	}
 
-	abstract render(): Promise<JQuery>;
+	abstract render(): Promise<HTMLElement>;
 
 	/**
 	 * Returns elements or strings for rendering all values of a note's
@@ -21,7 +22,7 @@ export abstract class View {
 	async renderAttributeValues(
 		note: NoteShort,
 		attributeConfig: AttributeConfig
-	): Promise<Array<JQuery | string>> {
+	): Promise<Array<HTMLElement | Text>> {
 		const attributes = note.getAttributes(undefined, attributeConfig.name);
 
 		let denominator: string | null = null;
@@ -45,7 +46,7 @@ export abstract class View {
 		attribute: Attribute,
 		denominator: string | null,
 		attributeConfig: AttributeConfig
-	): Promise<JQuery | string> {
+	): Promise<HTMLElement | Text> {
 		let relatedNote: NoteShort | null = null;
 		if (attribute.type === "relation") {
 			relatedNote = await api.getNote(attribute.value);
@@ -77,7 +78,7 @@ export abstract class View {
 		value: string,
 		attributeConfig: AttributeConfig,
 		relatedNote: NoteShort | null
-	): JQuery | string {
+	): HTMLElement | Text {
 		if (attributeConfig.boolean) {
 			return this.renderBoolean(value);
 		}
@@ -94,18 +95,19 @@ export abstract class View {
 			return this.renderBadge(value, attributeConfig, relatedNote);
 		}
 
-		return value;
+		return document.createTextNode(value);
 	}
 
 	/**
 	 * Returns an element for rendering an attribute value as a checkbox.
 	 */
-	renderBoolean(value: string): JQuery {
-		const $checkbox = $(
-			"<input class='collection-view-checkbox' type='checkbox' disabled>"
-		);
+	renderBoolean(value: string): HTMLElement {
+		const $checkbox = document.createElement("input");
+		$checkbox.className = "collection-view-checkbox";
+		$checkbox.type = "checkbox";
+		$checkbox.disabled = true;
 		if (!isFalsy(value)) {
-			$checkbox.attr("checked", "true");
+			$checkbox.checked = true;
 		}
 		return $checkbox;
 	}
@@ -121,7 +123,7 @@ export abstract class View {
 		value: string,
 		attributeConfig: AttributeConfig,
 		note: NoteShort | null
-	): JQuery {
+	): HTMLElement {
 		let background = attributeConfig.badgeBackground;
 		let color = attributeConfig.badgeColor;
 		if (note) {
@@ -129,12 +131,14 @@ export abstract class View {
 			color = note.getLabelValue("badgeColor") || color;
 		}
 
-		const $badge = $("<span class='badge badge-secondary'>").text(value);
+		const $badge = document.createElement("span");
+		$badge.classList.add("badge", "badge-secondary");
+		$badge.appendChild(document.createTextNode(value));
 		if (background) {
-			$badge.css("background", background);
+			$badge.style.background = background;
 		}
 		if (color) {
-			$badge.css("color", color);
+			$badge.style.color = color;
 		}
 		return $badge;
 	}
@@ -147,7 +151,7 @@ export abstract class View {
 		numerator: string,
 		denominator: string,
 		attributeConfig: AttributeConfig
-	): JQuery | undefined {
+	): HTMLElement | undefined {
 		const numeratorFloat = parseFloat(numerator);
 		const denominatorFloat = parseFloat(denominator);
 		if (isNaN(numeratorFloat) || isNaN(denominatorFloat)) {
@@ -159,40 +163,51 @@ export abstract class View {
 			percent = (100 * numeratorFloat) / denominatorFloat;
 		}
 
-		const $fraction = $("<div class='collection-view-progress-fraction'>");
+		const $fraction = document.createElement("div");
+		$fraction.className = "collection-view-progress-fraction";
 		if (attributeConfig.prefix) {
-			$fraction.append(attributeConfig.prefix);
+			const $prefix = document.createTextNode(attributeConfig.prefix);
+			$fraction.appendChild($prefix);
 		}
-		$fraction.append(
+		appendChildren($fraction, [
 			this.renderProgressBarNumber(numeratorFloat),
-			" / ",
-			this.renderProgressBarNumber(denominatorFloat)
-		);
+			document.createTextNode(" / "),
+			this.renderProgressBarNumber(denominatorFloat),
+		]);
 		if (attributeConfig.suffix) {
-			$fraction.append(attributeConfig.suffix);
+			const $suffix = document.createTextNode(attributeConfig.suffix);
+			$fraction.appendChild($suffix);
 		}
 
-		const $bar = $("<div class='progress-bar'>")
-			.width(`${clamp(percent, 0, 100)}%`)
-			.text(`${Math.round(percent)}%`);
+		const $bar = document.createElement("div");
+		$bar.className = "progress-bar";
+		$bar.style.width = `${clamp(percent, 0, 100)}%`;
+		$bar.appendChild(document.createTextNode(`${Math.round(percent)}%`));
 		if (percent >= 100) {
-			$bar.addClass("bg-success");
+			$bar.classList.add("bg-success");
 		}
 
-		return $("<div class='collection-view-progress'>").append(
-			$fraction,
-			$("<div class='progress'>").append($bar)
-		);
+		const $progress = document.createElement("div");
+		$progress.className = "progress";
+		$progress.appendChild($bar);
+
+		const $container = document.createElement("div");
+		$container.className = "collection-view-progress";
+		appendChildren($container, [$fraction, $progress]);
+		return $container;
 	}
 
 	/**
 	 * Returns an element for rendering a formatted number in a progress bar's
 	 * fraction.
 	 */
-	renderProgressBarNumber(number: number): JQuery {
-		return $("<span class='collection-view-progress-number'>").text(
-			numberFormat.format(number)
-		);
+	renderProgressBarNumber(number: number): HTMLElement {
+		const $text = document.createTextNode(numberFormat.format(number));
+
+		const $number = document.createElement("span");
+		$number.className = "collection-view-progress-number";
+		$number.appendChild($text);
+		return $number;
 	}
 
 	/**

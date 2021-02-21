@@ -18,15 +18,13 @@ export class GalleryView extends CardView {
 	/**
 	 * Returns an element for rendering a gallery view.
 	 */
-	async render(): Promise<JQuery> {
+	async render(): Promise<HTMLElement> {
 		const { columns } = this.config;
 
-		const $gallery = $("<div class='collection-view-gallery'>");
+		const $gallery = document.createElement("div");
+		$gallery.className = "collection-view-gallery";
 		if (columns) {
-			$gallery.css(
-				"grid-template-columns",
-				`repeat(${columns}, minmax(0, 1fr))`
-			);
+			$gallery.style.gridTemplateColumns = `repeat(${columns}, minmax(0, 1fr))`;
 		}
 		await staggeredRender($gallery, initialRenderSize, this.notes, (note) =>
 			this.renderCard(note, true)

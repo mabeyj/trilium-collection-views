@@ -1,10 +1,24 @@
 const staggeredSize = 25;
 
 /**
+ * Appends multiple elements or text nodes to some parent element.
+ */
+export function appendChildren(
+	$parent: HTMLElement,
+	$children: Array<HTMLElement | Text>
+): void {
+	for (const $child of $children) {
+		$parent.appendChild($child);
+	}
+}
+
+/**
  * Renders an error message.
  */
 export function renderError(message: string): void {
-	const $error = $("<div class='collection-view-error'>").html(message);
+	const $error = document.createElement("div");
+	$error.className = "collection-view-error";
+	$error.innerHTML = message;
 	api.$container.append($error);
 }
 
@@ -16,27 +30,27 @@ export function renderError(message: string): void {
  * render the remaining notes in chunks asynchronously.
  */
 export async function staggeredRender(
-	$parent: JQuery,
+	$parent: HTMLElement,
 	initialSize: number,
 	notes: NoteShort[],
-	render: (note: NoteShort) => Promise<JQuery>
+	render: (note: NoteShort) => Promise<HTMLElement>
 ): Promise<void> {
 	const initial = notes.slice(0, initialSize);
 	const remaining = notes.slice(initialSize);
 
 	const $children = await Promise.all(initial.map(render));
-	$parent.append(...$children);
+	appendChildren($parent, $children);
 	staggeredRenderAsync($parent, remaining, render);
 }
 
 /**
- * Returns immediately and will render notes in a staggered manner
- * asynchronously.
+ * Returns immediately and will render notes and append the resulting elements
+ * to a parent element in a staggered manner asynchronously.
  */
 function staggeredRenderAsync(
-	$parent: JQuery,
+	$parent: HTMLElement,
 	notes: NoteShort[],
-	render: (note: NoteShort) => Promise<JQuery>
+	render: (note: NoteShort) => Promise<HTMLElement>
 ) {
 	if (!notes.length) {
 		return;
@@ -49,7 +63,7 @@ function staggeredRenderAsync(
 		const $children = await Promise.all(chunk.map(render));
 
 		requestAnimationFrame(() => {
-			$parent.append(...$children);
+			appendChildren($parent, $children);
 			staggeredRenderAsync($parent, remaining, render);
 		});
 	});

@@ -1,6 +1,6 @@
 import { AttributeConfig, ViewConfig } from "collection-views/config";
 import { View } from "collection-views/view/View";
-import { staggeredRender } from "collection-views/dom";
+import { appendChildren, staggeredRender } from "collection-views/dom";
 
 const initialRenderSize = 25;
 
@@ -18,27 +18,43 @@ export class TableView extends View {
 	/**
 	 * Returns an element for rendering a table view.
 	 */
-	async render(): Promise<JQuery> {
-		return $("<div class='collection-view-scroll'>").append(
-			$(
-				"<table class='table table-bordered table-hover table-sm collection-view-table'>"
-			).append(this.renderHeader(), await this.renderBody())
+	async render(): Promise<HTMLElement> {
+		const $table = document.createElement("table");
+		$table.classList.add(
+			"table",
+			"table-bordered",
+			"table-hover",
+			"table-sm",
+			"collection-view-table"
 		);
+		appendChildren($table, [this.renderHeader(), await this.renderBody()]);
+
+		const $scroll = document.createElement("div");
+		$scroll.className = "collection-view-scroll";
+		$scroll.appendChild($table);
+		return $scroll;
 	}
 
 	/**
 	 * Returns an element for rendering the table header.
 	 */
-	renderHeader(): JQuery {
-		return $("<thead>").append(
-			$("<tr>").append($("<th>Title</th>"), ...this.renderHeaderCells())
-		);
+	renderHeader(): HTMLElement {
+		const $title = document.createElement("th");
+		$title.textContent = "Title";
+
+		const $row = document.createElement("tr");
+		$row.appendChild($title);
+		appendChildren($row, this.renderHeaderCells());
+
+		const $header = document.createElement("thead");
+		$header.appendChild($row);
+		return $header;
 	}
 
 	/**
 	 * Returns elements for rendering cells in the table header.
 	 */
-	renderHeaderCells(): JQuery[] {
+	renderHeaderCells(): HTMLElement[] {
 		return this.config.attributes.map((attributeConfig) =>
 			this.renderHeaderCell(attributeConfig)
 		);
@@ -47,15 +63,14 @@ export class TableView extends View {
 	/**
 	 * Returns an element for rendering a header cell for some attribute.
 	 */
-	renderHeaderCell(attributeConfig: AttributeConfig): JQuery {
-		const $cell = $("<th>").text(
-			attributeConfig.header || attributeConfig.name
-		);
+	renderHeaderCell(attributeConfig: AttributeConfig): HTMLElement {
+		const $cell = document.createElement("th");
+		$cell.textContent = attributeConfig.header || attributeConfig.name;
 		if (attributeConfig.align) {
-			$cell.css("text-align", attributeConfig.align);
+			$cell.style.textAlign = attributeConfig.align;
 		}
 		if (attributeConfig.width !== undefined) {
-			$cell.css("min-width", `${attributeConfig.width}px`);
+			$cell.style.minWidth = `${attributeConfig.width}px`;
 		}
 		return $cell;
 	}
@@ -63,8 +78,8 @@ export class TableView extends View {
 	/**
 	 * Returns an element for rendering the table body.
 	 */
-	async renderBody(): Promise<JQuery> {
-		const $body = $("<tbody>");
+	async renderBody(): Promise<HTMLElement> {
+		const $body = document.createElement("tbody");
 		await staggeredRender($body, initialRenderSize, this.notes, (note) =>
 			this.renderRow(note)
 		);
@@ -74,23 +89,30 @@ export class TableView extends View {
 	/**
 	 * Returns an element for rendering a table row for a note.
 	 */
-	async renderRow(note: NoteShort): Promise<JQuery> {
+	async renderRow(note: NoteShort): Promise<HTMLElement> {
 		const promises = [this.renderTitleCell(note)];
 		for (const attributeConfig of this.config.attributes) {
 			promises.push(this.renderAttributeCell(note, attributeConfig));
 		}
-		const $cells = await Promise.all(promises);
 
-		return $("<tr>").append(...$cells);
+		const $row = document.createElement("tr");
+		appendChildren($row, await Promise.all(promises));
+		return $row;
 	}
 
 	/**
 	 * Returns an element for rendering the note title cell in a row.
 	 */
-	async renderTitleCell(note: NoteShort): Promise<JQuery> {
+	async renderTitleCell(note: NoteShort): Promise<HTMLElement> {
 		const $link = (await api.createNoteLink(note.noteId)).find("a");
 		$link.addClass("stretched-link no-tooltip-preview");
-		return $("<td>").append($("<strong>").append($link));
+
+		const $strong = document.createElement("strong");
+		$strong.appendChild($link[0]);
+
+		const $cell = document.createElement("td");
+		$cell.appendChild($strong);
+		return $cell;
 	}
 
 	/**
@@ -100,13 +122,14 @@ export class TableView extends View {
 	async renderAttributeCell(
 		note: NoteShort,
 		attributeConfig: AttributeConfig
-	): Promise<JQuery> {
-		const $cell = $("<td>");
+	): Promise<HTMLElement> {
+		const $cell = document.createElement("td");
 		if (attributeConfig.align) {
-			$cell.css("text-align", attributeConfig.align);
+			$cell.style.textAlign = attributeConfig.align;
 		}
-		$cell.append(
-			...(await this.renderAttributeCellValues(note, attributeConfig))
+		appendChildren(
+			$cell,
+			await this.renderAttributeCellValues(note, attributeConfig)
 		);
 		return $cell;
 	}
@@ -118,20 +141,20 @@ export class TableView extends View {
 	async renderAttributeCellValues(
 		note: NoteShort,
 		attributeConfig: AttributeConfig
-	): Promise<Array<JQuery | string>> {
+	): Promise<Array<HTMLElement | Text>> {
 		const $values = await this.renderAttributeValues(note, attributeConfig);
 
-		let $separator: JQuery | string | undefined;
+		let $separator: HTMLElement | Text | undefined;
 		if (attributeConfig.badge) {
-			$separator = " ";
+			$separator = document.createTextNode(" ");
 		} else if (!attributeConfig.denominatorName) {
-			$separator = $("<br>");
+			$separator = document.createElement("br");
 		}
 		if (!$separator) {
 			return $values;
 		}
 
-		const $separatedValues: Array<JQuery | string> = [];
+		const $separatedValues: Array<HTMLElement | Text> = [];
 		$values.forEach(($value, i) => {
 			if ($separator && i) {
 				$separatedValues.push($separator);

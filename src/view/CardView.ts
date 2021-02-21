@@ -1,6 +1,7 @@
 import { View } from "collection-views/view/View";
 import { getCoverUrl } from "collection-views/notes";
 import { AttributeConfig } from "collection-views/config";
+import { appendChildren } from "collection-views/dom";
 
 /**
  * Base view implementing common rendering of cards.
@@ -13,17 +14,18 @@ export abstract class CardView extends View {
 	async renderCard(
 		note: NoteShort,
 		showEmptyCovers: boolean
-	): Promise<JQuery> {
+	): Promise<HTMLElement> {
 		const [$cover, $list] = await Promise.all([
 			this.renderCardCover(note, showEmptyCovers),
 			this.renderCardAttributeList(note),
 		]);
 
-		const $card = $("<div class='collection-view-card'>");
+		const $card = document.createElement("div");
+		$card.className = "collection-view-card";
 		if ($cover) {
-			$card.append($cover);
+			$card.appendChild($cover);
 		}
-		$card.append($list);
+		$card.appendChild($list);
 		return $card;
 	}
 
@@ -34,7 +36,7 @@ export abstract class CardView extends View {
 	async renderCardCover(
 		note: NoteShort,
 		showEmpty: boolean
-	): Promise<JQuery | undefined> {
+	): Promise<HTMLElement | undefined> {
 		const { coverHeight } = this.config;
 		if (coverHeight === 0) {
 			return undefined;
@@ -45,12 +47,13 @@ export abstract class CardView extends View {
 			return undefined;
 		}
 
-		const $cover = $("<div class='collection-view-card-cover'>");
+		const $cover = document.createElement("div");
+		$cover.className = "collection-view-card-cover";
 		if (url) {
-			$cover.css("background-image", `url("${url}")`);
+			$cover.style.backgroundImage = `url("${url}")`;
 		}
 		if (coverHeight) {
-			$cover.height(coverHeight);
+			$cover.style.height = `${coverHeight}px`;
 		}
 		return $cover;
 	}
@@ -58,10 +61,10 @@ export abstract class CardView extends View {
 	/**
 	 * Returns an element for rendering a list of a note's attributes in a card.
 	 */
-	async renderCardAttributeList(note: NoteShort): Promise<JQuery> {
+	async renderCardAttributeList(note: NoteShort): Promise<HTMLElement> {
 		const titlePromise = this.renderCardTitle(note);
 
-		const attributePromises: Promise<JQuery[]>[] = [];
+		const attributePromises: Promise<HTMLElement[]>[] = [];
 		for (const attributeConfig of this.config.attributes) {
 			attributePromises.push(
 				this.renderCardAttributeValues(note, attributeConfig)
@@ -71,11 +74,11 @@ export abstract class CardView extends View {
 		const $title = await titlePromise;
 		const $attributeValues = await Promise.all(attributePromises);
 
-		const $list = $("<ul class='collection-view-card-attributes'>").append(
-			$title
-		);
+		const $list = document.createElement("ul");
+		$list.className = "collection-view-card-attributes";
+		$list.appendChild($title);
 		for (const $values of $attributeValues) {
-			$list.append(...$values);
+			appendChildren($list, $values);
 		}
 		return $list;
 	}
@@ -83,10 +86,16 @@ export abstract class CardView extends View {
 	/**
 	 * Returns an element for rendering a list item for a note's title in a card.
 	 */
-	async renderCardTitle(note: NoteShort): Promise<JQuery> {
+	async renderCardTitle(note: NoteShort): Promise<HTMLElement> {
 		const $link = (await api.createNoteLink(note.noteId)).find("a");
 		$link.addClass("no-tooltip-preview stretched-link");
-		return $("<li>").append($("<strong>").append($link));
+
+		const $strong = document.createElement("strong");
+		$strong.appendChild($link[0]);
+
+		const $item = document.createElement("li");
+		$item.appendChild($strong);
+		return $item;
 	}
 
 	/**
@@ -96,8 +105,12 @@ export abstract class CardView extends View {
 	async renderCardAttributeValues(
 		note: NoteShort,
 		attributeConfig: AttributeConfig
-	): Promise<JQuery[]> {
+	): Promise<HTMLElement[]> {
 		const $values = await this.renderAttributeValues(note, attributeConfig);
-		return $values.map(($value) => $("<li>").append($value));
+		return $values.map(($value) => {
+			const $item = document.createElement("li");
+			$item.appendChild($value);
+			return $item;
+		});
 	}
 }
