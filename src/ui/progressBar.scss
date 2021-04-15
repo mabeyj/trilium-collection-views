@@ -18,7 +18,13 @@
 	text-align: right;
 }
 
-.collection-view-progress .progress {
-	flex-grow: 1;
-	min-width: 50px;
+.collection-view-progress {
+	.progress {
+		flex-grow: 1;
+		min-width: 50px;
+	}
+
+	.progress-bar {
+		overflow: visible; // Don't cut off percentage text.
+	}
 }

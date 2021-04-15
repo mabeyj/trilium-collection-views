@@ -182,7 +182,11 @@ export abstract class View {
 		const $bar = document.createElement("div");
 		$bar.className = "progress-bar";
 		$bar.style.width = `${clamp(percent, 0, 100)}%`;
-		$bar.appendChild(document.createTextNode(`${Math.round(percent)}%`));
+		if (percent >= 1) {
+			$bar.appendChild(
+				document.createTextNode(`${Math.round(percent)}%`)
+			);
+		}
 		if (percent >= 100) {
 			$bar.classList.add("bg-success");
 		}
