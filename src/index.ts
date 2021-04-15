@@ -1,5 +1,5 @@
 import { ViewType, ViewConfig } from "collection-views/config";
-import { renderError } from "collection-views/dom";
+import { fitToNoteDetailContainer, renderError } from "collection-views/dom";
 import { groupNotes, sortNotes } from "collection-views/notes";
 import { TableView, GalleryView, BoardView } from "collection-views/view";
 
@@ -66,6 +66,10 @@ async function render(): Promise<void> {
 	}
 
 	api.$container.append($view);
+
+	if ($view.classList.contains("collection-view-scroll")) {
+		fitToNoteDetailContainer($view);
+	}
 }
 
 render();

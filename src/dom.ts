@@ -23,6 +23,28 @@ export function renderError(message: string): void {
 }
 
 /**
+ * Observes the container containing the current note's contents and resizes an
+ * element to fit the container's height when the container is resized (keeping
+ * the horizontal scrollbar at the bottom of the visible area).
+ */
+export function fitToNoteDetailContainer($element: HTMLElement): void {
+	const $container = api.$container[0].closest(".note-detail")?.parentElement;
+	if (!$container) {
+		throw new Error("note container element not found");
+	}
+
+	new ResizeObserver((entries, observer) => {
+		if (!document.body.contains($element)) {
+			observer.disconnect();
+			return;
+		}
+
+		const entry = entries[entries.length - 1];
+		$element.style.height = `${entry.contentRect.height}px`;
+	}).observe($container);
+}
+
+/**
  * Renders notes in a staggered manner, appending elements returned from
  * a render function to some parent element.
  *
