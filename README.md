@@ -12,6 +12,7 @@ An extension for [Trilium Notes](https://github.com/zadam/trilium) that implemen
   - [Board view](#board-view)
   - [Gallery view](#gallery-view)
   - [Table view](#table-view)
+- [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
@@ -55,6 +56,10 @@ An extension for [Trilium Notes](https://github.com/zadam/trilium) that implemen
 ### Table view
 
 ![Table view screenshot](docs/table-view.png)
+
+## Requirements
+
+Minimum Trilium version supported: v0.46
 
 ## Installation
 
