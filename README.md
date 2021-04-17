@@ -14,6 +14,7 @@ An extension for [Trilium Notes](https://github.com/zadam/trilium) that implemen
   - [Table view](#table-view)
 - [Requirements](#requirements)
 - [Installation](#installation)
+- [Upgrading](#upgrading)
 - [Usage](#usage)
 - [Configuration](#configuration)
   - [Render Note attributes](#render-note-attributes)
@@ -69,7 +70,16 @@ Minimum Trilium version supported: v0.46
 
 3. Reload the frontend (Menu → Reload frontend).
 
-Upgrading involves the same steps. Import the zip file into the same parent note to replace the old files.
+## Upgrading
+
+1. Download and extract `collection-views.zip` from the [Releases](https://github.com/mabeyj/trilium-collection-views/releases) page.
+
+2. Replace the `css` and `js` child notes of the Collection Views note with the updated files found in the zip archive:
+
+   - Select the `css` child note, click "Upload new revision", and select the `Collection Views/css.css` file that was extracted.
+   - Select the `js` child note, click "Upload new revision", and select the `Collection Views/js.js` file that was extracted.
+
+3. Reload the frontend (Menu → Reload frontend).
 
 ## Usage
 
