@@ -1,11 +1,18 @@
 // Mimic style of tables in text notes.
 // .table is needed to override Bootstrap.
 
-.table.collection-view-table {
-	border: 0;
+.collection-view-table {
 	border-collapse: separate;
 	border-spacing: 0;
-	margin: 0;
+
+	&.table,
+	.ck-content &.table {
+		margin: 0;
+	}
+
+	&.table-bordered {
+		border: 0;
+	}
 }
 
 .table.collection-view-table thead th,
