@@ -21,9 +21,6 @@
 	left: 0;
 }
 
-// box-shadow fakes the border for the first row and column since position:
-// sticky doesn't move borders.
-
 .table.collection-view-table thead th {
 	position: sticky;
 	top: 0;
