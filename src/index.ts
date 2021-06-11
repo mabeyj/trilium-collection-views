@@ -82,7 +82,17 @@ async function render(): Promise<void> {
 
 	switch (mode) {
 		case RenderMode.Include:
-			api.$container.closest(".include-note-wrapper").width("100%");
+			const $include = api.$container.closest(".include-note");
+
+			// Fix read-only view missing wrapper element.
+			if ($include.children(".include-note-title").length) {
+				const $wrapper = $("<div>").addClass("include-note-wrapper");
+				$include.wrapInner($wrapper);
+			}
+
+			$include
+				.children(".include-note-wrapper")
+				.addClass("collection-view-include-note");
 			break;
 
 		case RenderMode.Note:
