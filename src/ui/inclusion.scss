@@ -10,8 +10,8 @@
 		max-height: 10em;
 	}
 
-	&.box-size-medium,
-	&[data-box-size="medium"] {
+	.box-size-medium &,
+	[data-box-size="medium"] & {
 		max-height: 20em;
 	}
 }
