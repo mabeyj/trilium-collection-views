@@ -1,17 +1,3 @@
 .collection-view-include-note {
 	width: 100%; // Fix scrolling.
 }
-
-.collection-view-scroll {
-	// Read-only view only has data attributes.
-
-	.box-size-small &,
-	[data-box-size="small"] & {
-		max-height: 10em;
-	}
-
-	.box-size-medium &,
-	[data-box-size="medium"] & {
-		max-height: 20em;
-	}
-}

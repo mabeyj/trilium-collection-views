@@ -84,10 +84,11 @@ async function render(): Promise<void> {
 		case RenderMode.Include:
 			const $include = api.$container.closest(".include-note");
 
-			// Fix read-only view missing wrapper element.
+			// Fix read-only view DOM inconsistencies.
 			if ($include.children(".include-note-title").length) {
+				const size = $include.data("box-size");
 				const $wrapper = $("<div>").addClass("include-note-wrapper");
-				$include.wrapInner($wrapper);
+				$include.addClass(`box-size-${size}`).wrapInner($wrapper);
 			}
 
 			$include
