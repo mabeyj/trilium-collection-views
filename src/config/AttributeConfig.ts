@@ -9,6 +9,7 @@ export class AttributeConfig {
 
 	align: string = "";
 	width?: number;
+	wrap: boolean = false;
 
 	header: string = "";
 
@@ -37,6 +38,7 @@ export class AttributeConfig {
 				case "badge":
 				case "boolean":
 				case "number":
+				case "wrap":
 					this[key] = true;
 					break;
 

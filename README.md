@@ -40,6 +40,7 @@ An extension for [Trilium Notes](https://github.com/zadam/trilium) that implemen
     - [`repeat`](#repeat)
     - [`suffix`](#suffix)
     - [`width`](#width)
+    - [`wrap`](#wrap)
   - [Covers](#covers)
   - [Custom badge colors](#custom-badge-colors)
   - [Custom sorting](#custom-sorting)
@@ -345,6 +346,15 @@ Examples:
 Sets the minimum width (in pixels) of the attribute's column. Columns may be resized proportionally since tables are set to 100% width.
 
 Example: `#attribute=status,width=100`
+
+#### `wrap`
+
+- Table views only
+- Optional (default: text does not wrap)
+
+Toggles text wrapping. If enabled, long text in a column will wrap to multiple lines. For tables that scroll horizontally, setting a [`width`](#width) will avoid text getting squashed into a very thin column.
+
+Example: `#attribute=description,wrap`
 
 ### Covers
 

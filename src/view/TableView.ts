@@ -72,6 +72,9 @@ export class TableView extends View {
 		if (attributeConfig.width !== undefined) {
 			$cell.style.minWidth = `${attributeConfig.width}px`;
 		}
+		if (attributeConfig.wrap) {
+			$cell.style.whiteSpace = "normal";
+		}
 		return $cell;
 	}
 
@@ -126,6 +129,9 @@ export class TableView extends View {
 		const $cell = document.createElement("td");
 		if (attributeConfig.align) {
 			$cell.style.textAlign = attributeConfig.align;
+		}
+		if (attributeConfig.wrap) {
+			$cell.style.whiteSpace = "normal";
 		}
 		appendChildren(
 			$cell,
