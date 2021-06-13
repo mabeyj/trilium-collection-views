@@ -9,6 +9,12 @@ const descriptions = {
 	[ViewType.Table]: "Table view",
 };
 
+enum RenderMode {
+	Text,
+	Include,
+	Note,
+}
+
 /**
  * Reads configuration and renders the entire view.
  */
@@ -24,7 +30,14 @@ async function render(): Promise<void> {
 		return;
 	}
 
-	if (!api.$container.parent(".note-detail-render-content").length) {
+	let mode = RenderMode.Text;
+	if (api.$container.closest(".include-note").length) {
+		mode = RenderMode.Include;
+	} else if (api.$container.parent(".note-detail-render-content").length) {
+		mode = RenderMode.Note;
+	}
+
+	if (mode === RenderMode.Text) {
 		api.$container.append(
 			$("<em>").text(descriptions[config.view] || "Collection view")
 		);
@@ -67,8 +80,27 @@ async function render(): Promise<void> {
 
 	api.$container.append($view);
 
-	if ($view.classList.contains("collection-view-scroll")) {
-		fitToNoteDetailContainer($view);
+	switch (mode) {
+		case RenderMode.Include:
+			const $include = api.$container.closest(".include-note");
+
+			// Fix read-only view DOM inconsistencies.
+			if ($include.children(".include-note-title").length) {
+				const size = $include.data("box-size");
+				const $wrapper = $("<div>").addClass("include-note-wrapper");
+				$include.addClass(`box-size-${size}`).wrapInner($wrapper);
+			}
+
+			$include
+				.children(".include-note-wrapper")
+				.addClass("collection-view-include-note");
+			break;
+
+		case RenderMode.Note:
+			if ($view.classList.contains("collection-view-scroll")) {
+				fitToNoteDetailContainer($view);
+			}
+			break;
 	}
 }
 

@@ -3,4 +3,12 @@
 
 .collection-view-scroll {
 	overflow: auto;
+
+	.box-size-small & {
+		max-height: 10em;
+	}
+
+	.box-size-medium & {
+		max-height: 20em;
+	}
 }

@@ -2,6 +2,10 @@
 	position: relative;
 	background: var(--accented-background-color);
 	border-radius: 10px;
+
+	.include-note & {
+		background: var(--main-background-color);
+	}
 }
 
 .collection-view-card-cover {
