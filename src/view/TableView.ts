@@ -133,10 +133,21 @@ export class TableView extends View {
 		if (attributeConfig.wrap) {
 			$cell.style.whiteSpace = "normal";
 		}
-		appendChildren(
-			$cell,
-			await this.renderAttributeCellValues(note, attributeConfig)
+
+		const $values = await this.renderAttributeCellValues(
+			note,
+			attributeConfig
 		);
+		if (attributeConfig.truncate) {
+			const $box = document.createElement("div");
+			$box.className = "collection-view-truncate";
+			$box.style.webkitLineClamp = `${attributeConfig.truncate}`;
+			appendChildren($box, $values);
+			$cell.appendChild($box);
+		} else {
+			appendChildren($cell, $values);
+		}
+
 		return $cell;
 	}
 

@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Add support for the "include note" feature, allowing views to be embedded in other notes.
+- Add `truncate` attribute setting for table views for truncating long text to one or more lines.
 - Add `wrap` attribute setting for table views for enabling text wrapping.
 - Improve vertical alignment and spacing of badges.
 - Badges are now normal font weight instead of bold.

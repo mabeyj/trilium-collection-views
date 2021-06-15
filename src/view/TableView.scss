@@ -62,3 +62,9 @@
 	margin: 0.25em 0;
 	font-weight: inherit;
 }
+
+.collection-view-truncate {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
