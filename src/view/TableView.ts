@@ -149,21 +149,14 @@ export class TableView extends View {
 		attributeConfig: AttributeConfig
 	): Promise<Array<HTMLElement | Text>> {
 		const $values = await this.renderAttributeValues(note, attributeConfig);
-
-		let $separator: HTMLElement | Text | undefined;
-		if (attributeConfig.badge) {
-			$separator = document.createTextNode(" ");
-		} else if (!attributeConfig.denominatorName) {
-			$separator = document.createElement("br");
-		}
-		if (!$separator) {
+		if (attributeConfig.denominatorName) {
 			return $values;
 		}
 
 		const $separatedValues: Array<HTMLElement | Text> = [];
 		$values.forEach(($value, i) => {
-			if ($separator && i) {
-				$separatedValues.push($separator);
+			if (i) {
+				$separatedValues.push(attributeConfig.makeSeparator());
 			}
 			$separatedValues.push($value);
 		});
