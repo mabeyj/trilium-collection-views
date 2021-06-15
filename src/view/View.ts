@@ -24,6 +24,9 @@ export abstract class View {
 		attributeConfig: AttributeConfig
 	): Promise<Array<HTMLElement | Text>> {
 		const attributes = note.getAttributes(undefined, attributeConfig.name);
+		if (attributeConfig.boolean && !attributes.length) {
+			attributes.push({ type: "label", value: "false" });
+		}
 
 		let denominator: string | null = null;
 		if (attributeConfig.denominatorName) {
