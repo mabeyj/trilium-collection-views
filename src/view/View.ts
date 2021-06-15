@@ -1,7 +1,7 @@
 import { AttributeConfig, ViewConfig } from "collection-views/config";
 import { clamp, numberFormat } from "collection-views/math";
 import { appendChildren } from "collection-views/dom";
-import { isFalsy } from "collection-views/boolean";
+import { isTruthy } from "collection-views/boolean";
 
 /**
  * Base view implementing common rendering of attributes.
@@ -105,10 +105,8 @@ export abstract class View {
 		const $checkbox = document.createElement("input");
 		$checkbox.className = "collection-view-checkbox";
 		$checkbox.type = "checkbox";
+		$checkbox.checked = isTruthy(value);
 		$checkbox.disabled = true;
-		if (!isFalsy(value)) {
-			$checkbox.checked = true;
-		}
 		return $checkbox;
 	}
 
