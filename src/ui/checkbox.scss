@@ -1,4 +1,29 @@
+$checkbox-size: 1em;
+
 .collection-view-checkbox {
-	width: var(--ck-todo-list-checkmark-size);
-	height: var(--ck-todo-list-checkmark-size);
+	appearance: none;
+	position: relative;
+	border: 1px solid var(--muted-text-color);
+	border-radius: 2px;
+	margin-bottom: -$checkbox-size * 0.15;
+	width: $checkbox-size;
+	height: $checkbox-size;
+
+	&:checked {
+		background: #26ab33 !important;
+
+		&:after {
+			position: absolute;
+			box-sizing: content-box;
+			content: "";
+			left: $checkbox-size / 3;
+			top: $checkbox-size / 5.3;
+			width: $checkbox-size / 5.3;
+			height: $checkbox-size / 2.6;
+			border: solid white;
+			border-width: 0 ($checkbox-size / 8) ($checkbox-size / 8) 0;
+			margin: -1px 0 0 -1px;
+			transform: rotate(45deg);
+		}
+	}
 }
