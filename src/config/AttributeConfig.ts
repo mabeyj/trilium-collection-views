@@ -81,4 +81,14 @@ export class AttributeConfig {
 	affix(text: string): string {
 		return `${this.prefix}${text}${this.suffix}`;
 	}
+
+	/**
+	 * Returns the separator to use for multiple attribute values in a table.
+	 */
+	makeSeparator(): HTMLElement | Text {
+		if (this.badge) {
+			return document.createTextNode(" ");
+		}
+		return document.createElement("br");
+	}
 }
