@@ -83,7 +83,7 @@ export abstract class View {
 		relatedNote: NoteShort | null
 	): HTMLElement | Text {
 		if (attributeConfig.boolean) {
-			return this.renderBoolean(value);
+			return this.renderBoolean(value, attributeConfig);
 		}
 
 		if (attributeConfig.repeat.trim()) {
@@ -104,13 +104,19 @@ export abstract class View {
 	/**
 	 * Returns an element for rendering an attribute value as a checkbox.
 	 */
-	renderBoolean(value: string): HTMLElement {
+	renderBoolean(
+		value: string,
+		attributeConfig: AttributeConfig
+	): HTMLElement {
 		const $checkbox = document.createElement("input");
 		$checkbox.className = "collection-view-checkbox";
 		$checkbox.type = "checkbox";
 		$checkbox.checked = isTruthy(value);
 		$checkbox.disabled = true;
-		return $checkbox;
+
+		const $span = document.createElement("span");
+		appendChildren($span, attributeConfig.affixNodes($checkbox));
+		return $span;
 	}
 
 	/**
@@ -166,19 +172,14 @@ export abstract class View {
 
 		const $fraction = document.createElement("div");
 		$fraction.className = "collection-view-progress-fraction";
-		if (attributeConfig.prefix) {
-			const $prefix = document.createTextNode(attributeConfig.prefix);
-			$fraction.appendChild($prefix);
-		}
-		appendChildren($fraction, [
-			this.renderProgressBarNumber(numeratorFloat),
-			document.createTextNode(" / "),
-			this.renderProgressBarNumber(denominatorFloat),
-		]);
-		if (attributeConfig.suffix) {
-			const $suffix = document.createTextNode(attributeConfig.suffix);
-			$fraction.appendChild($suffix);
-		}
+		appendChildren(
+			$fraction,
+			attributeConfig.affixNodes(
+				this.renderProgressBarNumber(numeratorFloat),
+				document.createTextNode(" / "),
+				this.renderProgressBarNumber(denominatorFloat)
+			)
+		);
 
 		const $bar = document.createElement("div");
 		$bar.className = "progress-bar";
