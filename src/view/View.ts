@@ -22,7 +22,7 @@ export abstract class View {
 	async renderAttributeValues(
 		note: NoteShort,
 		attributeConfig: AttributeConfig
-	): Promise<Array<HTMLElement | Text>> {
+	): Promise<Array<HTMLElement | Text>[]> {
 		const attributes = note.getAttributes(undefined, attributeConfig.name);
 		if (attributeConfig.boolean && !attributes.length) {
 			attributes.push({ type: "label", value: "false" });
@@ -40,7 +40,7 @@ export abstract class View {
 	}
 
 	/**
-	 * Returns an element or string for rendering an attribute's value.
+	 * Returns elements or strings for rendering an attribute's value.
 	 *
 	 * If a denominator value is given, the attribute's value will be rendered
 	 * as a progress bar.
@@ -49,7 +49,7 @@ export abstract class View {
 		attribute: Attribute,
 		denominator: string | null,
 		attributeConfig: AttributeConfig
-	): Promise<HTMLElement | Text> {
+	): Promise<Array<HTMLElement | Text>> {
 		let relatedNote: NoteShort | null = null;
 		if (attribute.type === "relation") {
 			relatedNote = await api.getNote(attribute.value);
@@ -64,7 +64,7 @@ export abstract class View {
 				attributeConfig
 			);
 			if ($progressBar) {
-				return $progressBar;
+				return [$progressBar];
 			}
 		}
 
@@ -81,7 +81,7 @@ export abstract class View {
 		value: string,
 		attributeConfig: AttributeConfig,
 		relatedNote: NoteShort | null
-	): HTMLElement | Text {
+	): Array<HTMLElement | Text> {
 		if (attributeConfig.boolean) {
 			return this.renderBoolean(value, attributeConfig);
 		}
@@ -95,10 +95,10 @@ export abstract class View {
 		value = attributeConfig.affix(value);
 
 		if (attributeConfig.badge) {
-			return this.renderBadge(value, attributeConfig, relatedNote);
+			return [this.renderBadge(value, attributeConfig, relatedNote)];
 		}
 
-		return document.createTextNode(value);
+		return [document.createTextNode(value)];
 	}
 
 	/**
@@ -107,16 +107,13 @@ export abstract class View {
 	renderBoolean(
 		value: string,
 		attributeConfig: AttributeConfig
-	): HTMLElement {
+	): Array<HTMLElement | Text> {
 		const $checkbox = document.createElement("input");
 		$checkbox.className = "collection-view-checkbox";
 		$checkbox.type = "checkbox";
 		$checkbox.checked = isTruthy(value);
 		$checkbox.disabled = true;
-
-		const $span = document.createElement("span");
-		appendChildren($span, attributeConfig.affixNodes($checkbox));
-		return $span;
+		return attributeConfig.affixNodes($checkbox);
 	}
 
 	/**

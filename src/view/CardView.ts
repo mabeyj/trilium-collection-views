@@ -107,9 +107,9 @@ export abstract class CardView extends View {
 		attributeConfig: AttributeConfig
 	): Promise<HTMLElement[]> {
 		const $values = await this.renderAttributeValues(note, attributeConfig);
-		return $values.map(($value) => {
+		return $values.map(($nodes) => {
 			const $item = document.createElement("li");
-			$item.appendChild($value);
+			appendChildren($item, $nodes);
 			return $item;
 		});
 	}

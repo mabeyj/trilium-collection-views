@@ -94,16 +94,17 @@ export class BoardView extends CardView {
 			return $name;
 		}
 
-		let $value = this.renderValue(group.name, groupBy, group.relatedNote);
+		let $nodes = this.renderValue(group.name, groupBy, group.relatedNote);
 		if (group.relatedNote) {
-			$value = (await api.createNoteLink(group.relatedNote.noteId))
+			const $link = (await api.createNoteLink(group.relatedNote.noteId))
 				.find("a")
 				.addClass("stretched-link no-tooltip-preview")
 				.empty()
-				.append($value)[0];
+				.append(...$nodes)[0];
+			$nodes = [$link];
 		}
 
-		$name.appendChild($value);
+		appendChildren($name, $nodes);
 		return $name;
 	}
 
