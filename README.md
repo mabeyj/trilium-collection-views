@@ -39,6 +39,7 @@ An extension for [Trilium Notes](https://github.com/zadam/trilium) that implemen
     - [`progressBar`](#progressbar)
     - [`repeat`](#repeat)
     - [`suffix`](#suffix)
+    - [`truncate`](#truncate)
     - [`width`](#width)
     - [`wrap`](#wrap)
   - [Covers](#covers)
@@ -337,6 +338,18 @@ Examples:
 
 - `#attribute="weight,suffix=kg"`
 - `#attribute="price,suffix= CAD"`
+
+#### `truncate`
+
+- Table views only
+- Optional (default: text is not truncated)
+
+Truncates long text to some number of lines. If set as a flag, text is truncated to a single line. Otherwise, the setting's value specifies how many lines. If set, the [`wrap`](#wrap) setting is implicitly enabled.
+
+Examples:
+
+- `#attribute="description,truncate"` (truncate to single line)
+- `#attribute="description,truncate=3"` (truncate to three lines)
 
 #### `width`
 
