@@ -139,11 +139,7 @@ export class TableView extends View {
 			attributeConfig
 		);
 		if (attributeConfig.truncate) {
-			const $box = document.createElement("div");
-			$box.className = "collection-view-truncate";
-			$box.style.webkitLineClamp = `${attributeConfig.truncate}`;
-			appendChildren($box, $values);
-			$cell.appendChild($box);
+			$cell.appendChild(this.renderTruncated($values, attributeConfig));
 		} else {
 			appendChildren($cell, $values);
 		}
@@ -169,5 +165,20 @@ export class TableView extends View {
 			$separated.push(...$nodes);
 		});
 		return $separated;
+	}
+
+	/**
+	 * Returns content wrapped in a container that truncates the content to the
+	 * number of lines set in the given configuration.
+	 */
+	renderTruncated(
+		$children: Array<HTMLElement | Text>,
+		attributeConfig: AttributeConfig
+	): HTMLElement {
+		const $container = document.createElement("div");
+		$container.className = "collection-view-truncate";
+		$container.style.webkitLineClamp = `${attributeConfig.truncate}`;
+		appendChildren($container, $children);
+		return $container;
 	}
 }
