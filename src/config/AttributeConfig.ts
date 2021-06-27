@@ -83,6 +83,24 @@ export class AttributeConfig {
 	}
 
 	/**
+	 * Returns an array of elements or text nodes affixed with the configured
+	 * prefix and suffix.
+	 */
+	affixNodes(
+		...$nodes: Array<HTMLElement | Text>
+	): Array<HTMLElement | Text> {
+		const $affixed = [];
+		if (this.prefix) {
+			$affixed.push(document.createTextNode(this.prefix));
+		}
+		$affixed.push(...$nodes);
+		if (this.suffix) {
+			$affixed.push(document.createTextNode(this.suffix));
+		}
+		return $affixed;
+	}
+
+	/**
 	 * Returns the separator to use for multiple attribute values in a table.
 	 */
 	makeSeparator(): HTMLElement | Text {

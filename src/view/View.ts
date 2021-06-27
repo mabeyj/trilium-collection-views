@@ -1,7 +1,7 @@
 import { AttributeConfig, ViewConfig } from "collection-views/config";
 import { clamp, numberFormat } from "collection-views/math";
 import { appendChildren } from "collection-views/dom";
-import { isFalsy } from "collection-views/boolean";
+import { isTruthy } from "collection-views/boolean";
 
 /**
  * Base view implementing common rendering of attributes.
@@ -22,8 +22,11 @@ export abstract class View {
 	async renderAttributeValues(
 		note: NoteShort,
 		attributeConfig: AttributeConfig
-	): Promise<Array<HTMLElement | Text>> {
+	): Promise<Array<HTMLElement | Text>[]> {
 		const attributes = note.getAttributes(undefined, attributeConfig.name);
+		if (attributeConfig.boolean && !attributes.length) {
+			attributes.push({ type: "label", value: "false" });
+		}
 
 		let denominator: string | null = null;
 		if (attributeConfig.denominatorName) {
@@ -37,7 +40,7 @@ export abstract class View {
 	}
 
 	/**
-	 * Returns an element or string for rendering an attribute's value.
+	 * Returns elements or strings for rendering an attribute's value.
 	 *
 	 * If a denominator value is given, the attribute's value will be rendered
 	 * as a progress bar.
@@ -46,7 +49,7 @@ export abstract class View {
 		attribute: Attribute,
 		denominator: string | null,
 		attributeConfig: AttributeConfig
-	): Promise<HTMLElement | Text> {
+	): Promise<Array<HTMLElement | Text>> {
 		let relatedNote: NoteShort | null = null;
 		if (attribute.type === "relation") {
 			relatedNote = await api.getNote(attribute.value);
@@ -61,7 +64,7 @@ export abstract class View {
 				attributeConfig
 			);
 			if ($progressBar) {
-				return $progressBar;
+				return [$progressBar];
 			}
 		}
 
@@ -78,9 +81,9 @@ export abstract class View {
 		value: string,
 		attributeConfig: AttributeConfig,
 		relatedNote: NoteShort | null
-	): HTMLElement | Text {
+	): Array<HTMLElement | Text> {
 		if (attributeConfig.boolean) {
-			return this.renderBoolean(value);
+			return this.renderBoolean(value, attributeConfig);
 		}
 
 		if (attributeConfig.repeat.trim()) {
@@ -92,24 +95,25 @@ export abstract class View {
 		value = attributeConfig.affix(value);
 
 		if (attributeConfig.badge) {
-			return this.renderBadge(value, attributeConfig, relatedNote);
+			return [this.renderBadge(value, attributeConfig, relatedNote)];
 		}
 
-		return document.createTextNode(value);
+		return [document.createTextNode(value)];
 	}
 
 	/**
 	 * Returns an element for rendering an attribute value as a checkbox.
 	 */
-	renderBoolean(value: string): HTMLElement {
+	renderBoolean(
+		value: string,
+		attributeConfig: AttributeConfig
+	): Array<HTMLElement | Text> {
 		const $checkbox = document.createElement("input");
 		$checkbox.className = "collection-view-checkbox";
 		$checkbox.type = "checkbox";
+		$checkbox.checked = isTruthy(value);
 		$checkbox.disabled = true;
-		if (!isFalsy(value)) {
-			$checkbox.checked = true;
-		}
-		return $checkbox;
+		return attributeConfig.affixNodes($checkbox);
 	}
 
 	/**
@@ -165,19 +169,14 @@ export abstract class View {
 
 		const $fraction = document.createElement("div");
 		$fraction.className = "collection-view-progress-fraction";
-		if (attributeConfig.prefix) {
-			const $prefix = document.createTextNode(attributeConfig.prefix);
-			$fraction.appendChild($prefix);
-		}
-		appendChildren($fraction, [
-			this.renderProgressBarNumber(numeratorFloat),
-			document.createTextNode(" / "),
-			this.renderProgressBarNumber(denominatorFloat),
-		]);
-		if (attributeConfig.suffix) {
-			const $suffix = document.createTextNode(attributeConfig.suffix);
-			$fraction.appendChild($suffix);
-		}
+		appendChildren(
+			$fraction,
+			attributeConfig.affixNodes(
+				this.renderProgressBarNumber(numeratorFloat),
+				document.createTextNode(" / "),
+				this.renderProgressBarNumber(denominatorFloat)
+			)
+		);
 
 		const $bar = document.createElement("div");
 		$bar.className = "progress-bar";
