@@ -8,6 +8,7 @@ export class AttributeConfig {
 	denominatorName: string = "";
 
 	align: string = "";
+	truncate?: number;
 	width?: number;
 	wrap: boolean = false;
 
@@ -66,6 +67,11 @@ export class AttributeConfig {
 				case "precision":
 					this.number = true;
 					this.precision = parseOptionalInt(value, 0, 20);
+					break;
+
+				case "truncate":
+					this.wrap = true;
+					this.truncate = parseOptionalInt(value || 1, 1, 1000);
 					break;
 
 				case "width":
