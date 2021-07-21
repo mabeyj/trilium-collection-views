@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 - 2021-07-21
 
 - Add support for the "include note" feature, allowing views to be embedded in other notes.
 - Add `truncate` attribute setting for table views for truncating long text to one or more lines.
