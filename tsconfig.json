@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"baseUrl": "src",
+		"moduleResolution": "node",
 		"paths": { "collection-views/*": ["*"] },
 		"strict": true,
 		"target": "ESNext"
