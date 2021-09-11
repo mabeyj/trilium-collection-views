@@ -1,3 +1,5 @@
+@use "sass:math";
+
 $checkbox-size: 1em;
 
 .collection-view-checkbox {
@@ -16,12 +18,12 @@ $checkbox-size: 1em;
 			position: absolute;
 			box-sizing: content-box;
 			content: "";
-			left: $checkbox-size / 3;
-			top: $checkbox-size / 5.3;
-			width: $checkbox-size / 5.3;
-			height: $checkbox-size / 2.6;
+			left: math.div($checkbox-size, 3);
+			top: math.div($checkbox-size, 5.3);
+			width: math.div($checkbox-size, 5.3);
+			height: math.div($checkbox-size, 2.6);
 			border: solid white;
-			border-width: 0 ($checkbox-size / 8) ($checkbox-size / 8) 0;
+			border-width: 0 ($checkbox-size * 0.125) ($checkbox-size * 0.125) 0;
 			margin: -1px 0 0 -1px;
 			transform: rotate(45deg);
 		}
