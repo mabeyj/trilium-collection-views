@@ -21,3 +21,4 @@ dist: node_modules $(SCSS_FILES) $(TYPESCRIPT_FILES)
 
 node_modules: package.json package-lock.json
 	npm install
+	touch $@
