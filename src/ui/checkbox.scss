@@ -21,7 +21,7 @@ $checkbox-size: 1em;
 			width: calc($checkbox-size / 5.3);
 			height: calc($checkbox-size / 2.6);
 			border: solid white;
-			border-width: 0 ($checkbox-size * 0.125) ($checkbox-size * 0.125) 0;
+			border-width: 0 calc($checkbox-size / 8) calc($checkbox-size / 8) 0;
 			margin: -1px 0 0 -1px;
 			transform: rotate(45deg);
 		}
