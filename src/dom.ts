@@ -33,6 +33,9 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 		throw new Error("note container element not found");
 	}
 
+	const style = getComputedStyle($element);
+	const margin = parseInt(style.marginTop) + parseInt(style.marginBottom);
+
 	new ResizeObserver((entries, observer) => {
 		if (!document.body.contains($element)) {
 			observer.disconnect();
@@ -40,7 +43,7 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 		}
 
 		const entry = entries[entries.length - 1];
-		$element.style.height = `${entry.contentRect.height}px`;
+		$element.style.height = `${entry.contentRect.height - margin}px`;
 	}).observe($container);
 }
 

@@ -4,6 +4,10 @@
 .collection-view-scroll {
 	overflow: auto;
 
+	.note-detail-render-content & {
+		margin: 10px;
+	}
+
 	.box-size-small & {
 		max-height: 10em;
 	}
