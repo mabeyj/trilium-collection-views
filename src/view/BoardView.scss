@@ -7,7 +7,11 @@
 	flex-direction: column;
 	min-width: 250px;
 	width: 250px;
-	margin-right: 10px;
+
+	&:not(:last-child) {
+		// TODO: Use gap when v0.46 is dropped.
+		margin-right: 10px;
+	}
 }
 
 .collection-view-board-column-header {
