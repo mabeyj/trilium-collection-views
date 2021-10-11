@@ -36,14 +36,21 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 	const style = getComputedStyle($element);
 	const margin = parseInt(style.marginTop) + parseInt(style.marginBottom);
 
+	let requestId: number | undefined;
 	new ResizeObserver((entries, observer) => {
+		if (requestId) {
+			cancelAnimationFrame(requestId);
+		}
 		if (!document.body.contains($element)) {
 			observer.disconnect();
 			return;
 		}
 
-		const entry = entries[entries.length - 1];
-		$element.style.height = `${entry.contentRect.height - margin}px`;
+		requestId = requestAnimationFrame(() => {
+			const entry = entries[entries.length - 1];
+			$element.style.height = `${entry.contentRect.height - margin}px`;
+			requestId = undefined;
+		});
 	}).observe($container);
 }
 
