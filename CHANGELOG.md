@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 - Unreleased
+
+- Add margin around all views.
+
 ## 1.1.0 - 2021-07-21
 
 - Add support for the "include note" feature, allowing views to be embedded in other notes.

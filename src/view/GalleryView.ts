@@ -29,6 +29,10 @@ export class GalleryView extends CardView {
 		await staggeredRender($gallery, initialRenderSize, this.notes, (note) =>
 			this.renderCard(note, true)
 		);
-		return $gallery;
+
+		const $scroll = document.createElement("div");
+		$scroll.className = "collection-view-scroll";
+		$scroll.appendChild($gallery);
+		return $scroll;
 	}
 }
