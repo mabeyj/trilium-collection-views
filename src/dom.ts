@@ -43,7 +43,14 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 		}
 
 		const entry = entries[entries.length - 1];
-		$element.style.height = `${entry.contentRect.height - margin}px`;
+		const height = `${Math.floor(entry.contentRect.height - margin)}px`;
+		if (height === $element.style.height) {
+			return;
+		}
+
+		observer.disconnect();
+		$element.style.height = height;
+		requestAnimationFrame(() => observer.observe($container));
 	}).observe($container);
 }
 
