@@ -4,6 +4,7 @@
 
 - Add margin around all views.
 - Fix "ResizeObserver loop limit exceeded" errors occurring in console when the note content area is resized.
+- Fix `boolean` checkbox styles not being applied in Trilium 0.46.
 
 ## 1.1.0 - 2021-07-21
 
