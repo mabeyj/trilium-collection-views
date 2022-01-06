@@ -45,6 +45,7 @@ An extension for [Trilium Notes](https://github.com/zadam/trilium) that implemen
   - [Covers](#covers)
   - [Custom badge colors](#custom-badge-colors)
   - [Custom sorting](#custom-sorting)
+  - [CSS variables](#css-variables)
 
 ## Screenshots
 
@@ -392,3 +393,19 @@ This is useful in a couple ways:
 - Ignoring leading articles like "The", "A", or "An". For example, a note titled "The Example" with `#sortableTitle=Example` would appear under E instead of T.
 
 - Numeric sorting. Alphanumerically, "Note 10" would be sorted before "Note 2". If you set `#sortableTitle="Note 02"` on Note 2, then it will appear in numeric order above Note 10.
+
+### CSS variables
+
+The following variables can be changed by [themes](https://github.com/zadam/trilium/wiki/Themes#custom-css-themes) or [custom CSS](https://github.com/zadam/trilium/wiki/Themes#custom-css):
+
+```css
+body {
+  --collection-view-margin: 10px;
+  --collection-view-table-border-color: #bfbfbf;
+}
+```
+
+| Name                                   | Description                              |
+| -------------------------------------- | ---------------------------------------- |
+| `--collection-view-margin`             | Outermost `margin` applied to all views. |
+| `--collection-view-table-border-color` | Table `border-color` for table views.    |
