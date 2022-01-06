@@ -5,7 +5,7 @@
 	overflow: auto;
 
 	.note-detail-render-content & {
-		margin: 10px;
+		margin: var(--collection-view-margin);
 	}
 
 	.box-size-small & {
