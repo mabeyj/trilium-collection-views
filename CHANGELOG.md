@@ -2,6 +2,13 @@
 
 ## 1.2.0 - Unreleased
 
+- Add a `separator` attribute setting for controlling how multiple values for a single attribute are separated:
+  - `separator=newline` inserts a newline between values, resulting in one value per line.
+  - `separator=comma` inserts a comma and space between values.
+  - `separator=space` inserts a space between values.
+  - Any other value will be inserted as is between values, allowing for custom separators.
+- The default separator is now `separator=comma`, except `separator=space` is used for `badge` and `boolean` attributes.
+  - Before, the default was `separator=newline`, except `separator=space` was used for `badge` attributes in table views.
 - Add margin around all views to better align the edges of views when using Trilium's default themes. This can be changed using the `--collection-view-margin` CSS variable.
 - Fix "ResizeObserver loop limit exceeded" errors occurring in console when the note content area is resized.
 - Fix `boolean` checkbox styles not being applied in Trilium 0.46.

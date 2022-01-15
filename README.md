@@ -38,6 +38,7 @@ An extension for [Trilium Notes](https://github.com/zadam/trilium) that implemen
     - [`precision`](#precision)
     - [`progressBar`](#progressbar)
     - [`repeat`](#repeat)
+    - [`separator`](#separator)
     - [`suffix`](#suffix)
     - [`truncate`](#truncate)
     - [`width`](#width)
@@ -328,6 +329,24 @@ Example: `#attribute="completed,progressBar=total"`
 Renders the value as a string repeated depending on the attribute's numeric value.
 
 Example: `#attribute="rating,repeat=⭐"`
+
+#### `separator`
+
+- Optional (default: `space` for `boolean` and `badge` attributes, `comma` otherwise)
+
+Sets the string inserted between values when an attribute has multiple values. This can be one of the following values:
+
+- `newline`: Inserts a newline between values, resulting in one value per line.
+- `comma`: Inserts a comma and space (`, `) between values.
+- `space`: Inserts a space (` `) between values.
+
+Or, it can be a custom separator. If this setting is not set to one of the above values, then the setting's value will be inserted as is between values.
+
+Examples:
+
+- `#attribute=description,separator=newline`
+- `#attribute=author,separator=comma`
+- `#attribute=tag,separator= | `
 
 #### `suffix`
 

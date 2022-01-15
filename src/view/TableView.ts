@@ -134,10 +134,7 @@ export class TableView extends View {
 			$cell.style.whiteSpace = "normal";
 		}
 
-		const $values = await this.renderAttributeCellValues(
-			note,
-			attributeConfig
-		);
+		const $values = await this.renderAttributeValues(note, attributeConfig);
 		if (attributeConfig.truncate) {
 			$cell.appendChild(this.renderTruncated($values, attributeConfig));
 		} else {
@@ -145,26 +142,6 @@ export class TableView extends View {
 		}
 
 		return $cell;
-	}
-
-	/**
-	 * Returns elements or strings for rendering a note's attributes of the same
-	 * name in a cell.
-	 */
-	async renderAttributeCellValues(
-		note: NoteShort,
-		attributeConfig: AttributeConfig
-	): Promise<Array<HTMLElement | Text>> {
-		const $values = await this.renderAttributeValues(note, attributeConfig);
-
-		const $separated: Array<HTMLElement | Text> = [];
-		$values.forEach(($nodes, i) => {
-			if (!attributeConfig.denominatorName && i) {
-				$separated.push(attributeConfig.makeSeparator());
-			}
-			$separated.push(...$nodes);
-		});
-		return $separated;
 	}
 
 	/**

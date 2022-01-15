@@ -1,5 +1,10 @@
 import { parseOptionalInt } from "collection-views/math";
 
+const separatorAliases: Record<string, string> = {
+	comma: ", ",
+	space: " ",
+};
+
 /**
  * Configuration related to an attribute.
  */
@@ -23,8 +28,9 @@ export class AttributeConfig {
 	precision?: number;
 
 	prefix: string = "";
-	suffix: string = "";
 	repeat: string = "";
+	separator?: string;
+	suffix: string = "";
 
 	constructor(value: string) {
 		const options = value.split(",");
@@ -50,6 +56,7 @@ export class AttributeConfig {
 					break;
 
 				case "prefix":
+				case "separator":
 				case "suffix":
 					this[key] = value;
 					break;
@@ -109,10 +116,24 @@ export class AttributeConfig {
 	/**
 	 * Returns the separator to use for multiple attribute values in a table.
 	 */
-	makeSeparator(): HTMLElement | Text {
-		if (this.badge) {
-			return document.createTextNode(" ");
+	getSeparator(): HTMLElement | Text | undefined {
+		if (this.denominatorName) {
+			return undefined;
 		}
-		return document.createElement("br");
+
+		let separator = this.separator;
+		if (separator === undefined) {
+			separator = this.badge || this.boolean ? "space" : "comma";
+		}
+
+		if (!separator) {
+			return undefined;
+		}
+		if (separator === "newline") {
+			return document.createElement("br");
+		}
+		return document.createTextNode(
+			separatorAliases[separator] || separator
+		);
 	}
 }

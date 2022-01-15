@@ -17,12 +17,12 @@ export abstract class View {
 
 	/**
 	 * Returns elements or strings for rendering all values of a note's
-	 * attributes of a certain name.
+	 * attribute with separators between each value.
 	 */
 	async renderAttributeValues(
 		note: NoteShort,
 		attributeConfig: AttributeConfig
-	): Promise<Array<HTMLElement | Text>[]> {
+	): Promise<Array<HTMLElement | Text>> {
 		const attributes = note.getAttributes(undefined, attributeConfig.name);
 		if (attributeConfig.boolean && !attributes.length) {
 			attributes.push({ type: "label", value: "false" });
@@ -33,10 +33,29 @@ export abstract class View {
 			denominator = note.getLabelValue(attributeConfig.denominatorName);
 		}
 
-		const promises = attributes.map((attribute) =>
-			this.renderAttributeValue(attribute, denominator, attributeConfig)
+		const $values = await Promise.all(
+			attributes.map((attribute) =>
+				this.renderAttributeValue(
+					attribute,
+					denominator,
+					attributeConfig
+				)
+			)
 		);
-		return await Promise.all(promises);
+
+		const $separated: Array<HTMLElement | Text> = [];
+		for (let i = 0; i < $values.length; i++) {
+			let $separator;
+			if (i) {
+				$separator = attributeConfig.getSeparator();
+			}
+			if ($separator) {
+				$separated.push($separator);
+			}
+
+			$separated.push(...$values[i]);
+		}
+		return $separated;
 	}
 
 	/**
