@@ -1,5 +1,8 @@
 import { parseOptionalInt } from "collection-views/math";
 
+const escapeCharacter = "`";
+const escapeableCharacters = [escapeCharacter, ","];
+
 const separatorAliases: Record<string, string> = {
 	comma: ", ",
 	space: " ",
@@ -33,11 +36,11 @@ export class AttributeConfig {
 	suffix: string = "";
 
 	constructor(value: string) {
-		const options = value.split(",");
-		this.name = options.shift() || "";
+		const settings = splitComma(value);
+		this.name = settings.shift() || "";
 
-		for (var option of options) {
-			const parts = option.split("=");
+		for (var setting of settings) {
+			const parts = setting.split("=");
 			const key = (parts.shift() || "").trim();
 			const value = parts.join("=");
 
@@ -136,4 +139,47 @@ export class AttributeConfig {
 			separatorAliases[separator] || separator
 		);
 	}
+}
+
+/**
+ * Returns a list of values from splitting on each comma in the given value,
+ * accounting for escape sequences.
+ */
+function splitComma(value: string): string[] {
+	const values: string[] = [];
+	let next = "";
+	let escaping = false;
+
+	for (const character of value) {
+		if (escaping) {
+			escaping = false;
+
+			if (escapeableCharacters.includes(character)) {
+				next += character;
+				continue;
+			}
+
+			next += escapeCharacter;
+		}
+
+		switch (character) {
+			case escapeCharacter:
+				escaping = true;
+				break;
+			case ",":
+				values.push(next);
+				next = "";
+				break;
+			default:
+				next += character;
+		}
+	}
+	if (escaping) {
+		next += escapeCharacter;
+	}
+	if (next) {
+		values.push(next);
+	}
+
+	return values;
 }
