@@ -3,4 +3,8 @@
 	border-radius: 10px;
 	padding: 8px;
 	text-align: center;
+
+	.note-detail-render-content & {
+		margin: var(--collection-view-margin);
+	}
 }

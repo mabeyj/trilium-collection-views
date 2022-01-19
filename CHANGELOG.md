@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.1.1 - Unreleased
+## 1.2.0 - Unreleased
 
-- Add margin around all views.
+- Add margin around all views to better align the edges of views when using Trilium's default themes. This can be changed using the `--collection-view-margin` CSS variable.
 - Fix "ResizeObserver loop limit exceeded" errors occurring in console when the note content area is resized.
 - Fix `boolean` checkbox styles not being applied in Trilium 0.46.
 
