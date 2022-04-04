@@ -44,9 +44,10 @@ export abstract class View {
 		);
 
 		const $separated: Array<HTMLElement | Text> = [];
+		const separable = !($values[0]?.[0] instanceof HTMLDivElement);
 		for (let i = 0; i < $values.length; i++) {
 			let $separator;
-			if (i) {
+			if (i && separable) {
 				$separator = attributeConfig.getSeparator();
 			}
 			if ($separator) {

@@ -333,6 +333,7 @@ Example: `#attribute="rating,repeat=⭐"`
 
 #### `separator`
 
+- Not supported by [`progressBar`](#progressBar)
 - Optional (default: `space` for `boolean` and `badge` attributes, `comma` otherwise)
 
 Sets the string inserted between values when an attribute has multiple values. This can be one of the following values:

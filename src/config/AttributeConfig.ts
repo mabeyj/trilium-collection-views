@@ -120,10 +120,6 @@ export class AttributeConfig {
 	 * Returns the separator to use for multiple attribute values in a table.
 	 */
 	getSeparator(): HTMLElement | Text | undefined {
-		if (this.denominatorName) {
-			return undefined;
-		}
-
 		let separator = this.separator;
 		if (separator === undefined) {
 			separator = this.badge || this.boolean ? "space" : "comma";
