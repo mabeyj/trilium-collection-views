@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"baseUrl": "src",
+		"esModuleInterop": true,
 		"moduleResolution": "node",
 		"paths": { "collection-views/*": ["*"] },
 		"strict": true,

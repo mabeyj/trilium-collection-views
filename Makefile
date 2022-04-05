@@ -15,6 +15,10 @@ clean:
 format:
 	$(PRETTIER) --write src "*.{js,json,md}"
 
+.PHONY: test
+test: node_modules
+	npx jest
+
 dist: node_modules $(SCSS_FILES) $(TYPESCRIPT_FILES)
 	$(WEBPACK)
 	touch $@
