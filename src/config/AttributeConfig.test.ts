@@ -110,14 +110,24 @@ describe("AttributeConfig", () => {
 			expect(config.prefix).toBe("  Text  ");
 		});
 
+		test("sets repeat", () => {
+			const config = new AttributeConfig("name,repeat=  Text  ");
+			expect(config.repeat).toBe("Text");
+		});
+
+		test("sets separator", () => {
+			const config = new AttributeConfig("name,separator=  |  ");
+			expect(config.separator).toBe("  |  ");
+		});
+
 		test("sets suffix", () => {
 			const config = new AttributeConfig("name,suffix=  Text  ");
 			expect(config.suffix).toBe("  Text  ");
 		});
 
-		test("sets repeat", () => {
-			const config = new AttributeConfig("name,repeat=  Text  ");
-			expect(config.repeat).toBe("Text");
+		test("handles escape sequences in setting values", () => {
+			const config = new AttributeConfig("name,header=`` `, `x `");
+			expect(config.header).toEqual("` , `x `");
 		});
 	});
 
@@ -159,17 +169,52 @@ describe("AttributeConfig", () => {
 		});
 	});
 
-	describe("makeSeparator", () => {
+	describe("getSeparator", () => {
 		test.each([
 			[
-				"returns space for badges",
+				"returns comma by default for non-badge/Boolean values",
+				"name",
+				document.createTextNode(", "),
+			],
+			[
+				"returns space by default for badges",
 				"name,badge",
 				document.createTextNode(" "),
 			],
-			["returns <br> otherwise", "name", document.createElement("br")],
+			[
+				"returns space by default for Boolean values",
+				"name,boolean",
+				document.createTextNode(" "),
+			],
+			[
+				"returns undefined for empty separator",
+				"name,separator=",
+				undefined,
+			],
+			[
+				"returns comma for comma alias",
+				"name,separator=comma",
+				document.createTextNode(", "),
+			],
+			[
+				"returns space for space alias",
+				"name,separator=space",
+				document.createTextNode(" "),
+			],
+			[
+				"returns <br> for newline alias",
+				"name,separator=newline",
+				document.createElement("br"),
+			],
+			[
+				"returns custom separator",
+				"name,separator= | ",
+				document.createTextNode(" | "),
+			],
 		])("%s", (_, value, expected) => {
 			const config = new AttributeConfig(value);
-			expect(config.makeSeparator()).toEqual(expected);
+			const $separator = config.getSeparator();
+			expect($separator).toEqual(expected);
 		});
 	});
 });

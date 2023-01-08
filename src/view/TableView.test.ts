@@ -163,35 +163,6 @@ describe("TableView", () => {
 		});
 	});
 
-	describe("renderAttributeCellValues", () => {
-		test("returns separated values", async () => {
-			const $values = await view.renderAttributeCellValues(
-				multipleValueNote,
-				new AttributeConfig("test")
-			);
-			expect($values).toHaveLength(3);
-			expect($values[0]).toHaveTextContent("Value 1");
-			expect($values[1]).toEqual(document.createElement("br"));
-			expect($values[2]).toHaveTextContent("Value 2");
-		});
-
-		test("returns progress bars unseparated", async () => {
-			const $values = await view.renderAttributeCellValues(
-				new MockNoteShort({
-					attributes: [
-						{ type: "label", name: "count", value: "1" },
-						{ type: "label", name: "count", value: "2" },
-						{ type: "label", name: "total", value: "2" },
-					],
-				}),
-				new AttributeConfig("count,progressBar=total")
-			);
-			expect($values).toHaveLength(2);
-			expect($values[0]).toHaveTextContent("50%");
-			expect($values[1]).toHaveTextContent("100%");
-		});
-	});
-
 	describe("renderTruncated", () => {
 		test("returns truncated content", () => {
 			const $container = view.renderTruncated(
