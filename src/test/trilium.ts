@@ -36,7 +36,13 @@ export class MockApi {
 		notePath: string,
 		noteTitle?: string
 	): Promise<JQuery> {
-		return $("<div>");
+		const note = await this.getNote(notePath);
+		if (!note) {
+			throw new Error("Note not found");
+		}
+
+		const $link = $("<a>").attr("href", note.noteId).text(note.title);
+		return $("<span>").append($link);
 	}
 
 	public async getNote(noteId: string): Promise<NoteShort | null> {
