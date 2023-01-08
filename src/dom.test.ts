@@ -14,7 +14,7 @@ import { clearBody, MockApi, MockNoteShort } from "collection-views/test";
 describe("appendChildren", () => {
 	afterEach(clearBody);
 
-	test("appends elements and text", () => {
+	test("appends elements and text to parent element", () => {
 		const $div = document.createElement("div");
 		appendChildren(document.body, [$div, document.createTextNode("text")]);
 		expect(document.body).toContainElement($div);
@@ -26,9 +26,10 @@ describe("renderError", () => {
 	beforeEach(() => {
 		new MockApi();
 	});
+
 	afterEach(clearBody);
 
-	test("renders an error message", () => {
+	test("renders error message", () => {
 		renderError("<strong>error</strong>");
 		const $message = screen.getByText("error");
 		expect($message.tagName).toBe("STRONG");
@@ -61,7 +62,7 @@ describe("fitToNoteDetailContainer", () => {
 		}
 	});
 
-	test("does not resize element if it is not in DOM", () => {
+	test("does not resize element if not in the DOM", () => {
 		fitToNoteDetailContainer($element);
 		observer.resize(mockApi.$component);
 		expect($element).toHaveStyle({ height: "" });
@@ -77,7 +78,7 @@ describe("staggeredRender", () => {
 		}
 	}
 
-	test("appends elements", async () => {
+	test("appends elements to parent element", async () => {
 		const notes: NoteShort[] = [];
 		for (let i = 1; i <= 30; i++) {
 			notes.push(new MockNoteShort({ title: `${i}` }));

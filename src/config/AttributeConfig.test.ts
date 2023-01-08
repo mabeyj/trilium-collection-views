@@ -10,12 +10,12 @@ describe("AttributeConfig", () => {
 			expect(config.name).toBe(expected);
 		});
 
-		test("sets denominatorName from progressBar option", () => {
+		test("sets denominator name from progressBar option", () => {
 			const config = new AttributeConfig("name,progressBar=total");
 			expect(config.denominatorName).toBe("total");
 		});
 
-		test("sets align option", () => {
+		test("sets align", () => {
 			const config = new AttributeConfig("name,align=  left  ");
 			expect(config.align).toBe("left");
 		});
@@ -26,7 +26,7 @@ describe("AttributeConfig", () => {
 			["name,truncate=10.9", 10],
 			["name,truncate=9999", 1000],
 			["name,truncate=bad", undefined],
-		])("%p sets truncate option to %p", (value, expected) => {
+		])("%p sets truncate to %p", (value, expected) => {
 			const config = new AttributeConfig(value);
 			expect(config.truncate).toBe(expected);
 			expect(config.wrap).toBe(true);
@@ -39,46 +39,46 @@ describe("AttributeConfig", () => {
 			["name,width=10.9", 10],
 			["name,width=9999", 1000],
 			["name,width=bad", undefined],
-		])("%p sets width option to %p", (value, expected) => {
+		])("%p sets width to %p", (value, expected) => {
 			const config = new AttributeConfig(value);
 			expect(config.width).toBe(expected);
 		});
 
 		test.each(["name,wrap", "name,wrap=anything"])(
-			"%p sets wrap option to true",
+			"%p sets wrap to true",
 			(value) => {
 				const config = new AttributeConfig(value);
 				expect(config.wrap).toBe(true);
 			}
 		);
 
-		test("sets header option", () => {
+		test("sets header", () => {
 			const config = new AttributeConfig("name,header=  Text  ");
 			expect(config.header).toBe("Text");
 		});
 
 		test.each(["name,badge", "name,badge=anything"])(
-			"%p sets badge option to true",
+			"%p sets badge to true",
 			(value) => {
 				const config = new AttributeConfig(value);
 				expect(config.badge).toBe(true);
 			}
 		);
 
-		test("sets badgeBackground option", () => {
+		test("sets badgeBackground", () => {
 			const config = new AttributeConfig("name,badgeBackground=  red  ");
 			expect(config.badge).toBe(true);
 			expect(config.badgeBackground).toBe("red");
 		});
 
-		test("sets badgeColor option", () => {
+		test("sets badgeColor", () => {
 			const config = new AttributeConfig("name,badgeColor=  red  ");
 			expect(config.badge).toBe(true);
 			expect(config.badgeColor).toBe("red");
 		});
 
 		test.each(["name,boolean", "name,boolean=anything"])(
-			"%p sets boolean option to true",
+			"%p sets boolean to true",
 			(value) => {
 				const config = new AttributeConfig(value);
 				expect(config.boolean).toBe(true);
@@ -86,7 +86,7 @@ describe("AttributeConfig", () => {
 		);
 
 		test.each(["name,number", "name,number=anything"])(
-			"%p sets number option to true",
+			"%p sets number to true",
 			(value) => {
 				const config = new AttributeConfig(value);
 				expect(config.number).toBe(true);
@@ -99,30 +99,30 @@ describe("AttributeConfig", () => {
 			["name,precision=0", 0],
 			["name,precision=10.9", 10],
 			["name,precision=99", 20],
-		])("%p sets precision option to %p", (value, expected) => {
+		])("%p sets precision to %p", (value, expected) => {
 			const config = new AttributeConfig(value);
 			expect(config.number).toBe(true);
 			expect(config.precision).toBe(expected);
 		});
 
-		test("sets prefix option", () => {
+		test("sets prefix", () => {
 			const config = new AttributeConfig("name,prefix=  Text  ");
 			expect(config.prefix).toBe("  Text  ");
 		});
 
-		test("sets suffix option", () => {
+		test("sets suffix", () => {
 			const config = new AttributeConfig("name,suffix=  Text  ");
 			expect(config.suffix).toBe("  Text  ");
 		});
 
-		test("sets repeat option", () => {
+		test("sets repeat", () => {
 			const config = new AttributeConfig("name,repeat=  Text  ");
 			expect(config.repeat).toBe("Text");
 		});
 	});
 
 	describe("affix", () => {
-		it("affixes text", () => {
+		test("returns affixed string", () => {
 			const config = new AttributeConfig(
 				"name,prefix=Prefix,suffix=Suffix"
 			);
@@ -138,7 +138,7 @@ describe("AttributeConfig", () => {
 		];
 
 		test.each([
-			["returns as is if no affix", "", "", nodes],
+			["returns nodes as is if no affix", "", "", nodes],
 			[
 				"returns nodes with prefix",
 				"Prefix",
@@ -160,18 +160,16 @@ describe("AttributeConfig", () => {
 	});
 
 	describe("makeSeparator", () => {
-		it("returns a space for badges", () => {
-			const config = new AttributeConfig("name,badge");
-			expect(config.makeSeparator()).toEqual(
-				document.createTextNode(" ")
-			);
-		});
-
-		it("returns a <br> for everything else", () => {
-			const config = new AttributeConfig("name");
-			expect(config.makeSeparator()).toEqual(
-				document.createElement("br")
-			);
+		test.each([
+			[
+				"returns space for badges",
+				"name,badge",
+				document.createTextNode(" "),
+			],
+			["returns <br> otherwise", "name", document.createElement("br")],
+		])("%s", (_, value, expected) => {
+			const config = new AttributeConfig(value);
+			expect(config.makeSeparator()).toEqual(expected);
 		});
 	});
 });

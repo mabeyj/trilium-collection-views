@@ -5,7 +5,7 @@ describe("ViewConfig", () => {
 	describe("constructor", () => {
 		function getNote(name: string, value: string): NoteShort {
 			return new MockNoteShort({
-				title: "Title",
+				title: "Note Title",
 				attributes: [{ type: "label", name, value }],
 			});
 		}
@@ -22,16 +22,16 @@ describe("ViewConfig", () => {
 
 		test.each([
 			["  #one and #two  ", "#one and #two"],
-			["#title = $title", '#title = "Title"'],
+			["#title = $title", '#title = "Note Title"'],
 		])("query label %p sets query to %p", (value, expected) => {
 			const config = new ViewConfig(getNote("query", value));
 			expect(config.query).toBe(expected);
 		});
 
 		test.each([
-			["empty groupBy label clears groupBy", "  ", undefined],
+			["clears groupBy if groupBy label is empty", "  ", undefined],
 			[
-				"non-empty groupBy label sets groupBy",
+				"sets groupBy otherwise",
 				"name,badge",
 				new AttributeConfig("name,badge"),
 			],
@@ -41,9 +41,9 @@ describe("ViewConfig", () => {
 		});
 
 		test.each([
-			["empty sort label sets clears sort", "  ", []],
+			["clears sort if sort label is empty", "  ", []],
 			[
-				"non-empty sort label sets sort",
+				"sets sort otherwise",
 				"  one  ,  !two  ",
 				[
 					{ name: "one", descending: false },
@@ -94,13 +94,14 @@ describe("ViewConfig", () => {
 			}
 		);
 
-		test("attribute labels set attributes", () => {
+		test("sets attributes from attribute labels", () => {
 			const note = new MockNoteShort({
 				attributes: [
 					{ type: "label", name: "attribute", value: "one,badge" },
 					{ type: "label", name: "attribute", value: "two,number" },
 				],
 			});
+
 			const config = new ViewConfig(note);
 			expect(config.attributes).toEqual([
 				new AttributeConfig("one,badge"),

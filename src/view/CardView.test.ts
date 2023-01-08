@@ -41,25 +41,25 @@ describe("CardView", () => {
 			return $card.querySelector(".collection-view-card-cover");
 		}
 
-		it("returns card with cover", async () => {
+		test("returns card with cover", async () => {
 			const $card = await view.renderCard(coverNote, false);
 			expect($card).toHaveTextContent("Title");
 			expect(getCover($card)).not.toBeNull();
 		});
 
-		it("returns card without empty cover if hiding empty covers", async () => {
+		test("returns card without empty cover if hiding empty covers", async () => {
 			const $card = await view.renderCard(note, false);
 			expect(getCover($card)).toBeNull();
 		});
 
-		it("returns card with empty cover if showing empty covers", async () => {
+		test("returns card with empty cover if showing empty covers", async () => {
 			const $card = await view.renderCard(note, true);
 			expect(getCover($card)).not.toBeNull();
 		});
 	});
 
 	describe("renderCardCover", () => {
-		it("returns cover with defaults", async () => {
+		test("returns cover with defaults", async () => {
 			const $cover = await view.renderCardCover(coverNote, false);
 			expect($cover).toHaveStyle({
 				backgroundImage: 'url("cover.png")',
@@ -67,31 +67,31 @@ describe("CardView", () => {
 			});
 		});
 
-		it("returns cover with custom height", async () => {
+		test("returns cover with custom height", async () => {
 			config.coverHeight = 100;
 			const $cover = await view.renderCardCover(coverNote, false);
 			expect($cover).toHaveStyle({ height: "100px" });
 		});
 
-		it("returns undefined if cover height is zero", async () => {
+		test("returns undefined if cover height is zero", async () => {
 			config.coverHeight = 0;
 			const $cover = await view.renderCardCover(coverNote, false);
 			expect($cover).toBeUndefined();
 		});
 
-		it("returns cover if no cover and showing empty covers", async () => {
+		test("returns cover if no cover and showing empty covers", async () => {
 			const $cover = await view.renderCardCover(note, true);
 			expect($cover).toHaveStyle({ backgroundImage: "" });
 		});
 
-		it("returns undefined if no cover and hiding empty covers", async () => {
+		test("returns undefined if no cover and hiding empty covers", async () => {
 			const $cover = await view.renderCardCover(note, false);
 			expect($cover).toBeUndefined();
 		});
 	});
 
 	describe("renderCardAttributeList", () => {
-		it("returns list", async () => {
+		test("returns list", async () => {
 			config.attributes.push(new AttributeConfig("test"));
 			const $list = await view.renderCardAttributeList(attributeNote);
 			expect($list).toHaveTextContent("Title");
@@ -100,14 +100,14 @@ describe("CardView", () => {
 	});
 
 	describe("renderCardTitle", () => {
-		it("returns list item", async () => {
+		test("returns list item", async () => {
 			const $item = await view.renderCardTitle(note);
 			expect($item).toHaveTextContent("Title");
 		});
 	});
 
 	describe("renderCardAttributeValues", () => {
-		it("returns list items", async () => {
+		test("returns list items", async () => {
 			const $items = await view.renderCardAttributeValues(
 				attributeNote,
 				new AttributeConfig("test")

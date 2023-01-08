@@ -12,31 +12,29 @@ const view = new TestView(new ViewConfig(new MockNoteShort()));
 
 describe("View", () => {
 	describe("renderAttributeValues", () => {
-		it("returns empty array for non-Boolean attribute with no values", async () => {
-			const elements = await view.renderAttributeValues(
+		test("returns empty array for non-Boolean attribute with no values", async () => {
+			const $values = await view.renderAttributeValues(
 				new MockNoteShort(),
 				new AttributeConfig("test")
 			);
-
-			expect(elements).toHaveLength(0);
+			expect($values).toHaveLength(0);
 		});
 
-		it("returns unchecked checkbox for Boolean attribute with no values", async () => {
-			const elements = await view.renderAttributeValues(
+		test("returns unchecked checkbox for Boolean attribute with no values", async () => {
+			const $values = await view.renderAttributeValues(
 				new MockNoteShort(),
 				new AttributeConfig("test,boolean")
 			);
-
-			expect(elements).toHaveLength(1);
-			expect(elements[0][0]).not.toBeChecked();
+			expect($values).toHaveLength(1);
+			expect($values[0][0]).not.toBeChecked();
 		});
 
-		it("returns elements for multiple values", async () => {
+		test("returns elements for multiple values", async () => {
 			new MockApi({
 				notes: [new MockNoteShort({ noteId: "id", title: "2" })],
 			});
 
-			const elements = await view.renderAttributeValues(
+			const $values = await view.renderAttributeValues(
 				new MockNoteShort({
 					attributes: [
 						{ type: "label", name: "test", value: "1" },
@@ -46,14 +44,13 @@ describe("View", () => {
 				}),
 				new AttributeConfig("test")
 			);
-
-			expect(elements).toHaveLength(2);
-			expect(elements[0][0]).toHaveTextContent("1");
-			expect(elements[1][0]).toHaveTextContent("2");
+			expect($values).toHaveLength(2);
+			expect($values[0][0]).toHaveTextContent("1");
+			expect($values[1][0]).toHaveTextContent("2");
 		});
 
-		it("returns progress bar for progressBar attribute", async () => {
-			const elements = await view.renderAttributeValues(
+		test("returns progress bar element", async () => {
+			const $values = await view.renderAttributeValues(
 				new MockNoteShort({
 					attributes: [
 						{ type: "label", name: "count", value: "1" },
@@ -62,9 +59,8 @@ describe("View", () => {
 				}),
 				new AttributeConfig("count,progressBar=total")
 			);
-
-			expect(elements).toHaveLength(1);
-			expect(elements[0][0]).toHaveClass("collection-view-progress");
+			expect($values).toHaveLength(1);
+			expect($values[0][0]).toHaveClass("collection-view-progress");
 		});
 	});
 
@@ -79,14 +75,13 @@ describe("View", () => {
 				notes: [new MockNoteShort({ noteId: "Value", title: "Title" })],
 			});
 
-			const elements = await view.renderAttributeValue(
+			const $value = await view.renderAttributeValue(
 				{ type, value: "Value" },
 				null,
 				config
 			);
-
-			expect(elements).toHaveLength(1);
-			expect(elements[0]).toHaveTextContent(expected);
+			expect($value).toHaveLength(1);
+			expect($value[0]).toHaveTextContent(expected);
 		});
 
 		test.each([
@@ -94,25 +89,23 @@ describe("View", () => {
 			["returns text for value with empty denominator", ""],
 			["returns text for value with non-numeric denominator", "bad"],
 		])("%s", async (_, denominator) => {
-			const elements = await view.renderAttributeValue(
+			const $value = await view.renderAttributeValue(
 				{ type: "label", value: "1" },
 				denominator,
 				config
 			);
-
-			expect(elements).toHaveLength(1);
-			expect(elements[0]).toBeInstanceOf(Text);
+			expect($value).toHaveLength(1);
+			expect($value[0]).toBeInstanceOf(Text);
 		});
 
 		test("returns progress bar for value with numeric denominator", async () => {
-			const elements = await view.renderAttributeValue(
+			const $value = await view.renderAttributeValue(
 				{ type: "label", value: "1" },
 				"2",
 				config
 			);
-
-			expect(elements).toHaveLength(1);
-			expect(elements[0]).toHaveClass("collection-view-progress");
+			expect($value).toHaveLength(1);
+			expect($value[0]).toHaveClass("collection-view-progress");
 		});
 	});
 
@@ -128,9 +121,9 @@ describe("View", () => {
 				"name,boolean,repeat=*,number,badge"
 			);
 
-			const elements = view.renderValue("true", config, null);
-			expect(elements).toHaveLength(1);
-			expect(elements[0]).toBeChecked();
+			const $value = view.renderValue("true", config, null);
+			expect($value).toHaveLength(1);
+			expect($value[0]).toBeChecked();
 		});
 
 		test.each([
@@ -148,68 +141,64 @@ describe("View", () => {
 				`name,prefix=Prefix,suffix=Suffix,${options}`
 			);
 
-			const elements = view.renderValue(value, config, null);
-			expect(elements).toHaveLength(1);
-			expect(elements[0]).toHaveTextContent(`Prefix${expected}Suffix`);
+			const $value = view.renderValue(value, config, null);
+			expect($value).toHaveLength(1);
+			expect($value[0]).toHaveTextContent(`Prefix${expected}Suffix`);
 		});
 
 		test.each([
-			[
-				"returns elements for badge with repeated string",
-				"3",
-				"repeat=*",
-				"***",
-			],
-			[
-				"returns elements for badge with formatted number",
-				"1000",
-				"number",
-				"1,000",
-			],
-			["returns elements for badge with defaults", "value", "", "value"],
+			["returns badge with defaults", "value", "", "value"],
+			["returns badge with repeated string", "3", "repeat=*", "***"],
+			["returns badge with formatted number", "1000", "number", "1,000"],
 		])("%s", (_, value, options, expected) => {
 			const config = new AttributeConfig(
 				`name,badge,prefix=Prefix,suffix=Suffix,${options}`
 			);
 
-			const elements = view.renderValue(value, config, note);
-			expect(elements).toHaveLength(1);
-			expect(elements[0]).toHaveClass("badge");
-			expect(elements[0]).toHaveStyle({ background: "red" });
-			expect(elements[0]).toHaveTextContent(`Prefix${expected}Suffix`);
+			const $value = view.renderValue(value, config, note);
+			expect($value).toHaveLength(1);
+			expect($value[0]).toHaveClass("badge");
+			expect($value[0]).toHaveStyle({ background: "red" });
+			expect($value[0]).toHaveTextContent(`Prefix${expected}Suffix`);
 		});
 	});
 
 	describe("renderBoolean", () => {
 		test("returns checked checkbox for truthy value", () => {
 			const config = new AttributeConfig("name");
-			const elements = view.renderBoolean("true", config);
-			expect(elements).toHaveLength(1);
-			expect(elements[0]).toBeChecked();
+			const $value = view.renderBoolean("true", config);
+			expect($value).toHaveLength(1);
+			expect($value[0]).toBeChecked();
 		});
 
 		test("returns unchecked checkbox for falsy value", () => {
 			const config = new AttributeConfig("name");
-			const elements = view.renderBoolean("false", config);
-			expect(elements).toHaveLength(1);
-			expect(elements[0]).not.toBeChecked();
+			const $value = view.renderBoolean("false", config);
+			expect($value).toHaveLength(1);
+			expect($value[0]).not.toBeChecked();
 		});
 
 		test("returns affixed checkbox", () => {
 			const config = new AttributeConfig(
 				"name,prefix=Prefix,suffix=Suffix"
 			);
-			const elements = view.renderBoolean("true", config);
-			expect(elements).toHaveLength(3);
-			expect(elements[0]).toHaveTextContent("Prefix");
-			expect(elements[1]).toBeChecked();
-			expect(elements[2]).toHaveTextContent("Suffix");
+
+			const $value = view.renderBoolean("true", config);
+			expect($value).toHaveLength(3);
+			expect($value[0]).toHaveTextContent("Prefix");
+			expect($value[1]).toBeChecked();
+			expect($value[2]).toHaveTextContent("Suffix");
 		});
 	});
 
 	describe("renderBadge", () => {
 		test.each([
-			["returns badge with default styles", "", null, undefined],
+			[
+				"returns badge with default styles",
+				"",
+				null,
+				{ background: "", color: "" },
+			],
 			[
 				"returns badge with background set via attribute option",
 				"badgeBackground=red",
@@ -250,10 +239,7 @@ describe("View", () => {
 			const config = new AttributeConfig(`name,${options}`);
 			const $badge = view.renderBadge("value", config, note);
 			expect($badge).toHaveTextContent("value");
-
-			if (styles) {
-				expect($badge).toHaveStyle(styles);
-			}
+			expect($badge).toHaveStyle(styles);
 		});
 	});
 
@@ -333,7 +319,7 @@ describe("View", () => {
 	});
 
 	describe("renderProgressBarNumber", () => {
-		test("returns element with a formatted number", () => {
+		test("returns formatted number", () => {
 			const $number = view.renderProgressBarNumber(1234.5);
 			expect($number).toHaveTextContent("1,234.5");
 		});
@@ -361,7 +347,8 @@ describe("View", () => {
 			],
 		])("%s", (_, value, expected) => {
 			const config = new AttributeConfig("name,repeat=<>");
-			expect(view.formatRepeat(value, config)).toBe(expected);
+			const $number = view.formatRepeat(value, config);
+			expect($number).toBe(expected);
 		});
 	});
 
@@ -383,7 +370,8 @@ describe("View", () => {
 			],
 		])("%s", (_, value, options, expected) => {
 			const config = new AttributeConfig(`name,${options}`);
-			expect(view.formatNumber(value, config)).toBe(expected);
+			const formatted = view.formatNumber(value, config);
+			expect(formatted).toBe(expected);
 		});
 	});
 });

@@ -22,16 +22,16 @@ describe("getCoverUrl", () => {
 });
 
 describe("groupNotes", () => {
-	test("returns empty array for no notes", async () => {
+	test("returns an empty array if no notes", async () => {
 		expect(await groupNotes([], "group")).toEqual([]);
 	});
 
-	test("returns groups of notes", async () => {
+	test("returns groups otherwise", async () => {
 		const relatedNotes = [
-			new MockNoteShort({ noteId: "1", title: "Title 1" }),
+			new MockNoteShort({ noteId: "1", title: "Note 1" }),
 			new MockNoteShort({
 				noteId: "2",
-				title: "Title 2",
+				title: "Note 2",
 				attributes: [
 					{
 						type: "label",
@@ -91,16 +91,17 @@ describe("groupNotes", () => {
 
 		new MockApi({ notes: relatedNotes });
 
-		expect(await groupNotes(notes, "group")).toEqual([
+		const groups = await groupNotes(notes, "group");
+		expect(groups).toEqual([
 			{ name: "a", relatedNote: null, notes: [notes[2]] },
 			{
-				name: "Title 2",
+				name: "Note 2",
 				relatedNote: relatedNotes[1],
 				notes: [notes[3]],
 			},
 			{ name: "bad", relatedNote: null, notes: [notes[4]] },
 			{
-				name: "Title 1",
+				name: "Note 1",
 				relatedNote: relatedNotes[0],
 				notes: [notes[3]],
 			},
@@ -297,15 +298,15 @@ describe("sortNotes", () => {
 
 describe("getSortableGroupName", () => {
 	test.each([
-		["returns the group name", "  Group  ", null, "  group  "],
+		["returns group name", "  Group  ", null, "  group  "],
 		[
-			"returns a related note's title",
+			"returns related note's title",
 			"  Group  ",
 			new MockNoteShort({ title: "  Title  " }),
 			"title",
 		],
 		[
-			"returns a related note's sortableTitle",
+			"returns related note's sortableTitle",
 			"  Group  ",
 			new MockNoteShort({
 				title: "  Title  ",
@@ -370,12 +371,12 @@ describe("getSortableAttributeValue", () => {
 			"sortable title",
 		],
 		[
-			"returns a relation's value if no related note found",
+			"returns a relation's value if related note not found",
 			[],
 			[{ type: "relation", name: "test", value: "  Bad  " }],
 			"bad",
 		],
-		["returns an empty string if no attribute found", [], [], ""],
+		["returns an empty string if attribute not found", [], [], ""],
 	])("%s", async (_, notes, attributes, expected) => {
 		new MockApi({ notes });
 		const note = new MockNoteShort({ attributes });
@@ -385,9 +386,9 @@ describe("getSortableAttributeValue", () => {
 
 describe("getSortableTitle", () => {
 	test.each([
-		["returns a note's title", [], "title"],
+		["returns note's title", [], "title"],
 		[
-			"returns a note's sortableTitle",
+			"returns note's sortableTitle",
 			[
 				{
 					type: "label",

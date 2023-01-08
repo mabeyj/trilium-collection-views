@@ -8,10 +8,11 @@ describe("GalleryView", () => {
 
 	beforeEach(() => {
 		const notes = [
-			new MockNoteShort({ noteId: "1", title: "Title 1" }),
-			new MockNoteShort({ noteId: "2", title: "Title 2" }),
+			new MockNoteShort({ noteId: "1", title: "Note 1" }),
+			new MockNoteShort({ noteId: "2", title: "Note 2" }),
 		];
 		new MockApi({ notes });
+
 		config = new ViewConfig(new MockNoteShort());
 		view = new GalleryView(config, notes);
 	});
@@ -21,14 +22,13 @@ describe("GalleryView", () => {
 			return $view.querySelector(".collection-view-gallery");
 		}
 
-		it("renders view with defaults", async () => {
+		test("renders view with defaults", async () => {
 			const $view = await view.render();
 			expect(getGallery($view)).toHaveStyle({ gridTemplateColumns: "" });
-			expect($view).toHaveTextContent("Title 1");
-			expect($view).toHaveTextContent("Title 2");
+			expect($view).toHaveTextContent("Note 1Note 2");
 		});
 
-		it("renders view with custom number of columns", async () => {
+		test("renders view with custom number of columns", async () => {
 			config.columns = 3;
 			const $view = await view.render();
 			expect(getGallery($view)).toHaveStyle({
