@@ -40,9 +40,8 @@ export function parseFloatStrict(value: any): number {
 }
 
 /**
- * Returns a number clamped between two values (inclusive) or undefined if not
- * a number.
+ * Returns a number clamped between two values (inclusive).
  */
-export function clamp(number: number, min: number, max: number): number {
-	return Math.max(min, Math.min(number, max));
+export function clamp(value: number, min: number, max: number): number {
+	return Math.max(min, Math.min(value, max));
 }

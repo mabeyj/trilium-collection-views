@@ -170,7 +170,7 @@ export async function sortNotes(
 /**
  * Returns the sortable name of a group.
  */
-function getSortableGroupName(group: Group): string {
+export function getSortableGroupName(group: Group): string {
 	if (group.relatedNote) {
 		return getSortableTitle(group.relatedNote);
 	}
@@ -186,7 +186,7 @@ function getSortableGroupName(group: Group): string {
  * If the attribute is a relation, then the related note's sortable title is
  * returned. Otherwise, the attribute's value is returned.
  */
-async function getSortableAttributeValue(
+export async function getSortableAttributeValue(
 	note: NoteShort,
 	name: string
 ): Promise<string> {
@@ -209,7 +209,7 @@ async function getSortableAttributeValue(
 /**
  * Returns the sortable title of a note.
  */
-function getSortableTitle(note: NoteShort): string {
+export function getSortableTitle(note: NoteShort): string {
 	const sortableTitle = note.getLabelValue("sortableTitle") || "";
 	const title = sortableTitle.trim() || note.title.trim();
 	return title.toLowerCase();
