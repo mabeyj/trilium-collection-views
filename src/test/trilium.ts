@@ -69,6 +69,8 @@ interface MockAttribute {
 
 export class MockNoteShort {
 	public noteId: string;
+	public type: string = "text";
+	public mime: string = "text/html";
 	public title: string;
 	private content: string;
 	private attributes: MockAttribute[];
@@ -107,5 +109,25 @@ export class MockNoteShort {
 
 	public getLabelValue(name: string): string | null {
 		return this.getAttribute("label", name)?.value ?? null;
+	}
+
+	public async getNoteComplement(): Promise<NoteComplement> {
+		return {
+			contentLength: 1000,
+			utcDateCreated: "2020-01-02 03:04:05.678Z",
+			combinedUtcDateModified: "2020-02-03 04:05:06.789Z",
+		};
+	}
+
+	public async getRelationTargets(name?: string): Promise<NoteShort[]> {
+		const targets: NoteShort[] = [];
+		for (const attribute of this.getAttributes("relation", name)) {
+			const note = await api.getNote(attribute.value);
+			if (note) {
+				targets.push(note);
+			}
+		}
+
+		return targets;
 	}
 }

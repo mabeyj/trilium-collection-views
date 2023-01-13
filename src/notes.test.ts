@@ -1,4 +1,6 @@
 import {
+	getAttributes,
+	getAttributeValue,
 	getCoverUrl,
 	getSortableAttributeValue,
 	getSortableGroupName,
@@ -7,6 +9,105 @@ import {
 	sortNotes,
 } from "collection-views/notes";
 import { MockApi, MockNoteShort } from "collection-views/test";
+
+const attributeNote = new MockNoteShort({
+	noteId: "1",
+	title: "Title",
+	attributes: [
+		{ type: "label", name: "test", value: "Label" },
+		{ type: "relation", name: "test", value: "Relation" },
+		{ type: "label", name: "label", value: "2" },
+		{ type: "relation", name: "relation", value: "2" },
+		{ type: "relation", name: "relation", value: "3" },
+		{ type: "relation", name: "relation", value: "bad" },
+	],
+});
+const relatedNotes = [
+	new MockNoteShort({
+		noteId: "2",
+		title: "Related note 1",
+		attributes: [
+			{ type: "label", name: "label", value: "Label 1" },
+			{ type: "label", name: "label", value: "Label 2" },
+		],
+	}),
+	new MockNoteShort({
+		noteId: "3",
+		title: "Related note 2",
+		attributes: [{ type: "label", name: "label", value: "Label 3" }],
+	}),
+];
+
+describe("getAttributes", () => {
+	beforeEach(() => {
+		new MockApi({ notes: relatedNotes });
+	});
+
+	test.each([
+		["returns ID for $id", "$id", "1"],
+		["returns ID for $noteId", "$noteId", "1"],
+		["returns type", "$type", "text"],
+		["returns content type", "$mime", "text/html"],
+		["returns title", "$title", "Title"],
+		["returns content length", "$contentSize", "1000"],
+		["returns date created", "$dateCreated", "2020-01-02 03:04:05.678Z"],
+		["returns date modified", "$dateModified", "2020-02-03 04:05:06.789Z"],
+	])("%s", async (_, path, expected) => {
+		const attributes = await getAttributes(attributeNote, path);
+		expect(attributes).toHaveLength(1);
+		expect(attributes[0].type).toBe("label");
+		expect(attributes[0].value).toBe(expected);
+	});
+
+	test.each([
+		["returns empty array for empty name", "", []],
+		["returns empty array for invalid property", "$bad", []],
+		["returns attributes", "test", ["Label", "Relation"]],
+		[
+			"returns related notes' attributes",
+			"relation.label",
+			["Label 1", "Label 2", "Label 3"],
+		],
+		["returns empty array for missing attribute", "bad", []],
+		["returns empty array for attributes of labels", "label.label", []],
+		[
+			"returns empty array for attributes of missing attributes",
+			"bad.bad",
+			[],
+		],
+		[
+			"returns related notes' properties",
+			"relation.$title",
+			["Related note 1", "Related note 2"],
+		],
+		[
+			"returns empty array for missing attributes for related notes",
+			"relation.bad",
+			[],
+		],
+	])("%s", async (_, path, expected) => {
+		const attributes = await getAttributes(attributeNote, path);
+		expect(attributes.map((attribute) => attribute.value)).toEqual(
+			expected
+		);
+	});
+});
+
+describe("getAttributeValue", () => {
+	test.each([
+		["returns property", "$title", "Title"],
+		["returns first value of attribute", "test", "Label"],
+		[
+			"returns first value of related note's attributes",
+			"relation.label",
+			"Label 1",
+		],
+		["returns empty string when no attributes", "bad", ""],
+	])("returns %s", async (_, path, expected) => {
+		const value = await getAttributeValue(attributeNote, path);
+		expect(value).toBe(expected);
+	});
+});
 
 describe("getCoverUrl", () => {
 	test.each([

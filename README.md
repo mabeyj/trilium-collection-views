@@ -27,6 +27,8 @@ An extension for [Trilium Notes](https://github.com/zadam/trilium) that implemen
     - [`coverHeight`](#coverheight)
     - [`attribute`](#attribute)
   - [Attribute settings](#attribute-settings)
+    - [Note properties](#note-properties)
+    - [Attribute paths](#attribute-paths)
     - [`align`](#align)
     - [`badge`](#badge)
     - [`badgeBackground`](#badgebackground)
@@ -215,6 +217,35 @@ By default, attribute values will be shown as plain text. For labels, the label'
 ### Attribute settings
 
 Labels that support attribute settings ([`#attribute`](#attribute) and [`#groupBy`](#groupBy)) have a value that is a comma-separated list. The first item in the list is an attribute name. Any remaining items in the list are settings (described below) either in the form of a flag (`settingName`) or a key/value pair (`settingName=value`).
+
+#### Note properties
+
+The following special attribute names (prefixed with `$`) refer to a note's properties instead of user-defined attributes:
+
+- `$id` or `$noteId`: The note's ID.
+- `$title`: The note's title.
+- `$type`: The note's type.
+  - As of Trilium v0.58, the possible types are: `book`, `canvas`, `code`, `contentWidget`, `doc`, `file`, `image`, `launcher`, `mermaid`, `noteMap`, `relationMap`, `render`, `search`, `text`, `webView`
+  - The following types existed in older versions of Trilium: `note-map`, `relation-map`, `web-view`
+- `$mime`: The note's content type, such as `text/html`.
+- `$contentSize`: The size of the note's content in bytes.
+- `$dateCreated`: The date and time when the note was created.
+- `$dateModified`: The date and time when the note was last modified.
+
+Date properties use UTC for the time zone and are formatted according to RFC 3339 (`YYYY-MM-DD hh:mm:ss.sssZ`).
+
+Example: `#attribute=$dateModified`
+
+#### Attribute paths
+
+Wherever an attribute name is specified, you can instead provide a path to an attribute. This allows for finding attributes for notes that are targeted by a note's relations.
+
+A path consists of one or more names separated by a period (`.`). The last name in the path must be an attribute name. All other names in the path must be relation names.
+
+Examples:
+
+- `#attribute=company.employee.name` would find all attributes named `name` defined on all notes targeted by the `employee` relation defined on all notes targeted by the `company` relation defined on a note.
+- `#attribute=tag.$dateModified` would find the modification dates of all notes targeted by the `tag` relation defined on a note.
 
 #### `align`
 
