@@ -106,16 +106,13 @@ describe("CardView", () => {
 		});
 	});
 
-	describe("renderCardAttributeValues", () => {
-		test("returns list items", async () => {
-			const $items = await view.renderCardAttributeValues(
+	describe("renderCardAttribute", () => {
+		test("returns list item", async () => {
+			const $item = await view.renderCardAttribute(
 				attributeNote,
 				new AttributeConfig("test")
 			);
-
-			expect($items).toHaveLength(2);
-			expect($items[0]).toHaveTextContent("Label 1");
-			expect($items[1]).toHaveTextContent("Label 2");
+			expect($item).toHaveTextContent("Label 1, Label 2");
 		});
 	});
 });

@@ -38,10 +38,12 @@ An extension for [Trilium Notes](https://github.com/zadam/trilium) that implemen
     - [`precision`](#precision)
     - [`progressBar`](#progressbar)
     - [`repeat`](#repeat)
+    - [`separator`](#separator)
     - [`suffix`](#suffix)
     - [`truncate`](#truncate)
     - [`width`](#width)
     - [`wrap`](#wrap)
+    - [Escape sequences](#escape-sequences)
   - [Covers](#covers)
   - [Custom badge colors](#custom-badge-colors)
   - [Custom sorting](#custom-sorting)
@@ -329,6 +331,25 @@ Renders the value as a string repeated depending on the attribute's numeric valu
 
 Example: `#attribute="rating,repeat=⭐"`
 
+#### `separator`
+
+- Not supported by [`progressBar`](#progressBar)
+- Optional (default: `space` for `boolean` and `badge` attributes, `comma` otherwise)
+
+Sets the string inserted between values when an attribute has multiple values. This can be one of the following values:
+
+- `newline`: Inserts a newline between values, resulting in one value per line.
+- `comma`: Inserts a comma and space (`, `) between values.
+- `space`: Inserts a space (` `) between values.
+
+Or, it can be a custom separator. If this setting is not set to one of the above values, then the setting's value will be inserted as is between values.
+
+Examples:
+
+- `#attribute=description,separator=newline`
+- `#attribute=author,separator=comma`
+- `#attribute=tag,separator= | `
+
 #### `suffix`
 
 - Optional
@@ -369,6 +390,17 @@ Example: `#attribute=status,width=100`
 Toggles text wrapping. If enabled, long text in a column will wrap to multiple lines. For tables that scroll horizontally, setting a [`width`](#width) will avoid text getting squashed into a very thin column.
 
 Example: `#attribute=description,wrap`
+
+#### Escape sequences
+
+Escape sequences in setting values begin with a backtick (<code>`</code>). The following escape sequences are supported:
+
+- <code>``</code>: Backtick
+- <code>`,</code>: Comma
+
+Since settings are separated by a comma, the most common use for escape sequences is for escaping a comma so that it can be used literally in a setting that accepts arbitrary text.
+
+Example: <code>#attribute=position,header=X`,Y</code> would display a header containing the text "X,Y".
 
 ### Covers
 

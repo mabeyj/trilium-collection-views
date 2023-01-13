@@ -64,22 +64,20 @@ export abstract class CardView extends View {
 	async renderCardAttributeList(note: NoteShort): Promise<HTMLElement> {
 		const titlePromise = this.renderCardTitle(note);
 
-		const attributePromises: Promise<HTMLElement[]>[] = [];
+		const attributePromises: Promise<HTMLElement>[] = [];
 		for (const attributeConfig of this.config.attributes) {
 			attributePromises.push(
-				this.renderCardAttributeValues(note, attributeConfig)
+				this.renderCardAttribute(note, attributeConfig)
 			);
 		}
 
 		const $title = await titlePromise;
-		const $attributeValues = await Promise.all(attributePromises);
+		const $attributes = await Promise.all(attributePromises);
 
 		const $list = document.createElement("ul");
 		$list.className = "collection-view-card-attributes";
 		$list.appendChild($title);
-		for (const $values of $attributeValues) {
-			appendChildren($list, $values);
-		}
+		appendChildren($list, $attributes);
 		return $list;
 	}
 
@@ -99,18 +97,17 @@ export abstract class CardView extends View {
 	}
 
 	/**
-	 * Returns elements for rendering list items for a note's attributes in
-	 * a card.
+	 * Returns an element for rendering a list item containing all values of
+	 * a note's attribute.
 	 */
-	async renderCardAttributeValues(
+	async renderCardAttribute(
 		note: NoteShort,
 		attributeConfig: AttributeConfig
-	): Promise<HTMLElement[]> {
+	): Promise<HTMLElement> {
 		const $values = await this.renderAttributeValues(note, attributeConfig);
-		return $values.map(($nodes) => {
-			const $item = document.createElement("li");
-			appendChildren($item, $nodes);
-			return $item;
-		});
+
+		const $item = document.createElement("li");
+		appendChildren($item, $values);
+		return $item;
 	}
 }

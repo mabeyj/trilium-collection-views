@@ -1,5 +1,13 @@
 import { parseOptionalInt } from "collection-views/math";
 
+const escapeCharacter = "`";
+const escapeableCharacters = [escapeCharacter, ","];
+
+const separatorAliases: Record<string, string> = {
+	comma: ", ",
+	space: " ",
+};
+
 /**
  * Configuration related to an attribute.
  */
@@ -23,15 +31,16 @@ export class AttributeConfig {
 	precision?: number;
 
 	prefix: string = "";
-	suffix: string = "";
 	repeat: string = "";
+	separator?: string;
+	suffix: string = "";
 
 	constructor(value: string) {
-		const options = value.split(",");
-		this.name = options.shift() || "";
+		const settings = splitComma(value);
+		this.name = settings.shift() || "";
 
-		for (var option of options) {
-			const parts = option.split("=");
+		for (var setting of settings) {
+			const parts = setting.split("=");
 			const key = (parts.shift() || "").trim();
 			const value = parts.join("=");
 
@@ -50,6 +59,7 @@ export class AttributeConfig {
 					break;
 
 				case "prefix":
+				case "separator":
 				case "suffix":
 					this[key] = value;
 					break;
@@ -109,10 +119,63 @@ export class AttributeConfig {
 	/**
 	 * Returns the separator to use for multiple attribute values in a table.
 	 */
-	makeSeparator(): HTMLElement | Text {
-		if (this.badge) {
-			return document.createTextNode(" ");
+	getSeparator(): HTMLElement | Text | undefined {
+		let separator = this.separator;
+		if (separator === undefined) {
+			separator = this.badge || this.boolean ? "space" : "comma";
 		}
-		return document.createElement("br");
+
+		if (!separator) {
+			return undefined;
+		}
+		if (separator === "newline") {
+			return document.createElement("br");
+		}
+		return document.createTextNode(
+			separatorAliases[separator] || separator
+		);
 	}
+}
+
+/**
+ * Returns a list of values from splitting on each comma in the given value,
+ * accounting for escape sequences.
+ */
+function splitComma(value: string): string[] {
+	const values: string[] = [];
+	let next = "";
+	let escaping = false;
+
+	for (const character of value) {
+		if (escaping) {
+			escaping = false;
+
+			if (escapeableCharacters.includes(character)) {
+				next += character;
+				continue;
+			}
+
+			next += escapeCharacter;
+		}
+
+		switch (character) {
+			case escapeCharacter:
+				escaping = true;
+				break;
+			case ",":
+				values.push(next);
+				next = "";
+				break;
+			default:
+				next += character;
+		}
+	}
+	if (escaping) {
+		next += escapeCharacter;
+	}
+	if (next) {
+		values.push(next);
+	}
+
+	return values;
 }

@@ -26,10 +26,10 @@ describe("View", () => {
 				new AttributeConfig("test,boolean")
 			);
 			expect($values).toHaveLength(1);
-			expect($values[0][0]).not.toBeChecked();
+			expect($values[0]).not.toBeChecked();
 		});
 
-		test("returns elements for multiple values", async () => {
+		test("returns values separated", async () => {
 			new MockApi({
 				notes: [new MockNoteShort({ noteId: "id", title: "2" })],
 			});
@@ -44,23 +44,26 @@ describe("View", () => {
 				}),
 				new AttributeConfig("test")
 			);
-			expect($values).toHaveLength(2);
-			expect($values[0][0]).toHaveTextContent("1");
-			expect($values[1][0]).toHaveTextContent("2");
+			expect($values).toHaveLength(3);
+			expect($values[0]).toHaveTextContent("1");
+			expect($values[1]).toHaveTextContent(",");
+			expect($values[2]).toHaveTextContent("2");
 		});
 
-		test("returns progress bar element", async () => {
+		test("returns progress bars unseparated", async () => {
 			const $values = await view.renderAttributeValues(
 				new MockNoteShort({
 					attributes: [
 						{ type: "label", name: "count", value: "1" },
+						{ type: "label", name: "count", value: "2" },
 						{ type: "label", name: "total", value: "2" },
 					],
 				}),
 				new AttributeConfig("count,progressBar=total")
 			);
-			expect($values).toHaveLength(1);
-			expect($values[0][0]).toHaveClass("collection-view-progress");
+			expect($values).toHaveLength(2);
+			expect($values[0]).toHaveClass("collection-view-progress");
+			expect($values[1]).toHaveClass("collection-view-progress");
 		});
 	});
 
