@@ -1,5 +1,11 @@
 import { parseFloatStrict } from "collection-views/math";
 
+const attributeNameRegex = "(\\$[a-z]+|[\\w:]+)";
+export const attributePathRegex = new RegExp(
+	`${attributeNameRegex}(\.${attributeNameRegex})*`,
+	"i"
+);
+
 export interface Group {
 	name?: string;
 	relatedNote: NoteShort | null;

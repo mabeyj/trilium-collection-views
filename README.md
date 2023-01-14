@@ -127,12 +127,21 @@ Example: `#view=board`
 
 A [search query](https://github.com/zadam/trilium/wiki/Search) that will be executed using Trilium's search engine. The notes returned by this search are the notes that will be included in the view.
 
-The substring `$title` will be replaced with the Render Note's title before executing the search.
+The following tokens may be used inside of a search query. Tokens are replaced with attributes or properties of the Render Note prior to executing the search.
+
+- `$id` or `$noteId`: The Render Note's ID.
+- `$title`: The Render Note's title.
+- `$renderNote.name`: An attribute of the Render Note, where `name` can be an attribute name, a [property name](#note-properties), or an [attribute path](#attribute-paths).
+  - If multiple values are found, then the token will be replaced with the first value that was found.
+  - If an attribute is not found, then the token will be replaced with an empty string.
+
+When a token is replaced, the value will be surrounded by double quotes (`"value"`).
 
 Examples:
 
 - `#query="#book #status=read"` would include all notes having a `book` label and a `status` label set to `read`.
-- `#query="~parent.title=$title"` would include all notes having a `parent` relation targeting a note having the same title as the Render Note itself.
+- `#query="#book #status=$renderNote.status"` would include all notes having a `book` label and a `status` label that has the same value as the Render Note's `status` label.
+- `#query="~parent.noteId=$id"` would include all notes having a `parent` relation targeting a note having the same ID as the Render Note itself.
 
 #### `groupBy`
 

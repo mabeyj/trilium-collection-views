@@ -18,6 +18,9 @@
   - `$contentSize` is the size of the note's content in bytes.
   - `$dateCreated` is the note's creation date and time in UTC and RFC 3339 format (`YYYY-MM-DD hh:mm:ss.sssZ`).
   - `$dateModified` is the note's modification date and time in UTC and RFC 3339 format.
+- Add tokens to `#query` for substituting the Render Note's ID and attributes into the search query.
+  - `$id` and `$noteId` will be replaced with the Render Note's ID.
+  - `$renderNote.name` will be replaced with the value of the first attribute found for the Render Note. `name` can be any attribute name, property name, or attribute path.
 - Add a `separator` attribute setting for controlling how multiple values for a single attribute are separated:
   - `separator=newline` inserts a newline between values, resulting in one value per line.
   - `separator=comma` inserts a comma and space between values.

@@ -44,7 +44,7 @@ async function render(): Promise<void> {
 		return;
 	}
 
-	const notes = await api.searchForNotes(config.query);
+	const notes = await api.searchForNotes(await config.getQuery());
 	if (!notes.length) {
 		renderError("No notes found.");
 		return;

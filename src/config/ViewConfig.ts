@@ -1,6 +1,12 @@
 import { parseOptionalInt } from "collection-views/math";
-import { SortAttribute } from "collection-views/notes";
+import {
+	attributePathRegex,
+	getAttributeValue,
+	SortAttribute,
+} from "collection-views/notes";
 import { AttributeConfig } from "collection-views/config/AttributeConfig";
+
+const tokens = ["$id", "$noteId", "$title", "$renderNote"];
 
 export enum ViewType {
 	Board = "board",
@@ -54,13 +60,9 @@ export class ViewConfig {
 
 	/**
 	 * Sets the search query from a string.
-	 *
-	 * The following substrings are substituted:
-	 * - $title: Origin note's title (quoted).
 	 */
 	parseQuery(value: string): void {
-		value = value.trim();
-		this.query = value.replace(/\$title/g, `"${this.note.title}"`);
+		this.query = value.trim();
 	}
 
 	/**
@@ -124,4 +126,71 @@ export class ViewConfig {
 	parseAttributes(values: string[]): void {
 		this.attributes = values.map((value) => new AttributeConfig(value));
 	}
+
+	/**
+	 * Returns the query with all tokens replaced with their respective values.
+	 *
+	 * Tokens are substrings beginning with "$" that are substituted with
+	 * a value associated with the Render Note. The following tokens are
+	 * supported:
+	 *
+	 * - $id: The Render Note's ID.
+	 * - $title: The Render Note's title.
+	 * - $renderNote.path: The value of the first attribute found for the Render
+	 *   Note at "path" (an attribute path; see getAttributes). If no attribute
+	 *   is found, then the value is an empty string.
+	 *
+	 * All substituted values are double quoted ("value").
+	 */
+	async getQuery(): Promise<string> {
+		let query = "";
+		let remainder = this.query;
+		while (remainder) {
+			let path = getTokenPrefix(remainder);
+			if (path === "$renderNote") {
+				path = getAttributePath(remainder);
+			}
+			if (path === "$renderNote") {
+				path = null;
+			}
+			if (!path) {
+				query += remainder[0];
+				remainder = remainder.slice(1);
+				continue;
+			}
+
+			let length = path.length;
+			if (path.startsWith("$renderNote")) {
+				path = path.split(".").slice(1).join(".");
+			}
+
+			const value = await getAttributeValue(this.note, path);
+			query += `"${value}"`;
+			remainder = remainder.slice(length);
+		}
+
+		return query;
+	}
+}
+
+/**
+ * Returns the token at the beginning of the given string or null if it does not
+ * start with a token.
+ */
+function getTokenPrefix(text: string): string | null {
+	for (const token of tokens) {
+		if (text.startsWith(token)) {
+			return token;
+		}
+	}
+	return null;
+}
+
+/**
+ * Returns the first attribute path found in the given string or null if no path
+ * was found.
+ */
+function getAttributePath(text: string): string | null {
+	const match = text.match(attributePathRegex);
+	return match ? match[0] : null;
 }
