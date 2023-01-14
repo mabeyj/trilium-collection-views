@@ -165,7 +165,7 @@ export class ViewConfig {
 			}
 
 			const value = await getAttributeValue(this.note, path);
-			query += `"${value}"`;
+			query += `"${escapeValue(value)}"`;
 			remainder = remainder.slice(length);
 		}
 
@@ -193,4 +193,12 @@ function getTokenPrefix(text: string): string | null {
 function getAttributePath(text: string): string | null {
 	const match = text.match(attributePathRegex);
 	return match ? match[0] : null;
+}
+
+/**
+ * Returns a string with all backslashes and double quotes escaped with
+ * a backslash.
+ */
+function escapeValue(value: string): string {
+	return value.replaceAll("\\", "\\\\").replaceAll('"', '\\"');
 }

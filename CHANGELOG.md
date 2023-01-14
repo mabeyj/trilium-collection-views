@@ -31,6 +31,7 @@
 - Escape sequences are now supported in attribute setting values using a backtick as the escape character: <code>``</code> and <code>\`,</code>. This allows for using a comma in settings that accept arbitrary text such as `header`.
 - Add margin around all views to better align the edges of views when using Trilium's default themes. This can be changed using the `--collection-view-margin` CSS variable.
 - Fix "ResizeObserver loop limit exceeded" errors occurring in console when the note content area is resized.
+- Fix `#query` tokens not escaping backslashes and double quotes in values.
 - Fix `boolean` checkbox styles not being applied in Trilium 0.46.
 
 ## 1.1.0 - 2021-07-21
