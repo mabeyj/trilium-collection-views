@@ -1,4 +1,5 @@
 import {
+	getAttribute,
 	getAttributes,
 	getAttributeValue,
 	getCoverUrl,
@@ -93,16 +94,23 @@ describe("getAttributes", () => {
 	});
 });
 
+describe("getAttribute", () => {
+	test("returns first attribute", async () => {
+		const attribute = await getAttribute(attributeNote, "test");
+		expect(attribute).not.toBeNull();
+		expect(attribute?.value).toBe("Label");
+	});
+
+	test("returns null if not found", async () => {
+		const attribute = await getAttribute(attributeNote, "bad");
+		expect(attribute).toBeNull();
+	});
+});
+
 describe("getAttributeValue", () => {
 	test.each([
-		["returns property", "$title", "Title"],
-		["returns first value of attribute", "test", "Label"],
-		[
-			"returns first value of related note's attributes",
-			"relation.label",
-			"Label 1",
-		],
-		["returns empty string when no attributes", "bad", ""],
+		["returns value of first attribute", "test", "Label"],
+		["returns empty string if not found", "bad", ""],
 	])("returns %s", async (_, path, expected) => {
 		const value = await getAttributeValue(attributeNote, path);
 		expect(value).toBe(expected);
@@ -340,6 +348,10 @@ describe("sortNotes", () => {
 		}),
 	];
 
+	beforeEach(() => {
+		new MockApi({ notes: relatedNotes });
+	});
+
 	test.each([
 		[
 			"sorts notes by title",
@@ -360,38 +372,37 @@ describe("sortNotes", () => {
 		[
 			"sorts notes by text ascending, then title",
 			textNotes,
-			[{ name: "text", descending: false }],
+			[{ path: "text", descending: false }],
 			["5", "2", "1", "3", "4"],
 		],
 		[
 			"sorts notes by text descending, then title",
 			textNotes,
-			[{ name: "text", descending: true }],
+			[{ path: "text", descending: true }],
 			["4", "2", "1", "3", "5"],
 		],
 		[
 			"sorts notes by number ascending, then title",
 			numericNotes,
-			[{ name: "number", descending: false }],
+			[{ path: "number", descending: false }],
 			["7", "2", "1", "3", "5", "4", "6"],
 		],
 		[
 			"sorts notes by number descending, then title",
 			numericNotes,
-			[{ name: "number", descending: true }],
+			[{ path: "number", descending: true }],
 			["6", "4", "5", "2", "1", "3", "7"],
 		],
 		[
 			"sorts notes by multiple attributes",
 			multipleNotes,
 			[
-				{ name: "one", descending: false },
-				{ name: "two", descending: true },
+				{ path: "one", descending: false },
+				{ path: "two", descending: true },
 			],
 			["3", "5", "2", "4", "1"],
 		],
 	])("%s", async (_, notes, sortAttributes, expected) => {
-		new MockApi({ notes: relatedNotes });
 		await sortNotes(notes, sortAttributes);
 		expect(notes.map((note) => note.noteId)).toEqual(expected);
 	});
@@ -434,54 +445,56 @@ describe("getSortableGroupName", () => {
 });
 
 describe("getSortableAttributeValue", () => {
+	const notes = [
+		new MockNoteShort({
+			attributes: [
+				{ type: "label", name: "label", value: "  Value 1  " },
+				{ type: "label", name: "label", value: "Value 2" },
+				{ type: "relation", name: "relation", value: "1" },
+				{ type: "relation", name: "relation", value: "2" },
+				{ type: "relation", name: "sortable", value: "2" },
+				{ type: "relation", name: "notFound", value: "  Bad  " },
+			],
+		}),
+		new MockNoteShort({
+			noteId: "1",
+			title: "  Title 1  ",
+			attributes: [
+				{ type: "label", name: "label", value: "  Related Label 1  " },
+			],
+		}),
+		new MockNoteShort({
+			noteId: "2",
+			title: "  Title 2  ",
+			attributes: [
+				{ type: "label", name: "sortableTitle", value: "  Sortable  " },
+				{ type: "label", name: "label", value: "Related Label 2" },
+			],
+		}),
+	];
+
+	beforeEach(() => {
+		new MockApi({ notes });
+	});
+
 	test.each([
+		["returns label's value", "label", "value 1"],
+		["returns related note's title", "relation", "title 1"],
+		["returns related note's sortableTitle", "sortable", "sortable"],
 		[
-			"returns a label's value",
-			[],
-			[
-				{ type: "label", name: "test", value: "  Value 1  " },
-				{ type: "label", name: "test", value: "  Value 2  " },
-			],
-			"value 1",
-		],
-		[
-			"returns a related note's title",
-			[new MockNoteShort({ noteId: "1", title: "  Title  " })],
-			[
-				{ type: "relation", name: "test", value: "1" },
-				{ type: "relation", name: "test", value: "2" },
-			],
-			"title",
-		],
-		[
-			"returns a related note's sortableTitle",
-			[
-				new MockNoteShort({
-					noteId: "1",
-					title: "  Title  ",
-					attributes: [
-						{
-							type: "label",
-							name: "sortableTitle",
-							value: "  Sortable Title  ",
-						},
-					],
-				}),
-			],
-			[{ type: "relation", name: "test", value: "1" }],
-			"sortable title",
-		],
-		[
-			"returns a relation's value if related note not found",
-			[],
-			[{ type: "relation", name: "test", value: "  Bad  " }],
+			"returns relation's value if related note not found",
+			"notFound",
 			"bad",
 		],
-		["returns an empty string if attribute not found", [], [], ""],
-	])("%s", async (_, notes, attributes, expected) => {
-		new MockApi({ notes });
-		const note = new MockNoteShort({ attributes });
-		expect(await getSortableAttributeValue(note, "test")).toBe(expected);
+		[
+			"returns related note's label's value",
+			"relation.label",
+			"related label 1",
+		],
+		["returns empty string if attribute not found", "bad", ""],
+	])("%s", async (_, path, expected) => {
+		const value = await getSortableAttributeValue(notes[0], path);
+		expect(value).toBe(expected);
 	});
 });
 

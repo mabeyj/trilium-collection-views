@@ -45,8 +45,8 @@ describe("ViewConfig", () => {
 				"sets sort otherwise",
 				"  one  ,  !two  ",
 				[
-					{ name: "one", descending: false },
-					{ name: "two", descending: true },
+					{ path: "one", descending: false },
+					{ path: "two", descending: true },
 				],
 			],
 		])("%s", (_, value, expected) => {

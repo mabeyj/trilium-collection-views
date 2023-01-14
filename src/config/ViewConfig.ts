@@ -86,16 +86,16 @@ export class ViewConfig {
 			return;
 		}
 
-		this.sort = value.split(",").map((name) => {
-			name = name.trim();
+		this.sort = value.split(",").map((path) => {
+			path = path.trim();
 
 			let descending = false;
-			if (name.startsWith("!")) {
+			if (path.startsWith("!")) {
 				descending = true;
-				name = name.slice(1);
+				path = path.slice(1);
 			}
 
-			return { name, descending };
+			return { path, descending };
 		});
 	}
 

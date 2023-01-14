@@ -168,7 +168,7 @@ Examples:
 - Optional
 - Single value
 
-Sorts notes in the view. The value of this label is a comma-separated list of attribute names. Attribute names can be prefixed with `!` to sort values in descending order.
+Sorts notes in the view. The value of this label is a comma-separated list of attribute names, [property names](#note-properties), or [attribute paths](#attribute-paths). Names and paths can be prefixed with `!` to sort values in descending order.
 
 - If an attribute is a label, then notes are sorted by their values for that label.
 - If an attribute is a relation, then notes are sorted by the titles of notes targeted by the relation.

@@ -13,7 +13,7 @@ export interface Group {
 }
 
 export interface SortAttribute {
-	name: string;
+	path: string;
 	descending: boolean;
 }
 
@@ -107,19 +107,31 @@ export async function getAttributes(
 }
 
 /**
- * Returns the first value of the attribute referenced by the given path that
- * belong to the given note or notes targeted by the given note's relations.
+ * Returns the first attribute referenced by the given path for the given note
+ * or null if no attributes are found.
  *
- * See getAttributes for more details.
+ * See getAttributes for attribute path syntax.
+ */
+export async function getAttribute(
+	note: NoteShort,
+	path: string
+): Promise<Attribute | null> {
+	const attributes = await getAttributes(note, path);
+	return attributes.length ? attributes[0] : null;
+}
+
+/**
+ * Returns the value of the first attribute referenced by the given path for the
+ * given note or an empty string if no attributes are found.
  *
- * If no attributes are found, then an empty string is returned.
+ * See getAttributes for attribute path syntax.
  */
 export async function getAttributeValue(
 	note: NoteShort,
-	name: string
+	path: string
 ): Promise<string> {
-	const attributes = await getAttributes(note, name);
-	return attributes[0]?.value || "";
+	const attribute = await getAttribute(note, path);
+	return attribute?.value || "";
 }
 
 /**
@@ -237,18 +249,18 @@ export async function sortNotes(
 		for (const sortAttribute of sortAttributes) {
 			const value = await getSortableAttributeValue(
 				note,
-				sortAttribute.name
+				sortAttribute.path
 			);
-			sortableValues[note.noteId][sortAttribute.name] = value;
+			sortableValues[note.noteId][sortAttribute.path] = value;
 		}
 	}
 
 	notes.sort((a, b) => {
 		for (const sortAttribute of sortAttributes) {
 			let valueA: number | string =
-				sortableValues[a.noteId][sortAttribute.name];
+				sortableValues[a.noteId][sortAttribute.path];
 			let valueB: number | string =
-				sortableValues[b.noteId][sortAttribute.name];
+				sortableValues[b.noteId][sortAttribute.path];
 
 			const floatA = parseFloatStrict(valueA);
 			const floatB = parseFloatStrict(valueB);
@@ -292,16 +304,19 @@ export function getSortableGroupName(group: Group): string {
 }
 
 /**
- * Returns the sortable value of an attribute of some note.
+ * Returns the sortable value of an attribute at the given path for the given
+ * note.
  *
  * If the attribute is a relation, then the related note's sortable title is
  * returned. Otherwise, the attribute's value is returned.
+ *
+ * See getAttributes for attribute path syntax.
  */
 export async function getSortableAttributeValue(
 	note: NoteShort,
-	name: string
+	path: string
 ): Promise<string> {
-	const attribute = note.getAttribute(undefined, name);
+	const attribute = await getAttribute(note, path);
 	if (!attribute) {
 		return "";
 	}
