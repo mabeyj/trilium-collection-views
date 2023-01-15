@@ -22,6 +22,7 @@
   - `$id` and `$noteId` will be replaced with the Render Note's ID.
   - `$renderNote.name` will be replaced with the value of the first attribute found for the Render Note. `name` can be any attribute name, property name, or attribute path.
 - `#sort` now supports properties (`#sort="$dateModified"`) and attribute paths (`#sort=relation.label`).
+- `#attribute` now supports properties (`#attribute="$dateModified"`) and attribute paths (`#attribute=relation.label`).
 - Add a `separator` attribute setting for controlling how multiple values for a single attribute are separated:
   - `separator=newline` inserts a newline between values, resulting in one value per line.
   - `separator=comma` inserts a comma and space between values.

@@ -31,8 +31,8 @@ describe("ViewConfig", () => {
 			["clears groupBy if groupBy label is empty", "  ", undefined],
 			[
 				"sets groupBy otherwise",
-				"name,badge",
-				new AttributeConfig("name,badge"),
+				"path,badge",
+				new AttributeConfig("path,badge"),
 			],
 		])("%s", (_, value, expected) => {
 			const config = new ViewConfig(getNote("groupBy", value));

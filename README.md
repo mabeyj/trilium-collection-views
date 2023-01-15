@@ -225,7 +225,9 @@ By default, attribute values will be shown as plain text. For labels, the label'
 
 ### Attribute settings
 
-Labels that support attribute settings ([`#attribute`](#attribute) and [`#groupBy`](#groupBy)) have a value that is a comma-separated list. The first item in the list is an attribute name. Any remaining items in the list are settings (described below) either in the form of a flag (`settingName`) or a key/value pair (`settingName=value`).
+Labels that support attribute settings ([`#attribute`](#attribute) and [`#groupBy`](#groupBy)) have a value that is a comma-separated list.
+
+The first item in the list is an attribute name, a [property name](#note-properties), or an [attribute path](#attribute-paths). Any remaining items in the list are settings (described below) either in the form of a flag (`settingName`) or a key/value pair (`settingName=value`).
 
 #### Note properties
 
@@ -247,7 +249,7 @@ Example: `#attribute=$dateModified`
 
 #### Attribute paths
 
-Wherever an attribute name is specified, you can instead provide a path to an attribute. This allows for finding attributes for notes that are targeted by a note's relations.
+Wherever an attribute name is specified, you can instead specify a path to an attribute. This allows for finding attributes for notes that are targeted by a note's relations.
 
 A path consists of one or more names separated by a period (`.`). The last name in the path must be an attribute name. All other names in the path must be relation names.
 

@@ -12,7 +12,7 @@ const separatorAliases: Record<string, string> = {
  * Configuration related to an attribute.
  */
 export class AttributeConfig {
-	name: string;
+	path: string;
 	denominatorName: string = "";
 
 	align: string = "";
@@ -37,7 +37,7 @@ export class AttributeConfig {
 
 	constructor(value: string) {
 		const settings = splitComma(value);
-		this.name = settings.shift() || "";
+		this.path = settings.shift() || "";
 
 		for (var setting of settings) {
 			const parts = setting.split("=");
