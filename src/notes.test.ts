@@ -131,11 +131,11 @@ describe("getCoverUrl", () => {
 });
 
 describe("groupNotes", () => {
-	test("returns an empty array if no notes", async () => {
+	test("returns empty array if no notes", async () => {
 		expect(await groupNotes([], "group")).toEqual([]);
 	});
 
-	test("returns groups otherwise", async () => {
+	test("returns groups for attribute", async () => {
 		const relatedNotes = [
 			new MockNoteShort({ noteId: "1", title: "Note 1" }),
 			new MockNoteShort({
@@ -216,6 +216,43 @@ describe("groupNotes", () => {
 			},
 			{ name: "z", relatedNote: null, notes: [notes[2]] },
 			{ name: undefined, relatedNote: null, notes: [notes[0], notes[1]] },
+		]);
+	});
+
+	test("returns groups for related note's attribute", async () => {
+		const notes = [
+			new MockNoteShort({
+				attributes: [
+					{ type: "relation", name: "relation", value: "1" },
+				],
+			}),
+			new MockNoteShort({
+				attributes: [
+					{ type: "relation", name: "relation", value: "2" },
+				],
+			}),
+		];
+		const relatedNotes = [
+			new MockNoteShort({
+				noteId: "1",
+				attributes: [
+					{ type: "label", name: "label", value: "Label 1" },
+				],
+			}),
+			new MockNoteShort({
+				noteId: "2",
+				attributes: [
+					{ type: "label", name: "label", value: "Label 2" },
+				],
+			}),
+		];
+
+		new MockApi({ notes: relatedNotes });
+
+		const groups = await groupNotes(notes, "relation.label");
+		expect(groups).toEqual([
+			{ name: "Label 1", relatedNote: null, notes: [notes[0]] },
+			{ name: "Label 2", relatedNote: null, notes: [notes[1]] },
 		]);
 	});
 });

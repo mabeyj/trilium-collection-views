@@ -169,7 +169,7 @@ interface AddedFlags {
  */
 export async function groupNotes(
 	notes: NoteShort[],
-	name: string
+	path: string
 ): Promise<Group[]> {
 	const types: NotesByAttributeType = {
 		label: {},
@@ -178,7 +178,7 @@ export async function groupNotes(
 	};
 
 	for (const note of notes) {
-		const attributes = note.getAttributes(undefined, name);
+		const attributes = await getAttributes(note, path);
 
 		let addToNone = !attributes.length;
 		const added: AddedFlags = { label: {}, relation: {} };

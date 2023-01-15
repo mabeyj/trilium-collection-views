@@ -61,7 +61,7 @@ async function render(): Promise<void> {
 				return;
 			}
 
-			const groups = await groupNotes(notes, config.groupBy.name);
+			const groups = await groupNotes(notes, config.groupBy.path);
 			$view = await new BoardView(config, groups).render();
 			break;
 
