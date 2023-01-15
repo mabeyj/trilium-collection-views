@@ -2,13 +2,6 @@
 
 ## 1.2.0 - Unreleased
 
-- Add support for finding attributes of notes targeted by a note's relations, similar to that supported by [Trilium's search engine](https://github.com/zadam/trilium/wiki/Search#advanced-use-cases).
-  - Wherever an attribute name can be specified, a path can now be specified instead.
-  - A path consists of one or more names separated by a period (`.`). The last name in the path must be an attribute name. All other names in the path must be relation names.
-  - For example:
-    - `name` would find attributes named `name` defined on a note.
-    - `employee.name` would find attributes named `name` defined on all notes targeted by the `employee` relation defined on a note.
-    - `company.employee.name` would find attributes named `name` defined on all notes targeted by the `employee` relation defined on all notes targeted by the `company` relation defined on a note.
 - Add support for finding properties of a note.
   - Wherever an attribute name can be specified, there are now some special names (prefixed with `$`) which refer to a note's properties instead of its user-defined attributes.
   - `$id` and `$noteId` are the note's ID.
@@ -18,6 +11,13 @@
   - `$contentSize` is the size of the note's content in bytes.
   - `$dateCreated` is the note's creation date and time in UTC and RFC 3339 format (`YYYY-MM-DD hh:mm:ss.sssZ`).
   - `$dateModified` is the note's modification date and time in UTC and RFC 3339 format.
+- Add support for finding attributes of notes targeted by a note's relations, similar to that supported by [Trilium's search engine](https://github.com/zadam/trilium/wiki/Search#advanced-use-cases).
+  - Wherever an attribute name can be specified, a path can now be specified instead.
+  - A path consists of one or more names separated by a period (`.`). The last name in the path must be an attribute name. All other names in the path must be relation names.
+  - For example:
+    - `name` would find attributes named `name` defined on a note.
+    - `employee.name` would find attributes named `name` defined on all notes targeted by the `employee` relation defined on a note.
+    - `company.employee.name` would find attributes named `name` defined on all notes targeted by the `employee` relation defined on all notes targeted by the `company` relation defined on a note.
 - Add tokens to `#query` for substituting the Render Note's ID and attributes into the search query.
   - `$id` and `$noteId` will be replaced with the Render Note's ID.
   - `$renderNote.name` will be replaced with the value of the first attribute found for the Render Note. `name` can be any attribute name, property name, or attribute path.
