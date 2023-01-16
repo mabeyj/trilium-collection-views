@@ -33,8 +33,19 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 		throw new Error("note container element not found");
 	}
 
-	const style = getComputedStyle($element);
-	const margin = parseInt(style.marginTop) + parseInt(style.marginBottom);
+	// The offset is the amount of borders, padding, and margin between the
+	// edges of .scrolling-container and the edges of $element.
+	//
+	// A min-height is temporarily set because $element needs to be at least as
+	// tall as .scrolling-container. Otherwise, empty space due to the content
+	// not filling .scrolling-container would be included in the offset.
+	//
+	// The horizontal scrollbar is temporarily hidden so that its height is not
+	// included in the offset.
+	$element.style.minHeight = "100vh";
+	$element.style.overflowX = "hidden";
+	const offset = $container.scrollHeight - $element.scrollHeight;
+	$element.style.minHeight = $element.style.overflowX = "";
 
 	new ResizeObserver((entries, observer) => {
 		if (!document.body.contains($element)) {
@@ -43,7 +54,7 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 		}
 
 		const entry = entries[entries.length - 1];
-		const height = `${Math.floor(entry.contentRect.height - margin)}px`;
+		const height = `${Math.floor(entry.contentRect.height - offset)}px`;
 		if (height === $element.style.height) {
 			return;
 		}

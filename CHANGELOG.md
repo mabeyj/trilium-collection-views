@@ -34,6 +34,7 @@
   - Before, the default was `separator=newline`, except `separator=space` was used for `badge` attributes in table views.
 - Escape sequences are now supported in attribute setting values using a backtick as the escape character: <code>``</code> and <code>\`,</code>. This allows for using a comma in settings that accept arbitrary text such as `header`.
 - Add margin around all views to better align the edges of views when using Trilium's default themes. This can be changed using the `--collection-view-margin` CSS variable.
+- Fix some cases where the sizing of scrollable containers would cause two vertical scrollbars to display. This could happen when using a custom theme that changes the border, padding, or margin around the note content area.
 - Fix "ResizeObserver loop limit exceeded" errors occurring in console when the note content area is resized.
 - Fix `#query` tokens not escaping backslashes and double quotes in values.
 - Fix `boolean` checkbox styles not being applied in Trilium 0.46.
