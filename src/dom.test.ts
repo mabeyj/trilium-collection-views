@@ -45,12 +45,11 @@ describe("fitToNoteDetailContainer", () => {
 		mockApi = new MockApi();
 		$element = document.createElement("div");
 
-		jest.spyOn(mockApi.$component, "scrollHeight", "get").mockReturnValue(
-			100
-		);
-		jest.spyOn($element, "scrollHeight", "get").mockReturnValue(80);
-
-		mockElementBoundingClientRect(mockApi.$component, { height: 200 });
+		mockElementBoundingClientRect(mockApi.$component, {
+			y: 100,
+			height: 200,
+		});
+		mockElementBoundingClientRect($element, { y: 120, height: 160.5 });
 	});
 
 	afterEach(clearBody);
@@ -59,9 +58,10 @@ describe("fitToNoteDetailContainer", () => {
 		api.$container.append($element);
 		fitToNoteDetailContainer($element);
 
+		expect($element).toHaveStyle({ minHeight: "" });
 		for (let i = 0; i < 2; i++) {
 			observer.resize(mockApi.$component);
-			expect($element).toHaveStyle({ height: "180px" });
+			expect($element).toHaveStyle({ height: "160px" });
 		}
 	});
 

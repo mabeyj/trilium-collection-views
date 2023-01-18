@@ -40,12 +40,18 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 	// tall as .scrolling-container. Otherwise, empty space due to the content
 	// not filling .scrolling-container would be included in the offset.
 	//
-	// The horizontal scrollbar is temporarily hidden so that its height is not
-	// included in the offset.
+	// getBoundingClientRect is the only API which returns non-rounded values.
+	// This is necessary to avoid an extra scrollbar appearing inconsistently
+	// due to rounding causing the $element height to be one pixel too large.
 	$element.style.minHeight = "100vh";
-	$element.style.overflowX = "hidden";
-	const offset = $container.scrollHeight - $element.scrollHeight;
-	$element.style.minHeight = $element.style.overflowX = "";
+	let offset =
+		$element.getBoundingClientRect().top -
+		$container.getBoundingClientRect().top;
+	$container.scrollTop = $container.scrollHeight;
+	offset +=
+		$container.getBoundingClientRect().bottom -
+		$element.getBoundingClientRect().bottom;
+	$element.style.minHeight = "";
 
 	new ResizeObserver((entries, observer) => {
 		if (!document.body.contains($element)) {
