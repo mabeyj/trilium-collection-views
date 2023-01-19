@@ -3,6 +3,7 @@ import {
 	getAttributes,
 	getAttributeValue,
 	getCoverUrl,
+	getLabelValueByPath,
 	getSortableAttributeValue,
 	getSortableGroupName,
 	getSortableTitle,
@@ -114,6 +115,26 @@ describe("getAttributeValue", () => {
 	])("returns %s", async (_, path, expected) => {
 		const value = await getAttributeValue(attributeNote, path);
 		expect(value).toBe(expected);
+	});
+});
+
+describe("getLabelValueByPath", () => {
+	test("returns value of first label", async () => {
+		const note = new MockNoteShort({
+			attributes: [
+				{ type: "relation", name: "test", value: "Relation" },
+				{ type: "label", name: "test", value: "Label 1" },
+				{ type: "label", name: "test", value: "Label 2" },
+			],
+		});
+
+		const value = await getLabelValueByPath(note, "test");
+		expect(value).toBe("Label 1");
+	});
+
+	test("returns empty string if not found", async () => {
+		const value = await getLabelValueByPath(attributeNote, "relation");
+		expect(value).toBe("");
 	});
 });
 

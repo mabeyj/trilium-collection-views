@@ -363,6 +363,8 @@ Example: `#attribute="price,precision=2"`
 
 Renders a progress bar using the attribute's value as the numerator and another attribute's value (named by this setting's value) as the denominator. Both attributes must be labels with numeric values.
 
+[Note properties](#note-properties) and [attributes of related notes](#attribute-paths) are supported.
+
 Example: `#attribute="completed,progressBar=total"`
 
 #### `repeat`

@@ -1,7 +1,7 @@
 import { AttributeConfig, ViewConfig } from "collection-views/config";
 import { appendChildren } from "collection-views/dom";
 import { clamp, numberFormat } from "collection-views/math";
-import { getAttributes } from "collection-views/notes";
+import { getAttributes, getLabelValueByPath } from "collection-views/notes";
 import { isTruthy } from "collection-views/boolean";
 
 /**
@@ -30,8 +30,11 @@ export abstract class View {
 		}
 
 		let denominator: string | null = null;
-		if (attributeConfig.denominatorName) {
-			denominator = note.getLabelValue(attributeConfig.denominatorName);
+		if (attributeConfig.denominatorPath) {
+			denominator = await getLabelValueByPath(
+				note,
+				attributeConfig.denominatorPath
+			);
 		}
 
 		const $values = await Promise.all(

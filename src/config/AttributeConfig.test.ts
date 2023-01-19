@@ -10,9 +10,9 @@ describe("AttributeConfig", () => {
 			expect(config.path).toBe(expected);
 		});
 
-		test("sets denominator name from progressBar option", () => {
+		test("sets denominator path from progressBar option", () => {
 			const config = new AttributeConfig("path,progressBar=total");
-			expect(config.denominatorName).toBe("total");
+			expect(config.denominatorPath).toBe("total");
 		});
 
 		test("sets align", () => {

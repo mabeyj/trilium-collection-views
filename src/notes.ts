@@ -135,6 +135,24 @@ export async function getAttributeValue(
 }
 
 /**
+ * Returns the value of the first label referenced by the given path for the
+ * given note or an empty string if no labels are found.
+ *
+ * See getAttributes for attribute path syntax.
+ */
+export async function getLabelValueByPath(
+	note: NoteShort,
+	path: string
+): Promise<string> {
+	for (const attribute of await getAttributes(note, path)) {
+		if (attribute.type === "label") {
+			return attribute.value;
+		}
+	}
+	return "";
+}
+
+/**
  * Returns the URL for a note's cover image or undefined if it has none.
  */
 export async function getCoverUrl(

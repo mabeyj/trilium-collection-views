@@ -24,6 +24,7 @@
 - `#sort` now supports properties (`#sort="$dateModified"`) and attribute paths (`#sort=relation.label`).
 - `#attribute` now supports properties (`#attribute="$dateModified"`) and attribute paths (`#attribute=relation.label`).
 - `#groupBy` now supports properties (`#groupBy="$type"`) attribute paths (`#groupBy=relation.label`).
+- `progressBar` now supports properties (`#attribute="count,progressBar=$contentSize"`) and attribute paths (`#attribute="count,progressBar=relation.total"`).
 - Add a `separator` attribute setting for controlling how multiple values for a single attribute are separated:
   - `separator=newline` inserts a newline between values, resulting in one value per line.
   - `separator=comma` inserts a comma and space between values.

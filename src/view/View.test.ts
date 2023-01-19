@@ -26,6 +26,7 @@ describe("View", () => {
 			title: "Title",
 			attributes: [
 				{ type: "label", name: "label", value: "Related label" },
+				{ type: "label", name: "total", value: "3" },
 			],
 		});
 
@@ -69,6 +70,8 @@ describe("View", () => {
 			expect($values).toHaveLength(2);
 			expect($values[0]).toHaveClass("collection-view-progress");
 			expect($values[1]).toHaveClass("collection-view-progress");
+			expect($values[0]).toHaveTextContent("1 / 2");
+			expect($values[1]).toHaveTextContent("2 / 2");
 		});
 
 		test("returns related note's values", async () => {
@@ -78,6 +81,16 @@ describe("View", () => {
 			);
 			expect($values).toHaveLength(1);
 			expect($values[0]).toHaveTextContent("Related label");
+		});
+
+		test("returns progress bar using related note's value", async () => {
+			const $values = await view.renderAttributeValues(
+				note,
+				new AttributeConfig("count,progressBar=test.total")
+			);
+			expect($values).toHaveLength(2);
+			expect($values[0]).toHaveClass("collection-view-progress");
+			expect($values[0]).toHaveTextContent("1 / 3");
 		});
 	});
 

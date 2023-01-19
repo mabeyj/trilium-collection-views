@@ -13,7 +13,7 @@ const separatorAliases: Record<string, string> = {
  */
 export class AttributeConfig {
 	path: string;
-	denominatorName: string = "";
+	denominatorPath: string = "";
 
 	align: string = "";
 	truncate?: number;
@@ -71,7 +71,7 @@ export class AttributeConfig {
 					break;
 
 				case "progressBar":
-					this.denominatorName = value;
+					this.denominatorPath = value;
 					break;
 
 				case "precision":
