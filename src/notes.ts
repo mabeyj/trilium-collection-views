@@ -54,7 +54,7 @@ export interface SortAttribute {
  *
  * If a relation refers to a note that does not exist, then it is ignored.
  */
-export async function getAttributes(
+export async function getAttributesByPath(
 	note: NoteShort,
 	path: string
 ): Promise<Attribute[]> {
@@ -67,8 +67,7 @@ export async function getAttributes(
 		const attributes = [];
 		const targetPath = parts.slice(1).join(".");
 		for (const target of await note.getRelationTargets(parts[0])) {
-			const targetAttributes = await getAttributes(target, targetPath);
-			attributes.push(...targetAttributes);
+			attributes.push(...(await getAttributesByPath(target, targetPath)));
 		}
 
 		return attributes;
@@ -110,13 +109,13 @@ export async function getAttributes(
  * Returns the first attribute referenced by the given path for the given note
  * or null if no attributes are found.
  *
- * See getAttributes for attribute path syntax.
+ * See getAttributesByPath for attribute path syntax.
  */
-export async function getAttribute(
+export async function getAttributeByPath(
 	note: NoteShort,
 	path: string
 ): Promise<Attribute | null> {
-	const attributes = await getAttributes(note, path);
+	const attributes = await getAttributesByPath(note, path);
 	return attributes.length ? attributes[0] : null;
 }
 
@@ -124,13 +123,13 @@ export async function getAttribute(
  * Returns the value of the first attribute referenced by the given path for the
  * given note or an empty string if no attributes are found.
  *
- * See getAttributes for attribute path syntax.
+ * See getAttributesByPath for attribute path syntax.
  */
-export async function getAttributeValue(
+export async function getAttributeValueByPath(
 	note: NoteShort,
 	path: string
 ): Promise<string> {
-	const attribute = await getAttribute(note, path);
+	const attribute = await getAttributeByPath(note, path);
 	return attribute?.value || "";
 }
 
@@ -138,13 +137,13 @@ export async function getAttributeValue(
  * Returns the value of the first label referenced by the given path for the
  * given note or an empty string if no labels are found.
  *
- * See getAttributes for attribute path syntax.
+ * See getAttributesByPath for attribute path syntax.
  */
 export async function getLabelValueByPath(
 	note: NoteShort,
 	path: string
 ): Promise<string> {
-	for (const attribute of await getAttributes(note, path)) {
+	for (const attribute of await getAttributesByPath(note, path)) {
 		if (attribute.type === "label") {
 			return attribute.value;
 		}
@@ -196,7 +195,7 @@ export async function groupNotes(
 	};
 
 	for (const note of notes) {
-		const attributes = await getAttributes(note, path);
+		const attributes = await getAttributesByPath(note, path);
 
 		let addToNone = !attributes.length;
 		const added: AddedFlags = { label: {}, relation: {} };
@@ -328,13 +327,13 @@ export function getSortableGroupName(group: Group): string {
  * If the attribute is a relation, then the related note's sortable title is
  * returned. Otherwise, the attribute's value is returned.
  *
- * See getAttributes for attribute path syntax.
+ * See getAttributesByPath for attribute path syntax.
  */
 export async function getSortableAttributeValue(
 	note: NoteShort,
 	path: string
 ): Promise<string> {
-	const attribute = await getAttribute(note, path);
+	const attribute = await getAttributeByPath(note, path);
 	if (!attribute) {
 		return "";
 	}

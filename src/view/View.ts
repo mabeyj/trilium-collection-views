@@ -1,7 +1,10 @@
 import { AttributeConfig, ViewConfig } from "collection-views/config";
 import { appendChildren } from "collection-views/dom";
 import { clamp, numberFormat } from "collection-views/math";
-import { getAttributes, getLabelValueByPath } from "collection-views/notes";
+import {
+	getAttributesByPath,
+	getLabelValueByPath,
+} from "collection-views/notes";
 import { isTruthy } from "collection-views/boolean";
 
 /**
@@ -24,7 +27,10 @@ export abstract class View {
 		note: NoteShort,
 		attributeConfig: AttributeConfig
 	): Promise<Array<HTMLElement | Text>> {
-		const attributes = await getAttributes(note, attributeConfig.path);
+		const attributes = await getAttributesByPath(
+			note,
+			attributeConfig.path
+		);
 		if (attributeConfig.boolean && !attributes.length) {
 			attributes.push({ type: "label", value: "false" });
 		}

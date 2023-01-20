@@ -1,7 +1,7 @@
 import { parseOptionalInt } from "collection-views/math";
 import {
 	attributePathRegex,
-	getAttributeValue,
+	getAttributeValueByPath,
 	SortAttribute,
 } from "collection-views/notes";
 import { AttributeConfig } from "collection-views/config/AttributeConfig";
@@ -137,8 +137,8 @@ export class ViewConfig {
 	 * - $id: The Render Note's ID.
 	 * - $title: The Render Note's title.
 	 * - $renderNote.path: The value of the first attribute found for the Render
-	 *   Note at "path" (an attribute path; see getAttributes). If no attribute
-	 *   is found, then the value is an empty string.
+	 *   Note at "path" (an attribute path; see getAttributesByPath). If no
+	 *   attribute is found, then the value is an empty string.
 	 *
 	 * All substituted values are double quoted ("value").
 	 */
@@ -164,7 +164,7 @@ export class ViewConfig {
 				path = path.split(".").slice(1).join(".");
 			}
 
-			const value = await getAttributeValue(this.note, path);
+			const value = await getAttributeValueByPath(this.note, path);
 			query += `"${escapeValue(value)}"`;
 			remainder = remainder.slice(length);
 		}

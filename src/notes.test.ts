@@ -1,7 +1,7 @@
 import {
-	getAttribute,
-	getAttributes,
-	getAttributeValue,
+	getAttributeByPath,
+	getAttributesByPath,
+	getAttributeValueByPath,
 	getCoverUrl,
 	getLabelValueByPath,
 	getSortableAttributeValue,
@@ -40,7 +40,7 @@ const relatedNotes = [
 	}),
 ];
 
-describe("getAttributes", () => {
+describe("getAttributesByPath", () => {
 	beforeEach(() => {
 		new MockApi({ notes: relatedNotes });
 	});
@@ -55,7 +55,7 @@ describe("getAttributes", () => {
 		["returns date created", "$dateCreated", "2020-01-02 03:04:05.678Z"],
 		["returns date modified", "$dateModified", "2020-02-03 04:05:06.789Z"],
 	])("%s", async (_, path, expected) => {
-		const attributes = await getAttributes(attributeNote, path);
+		const attributes = await getAttributesByPath(attributeNote, path);
 		expect(attributes).toHaveLength(1);
 		expect(attributes[0].type).toBe("label");
 		expect(attributes[0].value).toBe(expected);
@@ -88,32 +88,32 @@ describe("getAttributes", () => {
 			[],
 		],
 	])("%s", async (_, path, expected) => {
-		const attributes = await getAttributes(attributeNote, path);
+		const attributes = await getAttributesByPath(attributeNote, path);
 		expect(attributes.map((attribute) => attribute.value)).toEqual(
 			expected
 		);
 	});
 });
 
-describe("getAttribute", () => {
+describe("getAttributeByPath", () => {
 	test("returns first attribute", async () => {
-		const attribute = await getAttribute(attributeNote, "test");
+		const attribute = await getAttributeByPath(attributeNote, "test");
 		expect(attribute).not.toBeNull();
 		expect(attribute?.value).toBe("Label");
 	});
 
 	test("returns null if not found", async () => {
-		const attribute = await getAttribute(attributeNote, "bad");
+		const attribute = await getAttributeByPath(attributeNote, "bad");
 		expect(attribute).toBeNull();
 	});
 });
 
-describe("getAttributeValue", () => {
+describe("getAttributeValueByPath", () => {
 	test.each([
 		["returns value of first attribute", "test", "Label"],
 		["returns empty string if not found", "bad", ""],
 	])("returns %s", async (_, path, expected) => {
-		const value = await getAttributeValue(attributeNote, path);
+		const value = await getAttributeValueByPath(attributeNote, path);
 		expect(value).toBe(expected);
 	});
 });
