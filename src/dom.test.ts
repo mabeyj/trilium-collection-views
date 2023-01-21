@@ -43,11 +43,13 @@ describe("fitToNoteDetailContainer", () => {
 
 	beforeEach(() => {
 		mockApi = new MockApi();
-		mockElementBoundingClientRect(mockApi.$component, { height: 100 });
-
 		$element = document.createElement("div");
-		$element.style.marginTop = "10px";
-		$element.style.marginBottom = "10px";
+
+		mockElementBoundingClientRect(mockApi.$component, {
+			y: 100,
+			height: 200,
+		});
+		mockElementBoundingClientRect($element, { y: 120, height: 160.5 });
 	});
 
 	afterEach(clearBody);
@@ -56,9 +58,10 @@ describe("fitToNoteDetailContainer", () => {
 		api.$container.append($element);
 		fitToNoteDetailContainer($element);
 
+		expect($element).toHaveStyle({ minHeight: "" });
 		for (let i = 0; i < 2; i++) {
 			observer.resize(mockApi.$component);
-			expect($element).toHaveStyle({ height: "80px" });
+			expect($element).toHaveStyle({ height: "160px" });
 		}
 	});
 
