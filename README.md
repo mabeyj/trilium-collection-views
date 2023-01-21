@@ -28,7 +28,7 @@ An extension for [Trilium Notes](https://github.com/zadam/trilium) that implemen
     - [`attribute`](#attribute)
   - [Attribute settings](#attribute-settings)
     - [Note properties](#note-properties)
-    - [Attribute paths](#attribute-paths)
+    - [Attributes of related notes](#attributes-of-related-notes)
     - [`align`](#align)
     - [`badge`](#badge)
     - [`badgeBackground`](#badgebackground)
@@ -127,11 +127,11 @@ Example: `#view=board`
 
 A [search query](https://github.com/zadam/trilium/wiki/Search) that will be executed using Trilium's search engine. The notes returned by this search are the notes that will be included in the view.
 
-The following tokens may be used inside of a search query. Tokens are replaced with attributes or properties of the Render Note prior to executing the search.
+The following tokens may be used inside of a search query. Tokens are replaced with attributes of the Render Note prior to executing the search.
 
 - `$id` or `$noteId`: The Render Note's ID.
 - `$title`: The Render Note's title.
-- `$renderNote.name`: An attribute of the Render Note, where `name` can be an attribute name, a [property name](#note-properties), or an [attribute path](#attribute-paths).
+- `$renderNote.name`: An attribute of the Render Note, where `name` can be the name of an attribute, a [property](#note-properties), or a [related note's attribute](#attributes-of-related-notes).
   - If multiple values are found, then the token will be replaced with the first value that was found.
   - If an attribute is not found, then the token will be replaced with an empty string.
 
@@ -149,14 +149,14 @@ Examples:
 - Required
 - Single value
 
-Determines the columns of the board view. The value of this label is an attribute name.
+Determines the columns of a board view. The value of this label has the same format described in [attribute settings](#attribute-settings).
 
 - If the attribute is a label, then notes are grouped by their values for that label.
-- If the attribute is a relation, then notes are grouped by the notes targeted by the relation.
+- If the attribute is a relation, then notes are grouped by the notes targeted by that relation.
 
 Columns are sorted by the specified attribute. [Custom sorting](#custom-sorting) is supported.
 
-This attribute supports most [attribute settings](#Attribute-settings) for formatting the values displayed in column headers.
+Most attribute settings are supported for formatting the values displayed in column headers.
 
 Examples:
 
@@ -168,10 +168,10 @@ Examples:
 - Optional
 - Single value
 
-Sorts notes in the view. The value of this label is a comma-separated list of attribute names, [property names](#note-properties), or [attribute paths](#attribute-paths). Names and paths can be prefixed with `!` to sort values in descending order.
+Sorts notes in the view. The value of this label is a comma-separated list of names of attributes, [properties](#note-properties), or [attributes of related notes](#attributes-of-related-notes). Names can be prefixed with `!` to sort values in descending order.
 
 - If an attribute is a label, then notes are sorted by their values for that label.
-- If an attribute is a relation, then notes are sorted by the titles of notes targeted by the relation.
+- If an attribute is a relation, then notes are sorted by the titles of notes targeted by that relation.
 
 Values are sorted alphabetically and case-insensitively.
 
@@ -214,24 +214,28 @@ Example: `#coverHeight=500`
 - Optional
 - Multiple values
 
-Configures which note attributes will be displayed in the view and how they should be formatted.
+Configures which attributes will be displayed in the view and how they should be formatted.
 
 - For board and gallery views, attributes appear underneath the cover image.
 - For table views, attributes appear as additional columns in the table.
 
 By default, attribute values will be shown as plain text. For labels, the label's value will be shown. For relations, the titles of target notes will be shown.
 
-[Attribute settings](#Attribute-settings) control how the attribute values are formatted.
+[Attribute settings](#attribute-settings) control how the attribute's values are formatted.
 
 ### Attribute settings
 
 Labels that support attribute settings ([`#attribute`](#attribute) and [`#groupBy`](#groupBy)) have a value that is a comma-separated list.
 
-The first item in the list is an attribute name, a [property name](#note-properties), or an [attribute path](#attribute-paths). Any remaining items in the list are settings (described below) either in the form of a flag (`settingName`) or a key/value pair (`settingName=value`).
+The first item in the list is a name of an attribute, a [property](#note-properties), or a [related note's attribute](#attributes-of-related-notes).
+
+Any remaining items in the list are settings (described in the following sections) either in the form of a flag (`settingName`) or a key/value pair (`settingName=value`).
 
 #### Note properties
 
-The following special attribute names (prefixed with `$`) refer to a note's properties instead of user-defined attributes:
+There are some special attribute names (prefixed with `$`) which refer to a note's properties instead of user-defined attributes.
+
+The following properties are treated as a label with a single value:
 
 - `$id` or `$noteId`: The note's ID.
 - `$title`: The note's title.
@@ -243,15 +247,15 @@ The following special attribute names (prefixed with `$`) refer to a note's prop
 - `$dateCreated`: The date and time when the note was created.
 - `$dateModified`: The date and time when the note was last modified.
 
-Date properties use UTC for the time zone and are formatted according to RFC 3339 (`YYYY-MM-DD hh:mm:ss.sssZ`).
+Date properties are in RFC 3339 format (`YYYY-MM-DD hh:mm:ss.sssZ`) and use UTC for the time zone.
 
 Example: `#attribute=$dateModified`
 
-#### Attribute paths
+#### Attributes of related notes
 
-Wherever an attribute name is specified, you can instead specify a path to an attribute. This allows for finding attributes for notes that are targeted by a note's relations.
+Instead of an attribute name, you can specify a "path" that refers to an attribute of a related note. This allows for using attributes of notes that are targeted by a note's relations.
 
-A path consists of one or more names separated by a period (`.`). The last name in the path must be an attribute name. All other names in the path must be relation names.
+A path consists of one or more names separated by a period (`.`). The last name in the path must be an attribute name or a [property name](#note-properties). All other names in the path must be relation names.
 
 Examples:
 
@@ -361,11 +365,11 @@ Example: `#attribute="price,precision=2"`
 - Not supported by [`groupBy`](#groupBy)
 - Optional
 
-Renders a progress bar using the attribute's value as the numerator and another attribute's value (named by this setting's value) as the denominator. Both attributes must be labels with numeric values.
+Renders a progress bar. The attribute's value will be the numerator. The value of this setting refers to the attribute whose value will be used as the denominator. It can be the name of an attribute, a [property](#note-properties), or a [related note's attribute](#attributes-of-related-notes).
 
-[Note properties](#note-properties) and [attributes of related notes](#attribute-paths) are supported.
+Both attributes must be labels with numeric values.
 
-Example: `#attribute="completed,progressBar=total"`
+Example: `#attribute="completed,progressBar=total"` — For a note having the attributes `#completed=5 #total=10`, this would display a progress bar that is 50% full.
 
 #### `repeat`
 
