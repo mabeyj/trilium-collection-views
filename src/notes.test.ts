@@ -140,14 +140,28 @@ describe("getLabelValueByPath", () => {
 
 describe("getCoverUrl", () => {
 	test.each([
+		[undefined, undefined],
 		["<p></p>", undefined],
 		[
-			'<p>text</p><img src="api/images/cover.png"><img src="ignore.png">',
-			"api/images/cover.png",
+			`<p>text</p>
+			<img src="api/images/id/cover.png">
+			<img src="ignore.png">`,
+			"api/images/id/cover.png",
 		],
-	])("%p returns %p", async (content, expected) => {
+	])("text note content %p returns %p", async (content, expected) => {
 		const note = new MockNoteShort({ content });
-		expect(await getCoverUrl(note)).toBe(expected);
+		const url = await getCoverUrl(note);
+		expect(url).toBe(expected);
+	});
+
+	test("returns undefined for other note types", async () => {
+		const note = new MockNoteShort({
+			type: "code",
+			content: '<img src="image.png">',
+		});
+
+		const url = await getCoverUrl(note);
+		expect(url).toBeUndefined();
 	});
 });
 

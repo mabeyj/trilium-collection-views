@@ -16,7 +16,6 @@ interface NoteShort {
 	title: string;
 	getAttribute(type?: string, name?: string): Attribute | null;
 	getAttributes(type?: string, name?: string): Attribute[];
-	getContent(): Promise<string>;
 	getLabels(name: string): Attribute[];
 	getLabelValue(name: string): string | null;
 	getNoteComplement(): Promise<NoteComplement>;
@@ -24,6 +23,7 @@ interface NoteShort {
 }
 
 interface NoteComplement {
+	content?: string;
 	contentLength: number;
 	utcDateCreated: string;
 	combinedUtcDateModified: string;

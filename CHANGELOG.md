@@ -40,6 +40,8 @@
 - Fix included notes inside a read-only note having an incorrect height when the included note's box size is set to small or medium in Trilium 0.57+.
 - Fix badges sometimes being misplaced when displayed in an included note inside an editable note.
 - Fix `boolean` checkbox styles not being applied in Trilium 0.46.
+- Fix an error that occurs when attempting to display a cover image for image notes and web-view notes.
+- Content of non-text notes is no longer inspected for covers which may reduce memory and bandwidth usage.
 
 ## 1.1.0 - 2021-07-21
 

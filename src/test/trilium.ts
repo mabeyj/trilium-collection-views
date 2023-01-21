@@ -56,6 +56,7 @@ export class MockApi {
 
 interface NoteShortProps {
 	noteId?: string;
+	type?: string;
 	title?: string;
 	content?: string;
 	attributes?: MockAttribute[];
@@ -69,19 +70,21 @@ interface MockAttribute {
 
 export class MockNoteShort {
 	public noteId: string;
-	public type: string = "text";
+	public type: string;
 	public mime: string = "text/html";
 	public title: string;
-	private content: string;
+	private content?: string;
 	private attributes: MockAttribute[];
 
 	constructor({
 		noteId = "",
+		type = "text",
 		title = "",
-		content = "",
+		content,
 		attributes = [],
 	}: NoteShortProps = {}) {
 		this.noteId = noteId;
+		this.type = type;
 		this.title = title;
 		this.content = content;
 		this.attributes = attributes;
@@ -99,10 +102,6 @@ export class MockNoteShort {
 		);
 	}
 
-	public async getContent(): Promise<string> {
-		return this.content;
-	}
-
 	public getLabels(name: string): Attribute[] {
 		return this.getAttributes("label", name);
 	}
@@ -113,6 +112,7 @@ export class MockNoteShort {
 
 	public async getNoteComplement(): Promise<NoteComplement> {
 		return {
+			content: this.content,
 			contentLength: 1000,
 			utcDateCreated: "2020-01-02 03:04:05.678Z",
 			combinedUtcDateModified: "2020-02-03 04:05:06.789Z",
