@@ -37,6 +37,7 @@
 - Fix some cases where the sizing of scrollable containers would cause two vertical scrollbars to display. This could happen when using a custom theme that changes the border, padding, or margin around the note content area.
 - Fix "ResizeObserver loop limit exceeded" errors occurring in console when the note content area is resized.
 - Fix `#query` tokens not escaping backslashes and double quotes in values.
+- Fix included notes inside a read-only note having an incorrect height when the included note's box size is set to small or medium in Trilium 0.57+.
 - Fix `boolean` checkbox styles not being applied in Trilium 0.46.
 
 ## 1.1.0 - 2021-07-21

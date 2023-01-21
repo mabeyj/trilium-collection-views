@@ -72,6 +72,31 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 }
 
 /**
+ * Fix display issues when a view is rendered as an included note.
+ */
+export function fixIncludedNote(): void {
+	const $include = api.$container[0].closest(".include-note");
+	if (!($include instanceof HTMLElement)) {
+		return;
+	}
+
+	// Box size is not applied when the current note is read only.
+	$include.classList.add(`box-size-${$include.dataset.boxSize}`);
+
+	let $wrapper = $include.querySelector(".include-note-wrapper");
+	if (!$wrapper) {
+		// Trilium v0.46 to v0.56: Fix content being displayed beside the
+		// included note's title instead of below due to a missing wrapper
+		// element when the current note is read only.
+		$wrapper = document.createElement("div");
+		$wrapper.className = "include-note-wrapper";
+		$wrapper.append(...$include.children);
+		$include.append($wrapper);
+	}
+	$wrapper.classList.add("collection-view-include-note");
+}
+
+/**
  * Renders notes in a staggered manner, appending elements returned from
  * a render function to some parent element.
  *

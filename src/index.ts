@@ -1,5 +1,9 @@
 import { ViewType, ViewConfig } from "collection-views/config";
-import { fitToNoteDetailContainer, renderError } from "collection-views/dom";
+import {
+	fitToNoteDetailContainer,
+	fixIncludedNote,
+	renderError,
+} from "collection-views/dom";
 import { groupNotes, sortNotes } from "collection-views/notes";
 import { TableView, GalleryView, BoardView } from "collection-views/view";
 
@@ -82,18 +86,7 @@ async function render(): Promise<void> {
 
 	switch (mode) {
 		case RenderMode.Include:
-			const $include = api.$container.closest(".include-note");
-
-			// Fix read-only view DOM inconsistencies.
-			if ($include.children(".include-note-title").length) {
-				const size = $include.data("box-size");
-				const $wrapper = $("<div>").addClass("include-note-wrapper");
-				$include.addClass(`box-size-${size}`).wrapInner($wrapper);
-			}
-
-			$include
-				.children(".include-note-wrapper")
-				.addClass("collection-view-include-note");
+			fixIncludedNote();
 			break;
 
 		case RenderMode.Note:
