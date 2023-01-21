@@ -134,7 +134,7 @@ export class ViewConfig {
 	 * a value associated with the Render Note. The following tokens are
 	 * supported:
 	 *
-	 * - $id: The Render Note's ID.
+	 * - $id or $noteId: The Render Note's ID.
 	 * - $title: The Render Note's title.
 	 * - $renderNote.path: The value of the first attribute found for the Render
 	 *   Note at "path" (an attribute path; see getAttributesByPath). If no
