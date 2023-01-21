@@ -33,6 +33,7 @@
 - The default separator is now `separator=comma`, except `separator=space` is used for `badge` and `boolean` attributes.
   - Before, the default was `separator=newline`, except `separator=space` was used for `badge` attributes in table views.
 - Escape sequences are now supported in attribute setting values using a backtick as the escape character: <code>``</code> and <code>\`,</code>. This allows for using a comma in settings that accept arbitrary text such as `header`.
+- Board and gallery views will now display a cover image for image notes (uploaded image files). The image itself will be used as its cover.
 - Add margin around all views to better align the edges of views when using Trilium's default themes. This can be changed using the `--collection-view-margin` CSS variable.
 - Fix some cases where the sizing of scrollable containers would cause two vertical scrollbars to display. This could happen when using a custom theme that changes the border, padding, or margin around the note content area.
 - Fix "ResizeObserver loop limit exceeded" errors occurring in console when the note content area is resized.
