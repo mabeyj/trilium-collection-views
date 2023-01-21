@@ -63,8 +63,7 @@ export abstract class CardView extends View {
 	 */
 	async renderCardAttributeList(note: NoteShort): Promise<HTMLElement> {
 		const titlePromise = this.renderCardTitle(note);
-
-		const attributePromises: Promise<HTMLElement>[] = [];
+		const attributePromises: Promise<HTMLElement | null>[] = [];
 		for (const attributeConfig of this.config.attributes) {
 			attributePromises.push(
 				this.renderCardAttribute(note, attributeConfig)
@@ -72,7 +71,13 @@ export abstract class CardView extends View {
 		}
 
 		const $title = await titlePromise;
-		const $attributes = await Promise.all(attributePromises);
+		const $attributes: HTMLElement[] = [];
+		for (const promise of attributePromises) {
+			const $attribute = await promise;
+			if ($attribute) {
+				$attributes.push($attribute);
+			}
+		}
 
 		const $list = document.createElement("ul");
 		$list.className = "collection-view-card-attributes";
@@ -98,13 +103,16 @@ export abstract class CardView extends View {
 
 	/**
 	 * Returns an element for rendering a list item containing all values of
-	 * a note's attribute.
+	 * a note's attribute, or null if there are no values.
 	 */
 	async renderCardAttribute(
 		note: NoteShort,
 		attributeConfig: AttributeConfig
-	): Promise<HTMLElement> {
+	): Promise<HTMLElement | null> {
 		const $values = await this.renderAttributeValues(note, attributeConfig);
+		if (!$values.length) {
+			return null;
+		}
 
 		const $item = document.createElement("li");
 		appendChildren($item, $values);

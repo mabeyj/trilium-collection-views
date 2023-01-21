@@ -92,8 +92,13 @@ describe("CardView", () => {
 
 	describe("renderCardAttributeList", () => {
 		test("returns list", async () => {
-			config.attributes.push(new AttributeConfig("test"));
+			config.attributes.push(
+				new AttributeConfig("test"),
+				new AttributeConfig("bad")
+			);
+
 			const $list = await view.renderCardAttributeList(attributeNote);
+			expect($list.children).toHaveLength(2);
 			expect($list).toHaveTextContent("Title");
 			expect($list).toHaveTextContent("Label");
 		});
@@ -113,6 +118,14 @@ describe("CardView", () => {
 				new AttributeConfig("test")
 			);
 			expect($item).toHaveTextContent("Label 1, Label 2");
+		});
+
+		test("returns null if attribute not found", async () => {
+			const $item = await view.renderCardAttribute(
+				attributeNote,
+				new AttributeConfig("bad")
+			);
+			expect($item).toBeNull();
 		});
 	});
 });
