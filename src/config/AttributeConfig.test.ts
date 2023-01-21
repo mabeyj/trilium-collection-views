@@ -4,28 +4,28 @@ describe("AttributeConfig", () => {
 	describe("constructor", () => {
 		test.each([
 			["", ""],
-			["name,options", "name"],
-		])("%p sets name to %p", (value, expected) => {
+			["path,options", "path"],
+		])("%p sets path to %p", (value, expected) => {
 			const config = new AttributeConfig(value);
-			expect(config.name).toBe(expected);
+			expect(config.path).toBe(expected);
 		});
 
-		test("sets denominator name from progressBar option", () => {
-			const config = new AttributeConfig("name,progressBar=total");
-			expect(config.denominatorName).toBe("total");
+		test("sets denominator path from progressBar option", () => {
+			const config = new AttributeConfig("path,progressBar=total");
+			expect(config.denominatorPath).toBe("total");
 		});
 
 		test("sets align", () => {
-			const config = new AttributeConfig("name,align=  left  ");
+			const config = new AttributeConfig("path,align=  left  ");
 			expect(config.align).toBe("left");
 		});
 
 		test.each([
-			["name,truncate", 1],
-			["name,truncate=0", 1],
-			["name,truncate=10.9", 10],
-			["name,truncate=9999", 1000],
-			["name,truncate=bad", undefined],
+			["path,truncate", 1],
+			["path,truncate=0", 1],
+			["path,truncate=10.9", 10],
+			["path,truncate=9999", 1000],
+			["path,truncate=bad", undefined],
 		])("%p sets truncate to %p", (value, expected) => {
 			const config = new AttributeConfig(value);
 			expect(config.truncate).toBe(expected);
@@ -33,18 +33,18 @@ describe("AttributeConfig", () => {
 		});
 
 		test.each([
-			["name,width", undefined],
-			["name,width=-1", 0],
-			["name,width=0", 0],
-			["name,width=10.9", 10],
-			["name,width=9999", 1000],
-			["name,width=bad", undefined],
+			["path,width", undefined],
+			["path,width=-1", 0],
+			["path,width=0", 0],
+			["path,width=10.9", 10],
+			["path,width=9999", 1000],
+			["path,width=bad", undefined],
 		])("%p sets width to %p", (value, expected) => {
 			const config = new AttributeConfig(value);
 			expect(config.width).toBe(expected);
 		});
 
-		test.each(["name,wrap", "name,wrap=anything"])(
+		test.each(["path,wrap", "path,wrap=anything"])(
 			"%p sets wrap to true",
 			(value) => {
 				const config = new AttributeConfig(value);
@@ -53,11 +53,11 @@ describe("AttributeConfig", () => {
 		);
 
 		test("sets header", () => {
-			const config = new AttributeConfig("name,header=  Text  ");
+			const config = new AttributeConfig("path,header=  Text  ");
 			expect(config.header).toBe("Text");
 		});
 
-		test.each(["name,badge", "name,badge=anything"])(
+		test.each(["path,badge", "path,badge=anything"])(
 			"%p sets badge to true",
 			(value) => {
 				const config = new AttributeConfig(value);
@@ -66,18 +66,18 @@ describe("AttributeConfig", () => {
 		);
 
 		test("sets badgeBackground", () => {
-			const config = new AttributeConfig("name,badgeBackground=  red  ");
+			const config = new AttributeConfig("path,badgeBackground=  red  ");
 			expect(config.badge).toBe(true);
 			expect(config.badgeBackground).toBe("red");
 		});
 
 		test("sets badgeColor", () => {
-			const config = new AttributeConfig("name,badgeColor=  red  ");
+			const config = new AttributeConfig("path,badgeColor=  red  ");
 			expect(config.badge).toBe(true);
 			expect(config.badgeColor).toBe("red");
 		});
 
-		test.each(["name,boolean", "name,boolean=anything"])(
+		test.each(["path,boolean", "path,boolean=anything"])(
 			"%p sets boolean to true",
 			(value) => {
 				const config = new AttributeConfig(value);
@@ -85,7 +85,7 @@ describe("AttributeConfig", () => {
 			}
 		);
 
-		test.each(["name,number", "name,number=anything"])(
+		test.each(["path,number", "path,number=anything"])(
 			"%p sets number to true",
 			(value) => {
 				const config = new AttributeConfig(value);
@@ -94,11 +94,11 @@ describe("AttributeConfig", () => {
 		);
 
 		test.each([
-			["name,precision", undefined],
-			["name,precision=-1", 0],
-			["name,precision=0", 0],
-			["name,precision=10.9", 10],
-			["name,precision=99", 20],
+			["path,precision", undefined],
+			["path,precision=-1", 0],
+			["path,precision=0", 0],
+			["path,precision=10.9", 10],
+			["path,precision=99", 20],
 		])("%p sets precision to %p", (value, expected) => {
 			const config = new AttributeConfig(value);
 			expect(config.number).toBe(true);
@@ -106,27 +106,27 @@ describe("AttributeConfig", () => {
 		});
 
 		test("sets prefix", () => {
-			const config = new AttributeConfig("name,prefix=  Text  ");
+			const config = new AttributeConfig("path,prefix=  Text  ");
 			expect(config.prefix).toBe("  Text  ");
 		});
 
 		test("sets repeat", () => {
-			const config = new AttributeConfig("name,repeat=  Text  ");
+			const config = new AttributeConfig("path,repeat=  Text  ");
 			expect(config.repeat).toBe("Text");
 		});
 
 		test("sets separator", () => {
-			const config = new AttributeConfig("name,separator=  |  ");
+			const config = new AttributeConfig("path,separator=  |  ");
 			expect(config.separator).toBe("  |  ");
 		});
 
 		test("sets suffix", () => {
-			const config = new AttributeConfig("name,suffix=  Text  ");
+			const config = new AttributeConfig("path,suffix=  Text  ");
 			expect(config.suffix).toBe("  Text  ");
 		});
 
 		test("handles escape sequences in setting values", () => {
-			const config = new AttributeConfig("name,header=`` `, `x `");
+			const config = new AttributeConfig("path,header=`` `, `x `");
 			expect(config.header).toEqual("` , `x `");
 		});
 	});
@@ -134,7 +134,7 @@ describe("AttributeConfig", () => {
 	describe("affix", () => {
 		test("returns affixed string", () => {
 			const config = new AttributeConfig(
-				"name,prefix=Prefix,suffix=Suffix"
+				"path,prefix=Prefix,suffix=Suffix"
 			);
 			expect(config.affix("Text")).toBe("PrefixTextSuffix");
 		});
@@ -163,7 +163,7 @@ describe("AttributeConfig", () => {
 			],
 		])("%s", (_, prefix, suffix, expected) => {
 			const config = new AttributeConfig(
-				`name,prefix=${prefix},suffix=${suffix}`
+				`path,prefix=${prefix},suffix=${suffix}`
 			);
 			expect(config.affixNodes(...nodes)).toEqual(expected);
 		});
@@ -173,42 +173,42 @@ describe("AttributeConfig", () => {
 		test.each([
 			[
 				"returns comma by default for non-badge/Boolean values",
-				"name",
+				"path",
 				document.createTextNode(", "),
 			],
 			[
 				"returns space by default for badges",
-				"name,badge",
+				"path,badge",
 				document.createTextNode(" "),
 			],
 			[
 				"returns space by default for Boolean values",
-				"name,boolean",
+				"path,boolean",
 				document.createTextNode(" "),
 			],
 			[
 				"returns undefined for empty separator",
-				"name,separator=",
+				"path,separator=",
 				undefined,
 			],
 			[
 				"returns comma for comma alias",
-				"name,separator=comma",
+				"path,separator=comma",
 				document.createTextNode(", "),
 			],
 			[
 				"returns space for space alias",
-				"name,separator=space",
+				"path,separator=space",
 				document.createTextNode(" "),
 			],
 			[
 				"returns <br> for newline alias",
-				"name,separator=newline",
+				"path,separator=newline",
 				document.createElement("br"),
 			],
 			[
 				"returns custom separator",
-				"name,separator= | ",
+				"path,separator= | ",
 				document.createTextNode(" | "),
 			],
 		])("%s", (_, value, expected) => {

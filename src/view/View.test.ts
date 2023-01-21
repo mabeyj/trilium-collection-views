@@ -12,63 +12,90 @@ const view = new TestView(new ViewConfig(new MockNoteShort()));
 
 describe("View", () => {
 	describe("renderAttributeValues", () => {
+		const note = new MockNoteShort({
+			attributes: [
+				{ type: "label", name: "test", value: "Label" },
+				{ type: "relation", name: "test", value: "1" },
+				{ type: "label", name: "count", value: "1" },
+				{ type: "label", name: "count", value: "2" },
+				{ type: "label", name: "total", value: "2" },
+			],
+		});
+		const relatedNote = new MockNoteShort({
+			noteId: "1",
+			title: "Title",
+			attributes: [
+				{ type: "label", name: "label", value: "Related label" },
+				{ type: "label", name: "total", value: "3" },
+			],
+		});
+
+		beforeEach(() => {
+			new MockApi({ notes: [relatedNote] });
+		});
+
 		test("returns empty array for non-Boolean attribute with no values", async () => {
 			const $values = await view.renderAttributeValues(
-				new MockNoteShort(),
-				new AttributeConfig("test")
+				note,
+				new AttributeConfig("none")
 			);
 			expect($values).toHaveLength(0);
 		});
 
 		test("returns unchecked checkbox for Boolean attribute with no values", async () => {
 			const $values = await view.renderAttributeValues(
-				new MockNoteShort(),
-				new AttributeConfig("test,boolean")
+				note,
+				new AttributeConfig("none,boolean")
 			);
 			expect($values).toHaveLength(1);
 			expect($values[0]).not.toBeChecked();
 		});
 
 		test("returns values separated", async () => {
-			new MockApi({
-				notes: [new MockNoteShort({ noteId: "id", title: "2" })],
-			});
-
 			const $values = await view.renderAttributeValues(
-				new MockNoteShort({
-					attributes: [
-						{ type: "label", name: "test", value: "1" },
-						{ type: "relation", name: "test", value: "id" },
-						{ type: "label", name: "other", value: "3" },
-					],
-				}),
+				note,
 				new AttributeConfig("test")
 			);
 			expect($values).toHaveLength(3);
-			expect($values[0]).toHaveTextContent("1");
+			expect($values[0]).toHaveTextContent("Label");
 			expect($values[1]).toHaveTextContent(",");
-			expect($values[2]).toHaveTextContent("2");
+			expect($values[2]).toHaveTextContent("Title");
 		});
 
 		test("returns progress bars unseparated", async () => {
 			const $values = await view.renderAttributeValues(
-				new MockNoteShort({
-					attributes: [
-						{ type: "label", name: "count", value: "1" },
-						{ type: "label", name: "count", value: "2" },
-						{ type: "label", name: "total", value: "2" },
-					],
-				}),
+				note,
 				new AttributeConfig("count,progressBar=total")
 			);
 			expect($values).toHaveLength(2);
 			expect($values[0]).toHaveClass("collection-view-progress");
 			expect($values[1]).toHaveClass("collection-view-progress");
+			expect($values[0]).toHaveTextContent("1 / 2");
+			expect($values[1]).toHaveTextContent("2 / 2");
+		});
+
+		test("returns related note's values", async () => {
+			const $values = await view.renderAttributeValues(
+				note,
+				new AttributeConfig("test.label")
+			);
+			expect($values).toHaveLength(1);
+			expect($values[0]).toHaveTextContent("Related label");
+		});
+
+		test("returns progress bar using related note's value", async () => {
+			const $values = await view.renderAttributeValues(
+				note,
+				new AttributeConfig("count,progressBar=test.total")
+			);
+			expect($values).toHaveLength(2);
+			expect($values[0]).toHaveClass("collection-view-progress");
+			expect($values[0]).toHaveTextContent("1 / 3");
 		});
 	});
 
 	describe("renderAttributeValue", () => {
-		const config = new AttributeConfig("name");
+		const config = new AttributeConfig("path");
 
 		test.each([
 			["returns text for label's value", "label", "Value"],
@@ -121,7 +148,7 @@ describe("View", () => {
 
 		test("returns checkbox for Boolean attribute", () => {
 			const config = new AttributeConfig(
-				"name,boolean,repeat=*,number,badge"
+				"path,boolean,repeat=*,number,badge"
 			);
 
 			const $value = view.renderValue("true", config, null);
@@ -141,7 +168,7 @@ describe("View", () => {
 			["returns text by default", "value", "", "value"],
 		])("%s", (_, value, options, expected) => {
 			const config = new AttributeConfig(
-				`name,prefix=Prefix,suffix=Suffix,${options}`
+				`path,prefix=Prefix,suffix=Suffix,${options}`
 			);
 
 			const $value = view.renderValue(value, config, null);
@@ -155,7 +182,7 @@ describe("View", () => {
 			["returns badge with formatted number", "1000", "number", "1,000"],
 		])("%s", (_, value, options, expected) => {
 			const config = new AttributeConfig(
-				`name,badge,prefix=Prefix,suffix=Suffix,${options}`
+				`path,badge,prefix=Prefix,suffix=Suffix,${options}`
 			);
 
 			const $value = view.renderValue(value, config, note);
@@ -168,14 +195,14 @@ describe("View", () => {
 
 	describe("renderBoolean", () => {
 		test("returns checked checkbox for truthy value", () => {
-			const config = new AttributeConfig("name");
+			const config = new AttributeConfig("path");
 			const $value = view.renderBoolean("true", config);
 			expect($value).toHaveLength(1);
 			expect($value[0]).toBeChecked();
 		});
 
 		test("returns unchecked checkbox for falsy value", () => {
-			const config = new AttributeConfig("name");
+			const config = new AttributeConfig("path");
 			const $value = view.renderBoolean("false", config);
 			expect($value).toHaveLength(1);
 			expect($value[0]).not.toBeChecked();
@@ -183,7 +210,7 @@ describe("View", () => {
 
 		test("returns affixed checkbox", () => {
 			const config = new AttributeConfig(
-				"name,prefix=Prefix,suffix=Suffix"
+				"path,prefix=Prefix,suffix=Suffix"
 			);
 
 			const $value = view.renderBoolean("true", config);
@@ -239,7 +266,7 @@ describe("View", () => {
 				{ color: "black" },
 			],
 		])("%s", (_, options, note, styles) => {
-			const config = new AttributeConfig(`name,${options}`);
+			const config = new AttributeConfig(`path,${options}`);
 			const $badge = view.renderBadge("value", config, note);
 			expect($badge).toHaveTextContent("value");
 			expect($badge).toHaveStyle(styles);
@@ -255,7 +282,7 @@ describe("View", () => {
 			$progress: HTMLElement | undefined;
 			$bar: HTMLElement | null | undefined;
 		} {
-			const config = new AttributeConfig(`name,${options}`);
+			const config = new AttributeConfig(`path,${options}`);
 			const $progress = view.renderProgressBar(
 				numerator,
 				denominator,
@@ -349,7 +376,7 @@ describe("View", () => {
 				"<>".repeat(1000),
 			],
 		])("%s", (_, value, expected) => {
-			const config = new AttributeConfig("name,repeat=<>");
+			const config = new AttributeConfig("path,repeat=<>");
 			const $number = view.formatRepeat(value, config);
 			expect($number).toBe(expected);
 		});
@@ -372,7 +399,7 @@ describe("View", () => {
 				"1,234.567000",
 			],
 		])("%s", (_, value, options, expected) => {
-			const config = new AttributeConfig(`name,${options}`);
+			const config = new AttributeConfig(`path,${options}`);
 			const formatted = view.formatNumber(value, config);
 			expect(formatted).toBe(expected);
 		});

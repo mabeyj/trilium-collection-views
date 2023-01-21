@@ -44,7 +44,7 @@ async function render(): Promise<void> {
 		return;
 	}
 
-	const notes = await api.searchForNotes(config.query);
+	const notes = await api.searchForNotes(await config.getQuery());
 	if (!notes.length) {
 		renderError("No notes found.");
 		return;
@@ -61,7 +61,7 @@ async function render(): Promise<void> {
 				return;
 			}
 
-			const groups = await groupNotes(notes, config.groupBy.name);
+			const groups = await groupNotes(notes, config.groupBy.path);
 			$view = await new BoardView(config, groups).render();
 			break;
 

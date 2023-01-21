@@ -65,7 +65,7 @@ export class TableView extends View {
 	 */
 	renderHeaderCell(attributeConfig: AttributeConfig): HTMLElement {
 		const $cell = document.createElement("th");
-		$cell.textContent = attributeConfig.header || attributeConfig.name;
+		$cell.textContent = attributeConfig.header || attributeConfig.path;
 		if (attributeConfig.align) {
 			$cell.style.textAlign = attributeConfig.align;
 		}

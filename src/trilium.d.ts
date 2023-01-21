@@ -11,12 +11,22 @@ declare namespace api {
 
 interface NoteShort {
 	noteId: string;
+	type: string;
+	mime: string;
 	title: string;
 	getAttribute(type?: string, name?: string): Attribute | null;
 	getAttributes(type?: string, name?: string): Attribute[];
 	getContent(): Promise<string>;
 	getLabels(name: string): Attribute[];
 	getLabelValue(name: string): string | null;
+	getNoteComplement(): Promise<NoteComplement>;
+	getRelationTargets(name?: string): Promise<NoteShort[]>;
+}
+
+interface NoteComplement {
+	contentLength: number;
+	utcDateCreated: string;
+	combinedUtcDateModified: string;
 }
 
 interface Attribute {

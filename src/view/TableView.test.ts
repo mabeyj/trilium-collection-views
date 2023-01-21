@@ -167,7 +167,7 @@ describe("TableView", () => {
 		test("returns truncated content", () => {
 			const $container = view.renderTruncated(
 				[document.createElement("div"), new Text("Content")],
-				new AttributeConfig("name,truncate=3")
+				new AttributeConfig("path,truncate=3")
 			);
 			expect($container).toHaveStyle({ webkitLineClamp: "3" });
 			expect($container).toHaveTextContent("Content");

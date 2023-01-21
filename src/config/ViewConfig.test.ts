@@ -1,5 +1,5 @@
-import { MockNoteShort } from "collection-views/test";
 import { AttributeConfig, ViewConfig, ViewType } from "collection-views/config";
+import { MockApi, MockNoteShort } from "collection-views/test";
 
 describe("ViewConfig", () => {
 	describe("constructor", () => {
@@ -20,20 +20,19 @@ describe("ViewConfig", () => {
 			expect(config.view).toBe(expected);
 		});
 
-		test.each([
-			["  #one and #two  ", "#one and #two"],
-			["#title = $title", '#title = "Note Title"'],
-		])("query label %p sets query to %p", (value, expected) => {
-			const config = new ViewConfig(getNote("query", value));
-			expect(config.query).toBe(expected);
+		test("sets query", () => {
+			const config = new ViewConfig(
+				getNote("query", "  #one and #two  ")
+			);
+			expect(config.query).toBe("#one and #two");
 		});
 
 		test.each([
 			["clears groupBy if groupBy label is empty", "  ", undefined],
 			[
 				"sets groupBy otherwise",
-				"name,badge",
-				new AttributeConfig("name,badge"),
+				"path,badge",
+				new AttributeConfig("path,badge"),
 			],
 		])("%s", (_, value, expected) => {
 			const config = new ViewConfig(getNote("groupBy", value));
@@ -46,8 +45,8 @@ describe("ViewConfig", () => {
 				"sets sort otherwise",
 				"  one  ,  !two  ",
 				[
-					{ name: "one", descending: false },
-					{ name: "two", descending: true },
+					{ path: "one", descending: false },
+					{ path: "two", descending: true },
 				],
 			],
 		])("%s", (_, value, expected) => {
@@ -107,6 +106,56 @@ describe("ViewConfig", () => {
 				new AttributeConfig("one,badge"),
 				new AttributeConfig("two,number"),
 			]);
+		});
+	});
+
+	describe("getQuery", () => {
+		const relatedNote = new MockNoteShort({
+			noteId: "2",
+			attributes: [{ type: "label", name: "label", value: "related" }],
+		});
+
+		beforeEach(() => {
+			new MockApi({ notes: [relatedNote] });
+		});
+
+		test.each([
+			["$id", '"1"'],
+			["#test = $id", '#test = "1"'],
+			["#test = $id.bad", '#test = "1".bad'],
+			["#test = $noteId", '#test = "1"'],
+			["#test = $noteId.bad", '#test = "1".bad'],
+			["#test = $title", '#test = "Note Title"'],
+			["#test = $title.bad", '#test = "Note Title".bad'],
+			["#test = $renderNote", "#test = $renderNote"],
+			["#test = $renderNote.", "#test = $renderNote."],
+			["#test = $renderNote.$", "#test = $renderNote.$"],
+			["#test = $renderNote.$id", '#test = "1"'],
+			["#test = $renderNote.label", '#test = "value"'],
+			["#test = $renderNote.label.", '#test = "value".'],
+			["#test = $renderNote.relation.label", '#test = "related"'],
+			["#test = $renderNote.bad", '#test = ""'],
+			["#test = $bad", "#test = $bad"],
+			["#test = $renderNote.escape", '#test = "\\\\ \\""'],
+			[
+				"note.id = $id or note.title = $title or #test",
+				'note.id = "1" or note.title = "Note Title" or #test',
+			],
+		])("query %p returns %p", async (rawQuery, expected) => {
+			const note = new MockNoteShort({
+				noteId: "1",
+				title: "Note Title",
+				attributes: [
+					{ type: "label", name: "label", value: "value" },
+					{ type: "label", name: "query", value: rawQuery },
+					{ type: "label", name: "escape", value: '\\ "' },
+					{ type: "relation", name: "relation", value: "2" },
+				],
+			});
+
+			const config = new ViewConfig(note);
+			const query = await config.getQuery();
+			expect(query).toBe(expected);
 		});
 	});
 });

@@ -12,8 +12,8 @@ const separatorAliases: Record<string, string> = {
  * Configuration related to an attribute.
  */
 export class AttributeConfig {
-	name: string;
-	denominatorName: string = "";
+	path: string;
+	denominatorPath: string = "";
 
 	align: string = "";
 	truncate?: number;
@@ -37,7 +37,7 @@ export class AttributeConfig {
 
 	constructor(value: string) {
 		const settings = splitComma(value);
-		this.name = settings.shift() || "";
+		this.path = settings.shift() || "";
 
 		for (var setting of settings) {
 			const parts = setting.split("=");
@@ -71,7 +71,7 @@ export class AttributeConfig {
 					break;
 
 				case "progressBar":
-					this.denominatorName = value;
+					this.denominatorPath = value;
 					break;
 
 				case "precision":
