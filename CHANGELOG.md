@@ -38,6 +38,7 @@
 - Fix "ResizeObserver loop limit exceeded" errors occurring in console when the note content area is resized.
 - Fix `#query` tokens not escaping backslashes and double quotes in values.
 - Fix included notes inside a read-only note having an incorrect height when the included note's box size is set to small or medium in Trilium 0.57+.
+- Fix badges sometimes being misplaced when displayed in an included note inside an editable note.
 - Fix `boolean` checkbox styles not being applied in Trilium 0.46.
 
 ## 1.1.0 - 2021-07-21

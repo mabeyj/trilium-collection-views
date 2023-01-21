@@ -31,6 +31,11 @@
 	white-space: normal;
 	text-align: left;
 	vertical-align: top;
-	margin: 0.25em 0;
+	margin: $badge-margin 0;
 	font-weight: inherit;
+
+	.note-detail-editable-text &:not(figure):first-child {
+		// Override Trilium forcefully removing margin-top in this case.
+		margin-top: $badge-margin !important;
+	}
 }
