@@ -157,8 +157,15 @@ export async function getLabelValueByPath(
 export async function getCoverUrl(
 	note: NoteShort
 ): Promise<string | undefined> {
-	const content = await note.getContent();
-	if (!content.includes("<img")) {
+	if (note.type === "image") {
+		return `api/images/${note.noteId}/${encodeURIComponent(note.title)}`;
+	}
+	if (note.type !== "text") {
+		return undefined;
+	}
+
+	const content = (await note.getNoteComplement()).content;
+	if (!content?.includes("<img")) {
 		return undefined;
 	}
 

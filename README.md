@@ -452,7 +452,11 @@ Example: <code>#attribute=position,header=X`,Y</code> would display a header con
 
 ### Covers
 
-The board and gallery views display an optional cover image for each note. The first image found in the note's contents is used as the cover.
+The board and gallery views display an optional cover image for each note.
+
+- For text notes, the first image found in the note's contents will be used as the cover.
+- For image notes (image files uploaded to Trilium), the image itself will be displayed as the cover.
+- For other note types, no cover will be displayed.
 
 ### Custom badge colors
 

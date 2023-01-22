@@ -139,15 +139,40 @@ describe("getLabelValueByPath", () => {
 });
 
 describe("getCoverUrl", () => {
+	test("returns URL for image note", async () => {
+		const note = new MockNoteShort({
+			noteId: "id",
+			type: "image",
+			title: "test/../image.png",
+		});
+
+		const url = await getCoverUrl(note);
+		expect(url).toBe("api/images/id/test%2F..%2Fimage.png");
+	});
+
 	test.each([
+		[undefined, undefined],
 		["<p></p>", undefined],
 		[
-			'<p>text</p><img src="api/images/cover.png"><img src="ignore.png">',
-			"api/images/cover.png",
+			`<p>text</p>
+			<img src="api/images/id/cover.png">
+			<img src="ignore.png">`,
+			"api/images/id/cover.png",
 		],
-	])("%p returns %p", async (content, expected) => {
+	])("text note content %p returns %p", async (content, expected) => {
 		const note = new MockNoteShort({ content });
-		expect(await getCoverUrl(note)).toBe(expected);
+		const url = await getCoverUrl(note);
+		expect(url).toBe(expected);
+	});
+
+	test("returns undefined for other note types", async () => {
+		const note = new MockNoteShort({
+			type: "code",
+			content: '<img src="image.png">',
+		});
+
+		const url = await getCoverUrl(note);
+		expect(url).toBeUndefined();
 	});
 });
 
