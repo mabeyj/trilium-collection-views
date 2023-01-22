@@ -138,8 +138,12 @@ describe("ViewConfig", () => {
 			["#test = $bad", "#test = $bad"],
 			["#test = $renderNote.escape", '#test = "\\\\ \\""'],
 			[
-				"note.id = $id or note.title = $title or #test",
-				'note.id = "1" or note.title = "Note Title" or #test',
+				"note.noteId = $id or note.title = $title or #test",
+				'note.noteId = "1" or note.title = "Note Title" or #test',
+			],
+			[
+				"#label = $renderNote.relation.label and #test",
+				'#label = "related" and #test',
 			],
 		])("query %p returns %p", async (rawQuery, expected) => {
 			const note = new MockNoteShort({
