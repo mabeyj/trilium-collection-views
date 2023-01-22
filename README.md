@@ -49,6 +49,7 @@ An extension for [Trilium Notes](https://github.com/zadam/trilium) that implemen
   - [Covers](#covers)
   - [Custom badge colors](#custom-badge-colors)
   - [Custom sorting](#custom-sorting)
+  - [Including views in notes](#including-views-in-notes)
   - [CSS variables](#css-variables)
 
 ## Screenshots
@@ -477,6 +478,12 @@ This is useful in a couple ways:
 - Ignoring leading articles like "The", "A", or "An". For example, a note titled "The Example" with `#sortableTitle=Example` would appear under E instead of T.
 
 - Numeric sorting. Alphanumerically, "Note 10" would be sorted before "Note 2". If you set `#sortableTitle="Note 02"` on Note 2, then it will appear in numeric order above Note 10.
+
+### Including views in notes
+
+Views can be included in text notes using the [Include Note](https://github.com/zadam/trilium/wiki/Text-notes#include-note) feature.
+
+![Screenshot showing a view included in a note and the Include Note feature in the editor toolbar.](docs/include-note.png)
 
 ### CSS variables
 
