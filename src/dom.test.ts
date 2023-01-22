@@ -6,6 +6,7 @@ import {
 import {
 	appendChildren,
 	fitToNoteDetailContainer,
+	fixIncludedNote,
 	renderError,
 	staggeredRender,
 } from "collection-views/dom";
@@ -69,6 +70,78 @@ describe("fitToNoteDetailContainer", () => {
 		fitToNoteDetailContainer($element);
 		observer.resize(mockApi.$component);
 		expect($element).toHaveStyle({ height: "" });
+	});
+});
+
+describe("fixIncludedNote", () => {
+	const unwrappedHtml = `
+		<h4 class="include-note-title">Title</h4>
+		<div class="include-note-content type-render">
+			<div class="rendered-note-content">
+				<div></div>
+			</div>
+		</div>
+	`;
+	const wrappedHtml = `
+		<div class="include-note-wrapper">
+			${unwrappedHtml}
+		</div>
+	`;
+
+	let mockApi: MockApi;
+	let $include: HTMLElement;
+
+	function createIncludedNote(html: string): void {
+		$include.className = "include-note";
+		$include.dataset.boxSize = "small";
+		$include.innerHTML = html;
+		$include
+			.querySelector(".rendered-note-content > div")
+			?.append(api.$container[0]);
+	}
+
+	beforeEach(() => {
+		mockApi = new MockApi();
+		$include = document.createElement("section");
+	});
+
+	test("does nothing if included note not found", () => {
+		fixIncludedNote();
+	});
+
+	test("adds collection-view-include-note class", () => {
+		createIncludedNote(wrappedHtml);
+		fixIncludedNote();
+		const $wrapper = $include.querySelector(".include-note-wrapper");
+		expect($wrapper).toHaveClass("collection-view-include-note");
+	});
+
+	test("fixes missing box-size class", () => {
+		createIncludedNote(wrappedHtml);
+		fixIncludedNote();
+		expect($include).toHaveClass("box-size-small");
+	});
+
+	test("fixes missing wrapper element", () => {
+		createIncludedNote(unwrappedHtml);
+		fixIncludedNote();
+		expect($include.children).toHaveLength(1);
+
+		const $wrapper = $include.children[0];
+		expect($wrapper).toHaveClass(
+			"include-note-wrapper",
+			"collection-view-include-note"
+		);
+		expect($wrapper.children).toHaveLength(2);
+		expect($wrapper.children[0]).toHaveClass("include-note-title");
+		expect($wrapper.children[1]).toHaveClass("include-note-content");
+	});
+
+	test("does not create multiple wrappers", () => {
+		createIncludedNote(wrappedHtml);
+		fixIncludedNote();
+		const $wrappers = $include.querySelectorAll(".include-note-wrapper");
+		expect($wrappers).toHaveLength(1);
 	});
 });
 
