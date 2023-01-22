@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.0 - Unreleased
+## 1.2.0 - 2023-01-22
 
 - Add support for using properties of a note.
   - Wherever an attribute name can be specified, there are now some special names (prefixed with `$`) which refer to a note's properties instead of its user-defined attributes.
