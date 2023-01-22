@@ -141,6 +141,10 @@ describe("ViewConfig", () => {
 				"note.id = $id or note.title = $title or #test",
 				'note.id = "1" or note.title = "Note Title" or #test',
 			],
+			[
+				"note.label = $renderNote.relation.label and #test",
+				'note.label = "related" and #test',
+			],
 		])("query %p returns %p", async (rawQuery, expected) => {
 			const note = new MockNoteShort({
 				noteId: "1",
