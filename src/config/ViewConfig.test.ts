@@ -136,7 +136,7 @@ describe("ViewConfig", () => {
 			["#test = $renderNote.relation.label", '#test = "related"'],
 			["#test = $renderNote.bad", '#test = ""'],
 			["#test = $bad", "#test = $bad"],
-			["#test = $renderNote.escape", '#test = "\\\\ \\""'],
+			["#test = $renderNote.escape", '#test = "\\\\ \\" \\\\ \\""'],
 			[
 				"note.noteId = $id or note.title = $title or #test",
 				'note.noteId = "1" or note.title = "Note Title" or #test',
@@ -152,7 +152,7 @@ describe("ViewConfig", () => {
 				attributes: [
 					{ type: "label", name: "label", value: "value" },
 					{ type: "label", name: "query", value: rawQuery },
-					{ type: "label", name: "escape", value: '\\ "' },
+					{ type: "label", name: "escape", value: '\\ " \\ "' },
 					{ type: "relation", name: "relation", value: "2" },
 				],
 			});
