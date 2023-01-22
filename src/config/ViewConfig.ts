@@ -200,5 +200,6 @@ function getAttributePath(text: string): string | null {
  * a backslash.
  */
 function escapeValue(value: string): string {
-	return value.replaceAll("\\", "\\\\").replaceAll('"', '\\"');
+	// TODO: Use replaceAll when Trilium 0.46 is dropped.
+	return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }
