@@ -31,40 +31,6 @@ export class TableView extends View {
 
 		const $scroll = document.createElement("div");
 		$scroll.className = "collection-view-scroll";
-
-		if (this.config.search){
-			const $search = document.createElement("input");
-			$search.classList.add(
-				"form-control",
-				"promoted-attribute-input",
-				"aa-input"
-			);
-			$search.style.width = "240px";
-	
-			$search.oninput = function (event) {
-				const inputElement = event.target as HTMLInputElement;
-				const keyWord = inputElement.value.toLowerCase();
-				
-				const str = "(.*?)";
-				const regStr = str + keyWord.split("").join(str) + str;
-				const reg =  new RegExp(regStr, 'i');
-	
-				for (let i = 1; i < $table.rows.length; i++) {
-					let found = false;
-					const row = $table.rows[i];
-					for (let j = 0; j < row.cells.length; j++) {
-						const cell = row.cells[j];
-						const text = cell.textContent?cell.textContent.toLowerCase():"";
-						if (reg.test(text)) {
-							found = true;
-							break;
-						}
-					}
-					row.style.display = found?'':'none';
-				}
-			};
-			$scroll.appendChild($search);
-		}
 		
 		$scroll.appendChild($table);
 		return $scroll;
