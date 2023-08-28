@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1 - Unreleased
+
+- Fix scrolling issues (double scrollbar and scrolling down on load) that occur in Trilium v0.60+.
+
 ## 1.2.0 - 2023-01-22
 
 - Add support for using properties of a note.

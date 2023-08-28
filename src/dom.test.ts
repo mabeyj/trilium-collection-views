@@ -59,6 +59,8 @@ describe("fitToNoteDetailContainer", () => {
 		api.$container.append($element);
 		fitToNoteDetailContainer($element);
 
+		expect(mockApi.$component.scrollTop).toBe(0);
+		expect(mockApi.$component).toHaveStyle({ scrollBehavior: "smooth" });
 		expect($element).toHaveStyle({ minHeight: "" });
 		for (let i = 0; i < 2; i++) {
 			observer.resize(mockApi.$component);
@@ -104,6 +106,8 @@ describe("fixIncludedNote", () => {
 		mockApi = new MockApi();
 		$include = document.createElement("section");
 	});
+
+	afterEach(clearBody);
 
 	test("does nothing if included note not found", () => {
 		fixIncludedNote();

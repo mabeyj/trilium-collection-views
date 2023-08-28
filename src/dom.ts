@@ -43,14 +43,22 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 	// getBoundingClientRect is the only API which returns non-rounded values.
 	// This is necessary to avoid an extra scrollbar appearing inconsistently
 	// due to rounding causing the $element height to be one pixel too large.
+
+	var scrollBehavior = $container.style.scrollBehavior;
+	$container.style.scrollBehavior = "auto";
 	$element.style.minHeight = "100vh";
+
 	let offset =
 		$element.getBoundingClientRect().top -
 		$container.getBoundingClientRect().top;
+
 	$container.scrollTop = $container.scrollHeight;
 	offset +=
 		$container.getBoundingClientRect().bottom -
 		$element.getBoundingClientRect().bottom;
+
+	$container.scrollTop = 0;
+	$container.style.scrollBehavior = scrollBehavior;
 	$element.style.minHeight = "";
 
 	new ResizeObserver((entries, observer) => {
