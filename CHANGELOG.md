@@ -3,6 +3,7 @@
 ## 1.2.1 - Unreleased
 
 - Fix scrolling issues (double scrollbar and scrolling down on load) that occur in Trilium v0.60+.
+- Fix the `header` attribute setting displaying the attribute name instead of an empty header cell when set to an empty value (`#attribute=name,header=`).
 
 ## 1.2.0 - 2023-01-22
 

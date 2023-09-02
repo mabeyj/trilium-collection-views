@@ -20,7 +20,7 @@ export class AttributeConfig {
 	width?: number;
 	wrap: boolean = false;
 
-	header: string = "";
+	header?: string;
 
 	badge: boolean = false;
 	badgeBackground: string = "";
