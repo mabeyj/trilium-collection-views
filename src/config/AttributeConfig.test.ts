@@ -52,9 +52,13 @@ describe("AttributeConfig", () => {
 			}
 		);
 
-		test("sets header", () => {
-			const config = new AttributeConfig("path,header=  Text  ");
-			expect(config.header).toBe("Text");
+		test.each([
+			["path,header", ""],
+			["path,header=", ""],
+			["path,header=  Text  ", "Text"],
+		])("%p sets header to %p", (value, expected) => {
+			const config = new AttributeConfig(value);
+			expect(config.header).toBe(expected);
 		});
 
 		test.each(["path,badge", "path,badge=anything"])(
@@ -127,7 +131,7 @@ describe("AttributeConfig", () => {
 
 		test("handles escape sequences in setting values", () => {
 			const config = new AttributeConfig("path,header=`` `, `x `");
-			expect(config.header).toEqual("` , `x `");
+			expect(config.header).toBe("` , `x `");
 		});
 	});
 

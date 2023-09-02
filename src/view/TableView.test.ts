@@ -75,6 +75,13 @@ describe("TableView", () => {
 			expect($cell).toHaveTextContent("test");
 		});
 
+		test("returns table cell with empty header text", () => {
+			const $cell = view.renderHeaderCell(
+				new AttributeConfig("test,header=")
+			);
+			expect($cell).toBeEmptyDOMElement();
+		});
+
 		test("returns table cell with custom header text", () => {
 			const $cell = view.renderHeaderCell(
 				new AttributeConfig("test,header=Header")
