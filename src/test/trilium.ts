@@ -14,6 +14,7 @@ export class MockApi {
 	constructor({ originEntity = null, notes = [] }: MockApiProps = {}) {
 		this.$component = document.createElement("div");
 		this.$component.className = "component";
+		this.$component.style.scrollBehavior = "smooth";
 		this.$component.innerHTML = `
 			<div class="note-detail component">
 				<div class="note-detail-render component">
