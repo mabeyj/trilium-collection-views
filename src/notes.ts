@@ -73,7 +73,7 @@ export async function getAttributesByPath(
 		return attributes;
 	}
 
-	let value: string | undefined;
+	let value: string | null = null;
 	switch (path) {
 		case "$id":
 		case "$noteId":
@@ -89,16 +89,19 @@ export async function getAttributesByPath(
 			value = note.title;
 			break;
 		case "$contentSize":
-			value = `${(await note.getNoteComplement()).contentLength}`;
+			const size = await getContentLength(note);
+			if (size !== null) {
+				value = `${size}`;
+			}
 			break;
 		case "$dateCreated":
-			value = (await note.getNoteComplement()).utcDateCreated;
+			value = await getDateCreated(note);
 			break;
 		case "$dateModified":
-			value = (await note.getNoteComplement()).combinedUtcDateModified;
+			value = await getDateModified(note);
 			break;
 	}
-	if (value !== undefined) {
+	if (value !== null) {
 		return [{ type: "label", value }];
 	}
 
@@ -164,7 +167,7 @@ export async function getCoverUrl(
 		return undefined;
 	}
 
-	const content = (await note.getNoteComplement()).content;
+	const content = await getContent(note);
 	if (!content?.includes("<img")) {
 		return undefined;
 	}
@@ -363,4 +366,77 @@ export function getSortableTitle(note: NoteShort): string {
 	const sortableTitle = note.getLabelValue("sortableTitle") || "";
 	const title = sortableTitle.trim() || note.title.trim();
 	return title.toLowerCase();
+}
+
+/**
+ * Returns the given note's content or null if not available.
+ */
+export async function getContent(note: NoteShort): Promise<string | null> {
+	if (note.getBlob) {
+		// Available since Trilium v0.61.
+		return (await note.getBlob()).content ?? null;
+	}
+	if (note.getNoteComplement) {
+		// Deprecated since Trilium v0.61.
+		return (await note.getNoteComplement()).content ?? null;
+	}
+	return null;
+}
+
+/**
+ * Returns the size of the given note's content in bytes or null if not
+ * available.
+ */
+export async function getContentLength(
+	note: NoteShort
+): Promise<number | null> {
+	if (note.getBlob) {
+		// Available since Trilium v0.61.
+		return (await note.getBlob()).contentLength;
+	}
+	if (note.getNoteComplement) {
+		// Deprecated since Trilium v0.61.
+		return (await note.getNoteComplement()).contentLength;
+	}
+	return null;
+}
+
+/**
+ * Returns the creation date of the given note or null if not available.
+ */
+export async function getDateCreated(note: NoteShort): Promise<string | null> {
+	if (note.getMetadata) {
+		// Available since Trilium v0.61.6.
+		return (await note.getMetadata()).utcDateCreated;
+	}
+	if (note.getNoteComplement) {
+		// Deprecated since Trilium v0.61.
+		const complement = await note.getNoteComplement();
+		if ("utcDateCreated" in complement) {
+			return complement.utcDateCreated;
+		}
+	}
+	return null;
+}
+
+/**
+ * Returns the modification date of the given note or null if not available.
+ */
+export async function getDateModified(note: NoteShort): Promise<string | null> {
+	if (note.getMetadata) {
+		// Available since Trilium v0.61.6.
+		return (await note.getMetadata()).utcDateModified;
+	}
+	if (note.getBlob) {
+		// Available since Trilium v0.61.
+		return (await note.getBlob()).utcDateModified;
+	}
+	if (note.getNoteComplement) {
+		// Deprecated since Trilium v0.61.
+		const complement = await note.getNoteComplement();
+		if ("combinedUtcDateModified" in complement) {
+			return complement.combinedUtcDateModified;
+		}
+	}
+	return null;
 }

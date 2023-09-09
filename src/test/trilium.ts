@@ -60,6 +60,7 @@ interface NoteShortProps {
 	type?: string;
 	title?: string;
 	content?: string;
+	contentLength?: number;
 	attributes?: MockAttribute[];
 }
 
@@ -69,12 +70,15 @@ interface MockAttribute {
 	value: string;
 }
 
-export class MockNoteShort {
+abstract class BaseMockFNote {
 	public noteId: string;
 	public type: string;
 	public mime: string = "text/html";
 	public title: string;
-	private content?: string;
+	protected content?: string;
+	protected contentLength: number;
+	protected dateCreated: string = "2020-01-02 03:04:05.678Z";
+	protected dateModified: string = "2020-02-03 04:05:06.789Z";
 	private attributes: MockAttribute[];
 
 	constructor({
@@ -82,12 +86,14 @@ export class MockNoteShort {
 		type = "text",
 		title = "",
 		content,
+		contentLength = 1000,
 		attributes = [],
 	}: NoteShortProps = {}) {
 		this.noteId = noteId;
 		this.type = type;
 		this.title = title;
 		this.content = content;
+		this.contentLength = contentLength;
 		this.attributes = attributes;
 	}
 
@@ -111,15 +117,6 @@ export class MockNoteShort {
 		return this.getAttribute("label", name)?.value ?? null;
 	}
 
-	public async getNoteComplement(): Promise<NoteComplement> {
-		return {
-			content: this.content,
-			contentLength: 1000,
-			utcDateCreated: "2020-01-02 03:04:05.678Z",
-			combinedUtcDateModified: "2020-02-03 04:05:06.789Z",
-		};
-	}
-
 	public async getRelationTargets(name?: string): Promise<NoteShort[]> {
 		const targets: NoteShort[] = [];
 		for (const attribute of this.getAttributes("relation", name)) {
@@ -130,5 +127,48 @@ export class MockNoteShort {
 		}
 
 		return targets;
+	}
+}
+
+/**
+ * Mock of a note from Trilium v0.61.0 to v0.61.5.
+ */
+export class MockFNote0615 extends BaseMockFNote {
+	public async getBlob(): Promise<FBlob> {
+		return {
+			content: this.content,
+			contentLength: this.contentLength,
+			utcDateModified: this.dateModified,
+		};
+	}
+
+	public async getNoteComplement(): Promise<FBlob> {
+		return this.getBlob();
+	}
+}
+
+/**
+ * Mock of a note from Trilium v0.61.6 and newer.
+ */
+export class MockFNote extends MockFNote0615 {
+	public async getMetadata(): Promise<FNoteMetadata> {
+		return {
+			utcDateCreated: this.dateCreated,
+			utcDateModified: this.dateModified,
+		};
+	}
+}
+
+/**
+ * Mock of a note from Trilium v0.60 and below.
+ */
+export class MockNoteShort extends BaseMockFNote {
+	public async getNoteComplement(): Promise<NoteComplement> {
+		return {
+			content: this.content,
+			contentLength: this.contentLength,
+			utcDateCreated: this.dateCreated,
+			combinedUtcDateModified: this.dateModified,
+		};
 	}
 }
