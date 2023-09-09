@@ -166,15 +166,21 @@ describe("getCoverUrl", () => {
 	});
 
 	test.each([
-		[undefined, undefined],
-		["<p></p>", undefined],
+		["returns undefined if content is undefined", undefined, undefined],
+		["returns undefined if no image in content", "<p></p>", undefined],
 		[
+			"returns URL if content references image note",
 			`<p>text</p>
 			<img src="api/images/id/cover.png">
 			<img src="ignore.png">`,
 			"api/images/id/cover.png",
 		],
-	])("text note content %p returns %p", async (content, expected) => {
+		[
+			"returns URL if content references image attachment",
+			'<img src="api/attachments/id/image/cover.png">',
+			"api/attachments/id/image/cover.png",
+		],
+	])("%s", async (_, content, expected) => {
 		const note = new MockNoteShort({ content });
 		const url = await getCoverUrl(note);
 		expect(url).toBe(expected);
