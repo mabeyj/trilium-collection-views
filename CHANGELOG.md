@@ -8,6 +8,7 @@
   - For Trilium v0.61.0 to v0.61.5, `$dateCreated` is not available and `$dateModified` will display the modification date of the note's content and not the note itself.
   - If you are using the v0.61 beta, upgrade to at least v0.61.6 for these dates to work as intended.
 - Fix the `header` attribute setting displaying the attribute name instead of an empty header cell when set to an empty value (`#attribute=name,header=`).
+- Fix the first column of table views not being sticky when displayed in an included note in Trilium v0.61+.
 
 ## 1.2.0 - 2023-01-22
 
