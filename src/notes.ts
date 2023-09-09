@@ -374,7 +374,7 @@ export function getSortableTitle(note: NoteShort): string {
 export async function getContent(note: NoteShort): Promise<string | null> {
 	if (note.getBlob) {
 		// Available since Trilium v0.61.
-		return (await note.getBlob()).content ?? null;
+		return (await note.getBlob()).content;
 	}
 	if (note.getNoteComplement) {
 		// Deprecated since Trilium v0.61.

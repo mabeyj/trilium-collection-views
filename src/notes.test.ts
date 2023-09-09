@@ -166,24 +166,37 @@ describe("getCoverUrl", () => {
 	});
 
 	test.each([
-		["returns undefined if content is undefined", undefined, undefined],
-		["returns undefined if no image in content", "<p></p>", undefined],
+		[
+			"returns undefined if content is undefined",
+			new MockNoteShort(),
+			undefined,
+		],
+		["returns undefined if content is null", new MockFNote(), undefined],
+		[
+			"returns undefined if no image in content",
+			new MockFNote({ content: "<p></p>" }),
+			undefined,
+		],
 		[
 			"returns URL if content references image note",
-			`<p>text</p>
-			<img src="api/images/id/cover.png">
-			<img src="ignore.png">`,
+			new MockFNote({
+				content: `
+					<p>text</p>
+					<img src="api/images/id/cover.png">
+					<img src="ignore.png">
+				`,
+			}),
 			"api/images/id/cover.png",
 		],
 		[
 			"returns URL if content references image attachment",
-			'<img src="api/attachments/id/image/cover.png">',
+			new MockFNote({
+				content: '<img src="api/attachments/id/image/cover.png">',
+			}),
 			"api/attachments/id/image/cover.png",
 		],
-	])("%s", async (_, content, expected) => {
-		const note = new MockNoteShort({ content });
-		const url = await getCoverUrl(note);
-		expect(url).toBe(expected);
+	])("%s", async (_, note, expected) => {
+		expect(await getCoverUrl(note)).toBe(expected);
 	});
 
 	test("returns undefined for other note types", async () => {
@@ -630,7 +643,7 @@ describe("getSortableTitle", () => {
 describe("getContent", () => {
 	test.each([
 		[
-			"returns null if content of note's blob is undefined",
+			"returns null if content of note's blob is null",
 			new MockFNote(),
 			null,
 		],

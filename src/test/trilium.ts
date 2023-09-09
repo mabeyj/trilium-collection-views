@@ -59,7 +59,7 @@ interface NoteShortProps {
 	noteId?: string;
 	type?: string;
 	title?: string;
-	content?: string;
+	content?: string | null;
 	contentLength?: number;
 	attributes?: MockAttribute[];
 }
@@ -75,7 +75,7 @@ abstract class BaseMockFNote {
 	public type: string;
 	public mime: string = "text/html";
 	public title: string;
-	protected content?: string;
+	protected content: string | null;
 	protected contentLength: number;
 	protected dateCreated: string = "2020-01-02 03:04:05.678Z";
 	protected dateModified: string = "2020-02-03 04:05:06.789Z";
@@ -85,7 +85,7 @@ abstract class BaseMockFNote {
 		noteId = "",
 		type = "text",
 		title = "",
-		content,
+		content = null,
 		contentLength = 1000,
 		attributes = [],
 	}: NoteShortProps = {}) {
@@ -165,7 +165,7 @@ export class MockFNote extends MockFNote0615 {
 export class MockNoteShort extends BaseMockFNote {
 	public async getNoteComplement(): Promise<NoteComplement> {
 		return {
-			content: this.content,
+			content: this.content ?? undefined,
 			contentLength: this.contentLength,
 			utcDateCreated: this.dateCreated,
 			combinedUtcDateModified: this.dateModified,

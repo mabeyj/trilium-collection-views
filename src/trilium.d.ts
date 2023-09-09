@@ -26,7 +26,7 @@ interface NoteShort {
 
 // Available since Trilium v0.61.
 interface FBlob {
-	content?: string;
+	content: string | null;
 	contentLength: number;
 	utcDateModified: string;
 }
