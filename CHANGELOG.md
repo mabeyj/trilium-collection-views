@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.1 - Unreleased
+## 1.2.1 - 2023-09-09
 
 - Fix scrolling issues (double scrollbar and scrolling down on load) that occur in Trilium v0.60+.
 - Fix a scrolling issue (view height slowly decreasing on load) that could occur with custom themes that change the parent scrollable container of notes to a different element.
