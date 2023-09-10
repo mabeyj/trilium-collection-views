@@ -5,7 +5,7 @@
 - Fix scrolling issues (double scrollbar and scrolling down on load) that occur in Trilium v0.60+.
 - Fix a scrolling issue (view height slowly decreasing on load) that could occur with custom themes that change the parent scrollable container of notes to a different element.
 - Fix the `$dateCreated` and `$dateModified` properties displaying an empty value in Trilium v0.61+.
-  - For Trilium v0.61.0 to v0.61.5, `$dateCreated` is not available and `$dateModified` will display the modification date of the note's content and not the note itself.
+  - For Trilium v0.61.0 to v0.61.5, `$dateCreated` is not available and `$dateModified` will display the modification date of the note's content (which is not updated when things like note titles are modified).
   - If you are using the v0.61 beta, upgrade to at least v0.61.6 for these dates to work as intended.
 - Fix the `header` attribute setting displaying the attribute name instead of an empty header cell when set to an empty value (`#attribute=name,header=`).
 - Fix the first column of table views not being sticky when displayed in an included note in Trilium v0.61+.
@@ -48,9 +48,9 @@
 - Fix some cases where the sizing of scrollable containers would cause two vertical scrollbars to display. This could happen when using a custom theme that changes the border, padding, or margin around the note content area.
 - Fix "ResizeObserver loop limit exceeded" errors occurring in console when the note content area is resized.
 - Fix `#query` tokens not escaping backslashes and double quotes in values.
-- Fix included notes inside a read-only note having an incorrect height when the included note's box size is set to small or medium in Trilium 0.57+.
+- Fix included notes inside a read-only note having an incorrect height when the included note's box size is set to small or medium in Trilium v0.57+.
 - Fix badges sometimes being misplaced when displayed in an included note inside an editable note.
-- Fix `boolean` checkbox styles not being applied in Trilium 0.46.
+- Fix `boolean` checkbox styles not being applied in Trilium v0.46.
 - Fix an error that occurs when attempting to display a cover image for image notes and web-view notes.
 - Content of non-text notes is no longer inspected for covers which may reduce memory and bandwidth usage.
 
@@ -63,7 +63,7 @@
 - Badges are now normal font weight instead of bold.
 - `boolean` attributes will now display a single unchecked checkbox instead of nothing when a note does not have the attribute defined.
 - `boolean` checkboxes now look like to-do list checkboxes to better distinguish checked and unchecked when using a dark theme.
-- Fix sticky table cell borders not rendering correctly when scrolling large tables in Trilium 0.47.
+- Fix sticky table cell borders not rendering correctly when scrolling large tables in Trilium v0.47.
 - Fix attribute values not being separated correctly when there are more than two values displayed in a single table cell. Only the last two values would be separated by a space or line break instead of all values.
 - Fix `boolean` checkboxes being inverted (true as unchecked, false as checked).
 - Fix `prefix` and `suffix` settings not working with `boolean` checkboxes.
