@@ -27,8 +27,12 @@
 	white-space: nowrap;
 }
 
-.collection-view-table tr > :first-child {
+.table.collection-view-table tr > :first-child {
+	// Higher specificity necessary to override default CKEditor styles.
 	position: sticky;
+}
+
+.collection-view-table tr > :first-child {
 	left: 0;
 	z-index: 1;
 }
