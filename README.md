@@ -76,7 +76,7 @@ Minimum Trilium version supported: v0.46
 
 2. Import `collection-views.zip` into your tree: right-click a parent note, then select "Import into note".
 
-3. Reload the frontend (Menu → Reload frontend).
+3. Reload the frontend (Menu → Advanced → Reload Frontend).
 
 ## Upgrading
 
@@ -87,7 +87,7 @@ Minimum Trilium version supported: v0.46
    - Select the `css` child note, click "Upload new revision", and select the `Collection Views/css.css` file that was extracted.
    - Select the `js` child note, click "Upload new revision", and select the `Collection Views/js.js` file that was extracted.
 
-3. Reload the frontend (Menu → Reload frontend).
+3. Reload the frontend (Menu → Advanced → Reload Frontend).
 
 ## Usage
 
