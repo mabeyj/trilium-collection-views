@@ -2,7 +2,11 @@ import {
 	getAttributeByPath,
 	getAttributesByPath,
 	getAttributeValueByPath,
+	getContent,
+	getContentLength,
 	getCoverUrl,
+	getDateCreated,
+	getDateModified,
 	getLabelValueByPath,
 	getSortableAttributeValue,
 	getSortableGroupName,
@@ -10,7 +14,12 @@ import {
 	groupNotes,
 	sortNotes,
 } from "collection-views/notes";
-import { MockApi, MockNoteShort } from "collection-views/test";
+import {
+	MockApi,
+	MockFNote,
+	MockFNote0615,
+	MockNoteShort,
+} from "collection-views/test";
 
 const attributeNote = new MockNoteShort({
 	noteId: "1",
@@ -51,7 +60,7 @@ describe("getAttributesByPath", () => {
 		["returns type", "$type", "text"],
 		["returns content type", "$mime", "text/html"],
 		["returns title", "$title", "Title"],
-		["returns content length", "$contentSize", "1000"],
+		["returns content size", "$contentSize", "1000"],
 		["returns date created", "$dateCreated", "2020-01-02 03:04:05.678Z"],
 		["returns date modified", "$dateModified", "2020-02-03 04:05:06.789Z"],
 	])("%s", async (_, path, expected) => {
@@ -59,6 +68,12 @@ describe("getAttributesByPath", () => {
 		expect(attributes).toHaveLength(1);
 		expect(attributes[0].type).toBe("label");
 		expect(attributes[0].value).toBe(expected);
+	});
+
+	test("returns zero content size", async () => {
+		const note = new MockFNote({ contentLength: 0 });
+		const attributes = await getAttributesByPath(note, "$contentSize");
+		expect(attributes[0].value).toBe("0");
 	});
 
 	test.each([
@@ -151,18 +166,37 @@ describe("getCoverUrl", () => {
 	});
 
 	test.each([
-		[undefined, undefined],
-		["<p></p>", undefined],
 		[
-			`<p>text</p>
-			<img src="api/images/id/cover.png">
-			<img src="ignore.png">`,
+			"returns undefined if content is undefined",
+			new MockNoteShort(),
+			undefined,
+		],
+		["returns undefined if content is null", new MockFNote(), undefined],
+		[
+			"returns undefined if no image in content",
+			new MockFNote({ content: "<p></p>" }),
+			undefined,
+		],
+		[
+			"returns URL if content references image note",
+			new MockFNote({
+				content: `
+					<p>text</p>
+					<img src="api/images/id/cover.png">
+					<img src="ignore.png">
+				`,
+			}),
 			"api/images/id/cover.png",
 		],
-	])("text note content %p returns %p", async (content, expected) => {
-		const note = new MockNoteShort({ content });
-		const url = await getCoverUrl(note);
-		expect(url).toBe(expected);
+		[
+			"returns URL if content references image attachment",
+			new MockFNote({
+				content: '<img src="api/attachments/id/image/cover.png">',
+			}),
+			"api/attachments/id/image/cover.png",
+		],
+	])("%s", async (_, note, expected) => {
+		expect(await getCoverUrl(note)).toBe(expected);
 	});
 
 	test("returns undefined for other note types", async () => {
@@ -603,5 +637,73 @@ describe("getSortableTitle", () => {
 	])("%s", (_, attributes, expected) => {
 		const note = new MockNoteShort({ title: "  Title  ", attributes });
 		expect(getSortableTitle(note)).toBe(expected);
+	});
+});
+
+describe("getContent", () => {
+	test.each([
+		[
+			"returns null if content of note's blob is null",
+			new MockFNote(),
+			null,
+		],
+		[
+			"returns content of note's blob",
+			new MockFNote({ content: "Content" }),
+			"Content",
+		],
+		[
+			"returns null if content of note's complement is undefined",
+			new MockNoteShort(),
+			null,
+		],
+		[
+			"returns content of note's complement",
+			new MockNoteShort({ content: "Content" }),
+			"Content",
+		],
+	])("%s", async (_, note, expected) => {
+		expect(await getContent(note)).toBe(expected);
+	});
+});
+
+describe("getContentLength", () => {
+	test.each([
+		["returns content length of note's blob", new MockFNote()],
+		["returns content length of note's complement", new MockNoteShort()],
+	])("%s", async (_, note) => {
+		expect(await getContentLength(note)).toBe(1000);
+	});
+});
+
+describe("getDateCreated", () => {
+	test.each([
+		[
+			"returns creation date from note's metadata",
+			new MockFNote(),
+			"2020-01-02 03:04:05.678Z",
+		],
+		[
+			"returns creation date from note's complement",
+			new MockNoteShort(),
+			"2020-01-02 03:04:05.678Z",
+		],
+		[
+			"returns null if creation date not supported",
+			new MockFNote0615(),
+			null,
+		],
+	])("%s", async (_, note, expected) => {
+		expect(await getDateCreated(note)).toBe(expected);
+	});
+});
+
+describe("getDateModified", () => {
+	test.each([
+		["returns modified date from note's metadata", new MockFNote()],
+		["returns modified date from note's blob", new MockFNote0615()],
+		["returns modified date from note's complement", new MockNoteShort()],
+	])("%s", async (_, note) => {
+		expect(await getDateModified(note)).toBe("2020-02-03 04:05:06.789Z");
 	});
 });
