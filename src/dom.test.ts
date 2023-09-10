@@ -7,6 +7,7 @@ import {
 	appendChildren,
 	fitToNoteDetailContainer,
 	fixIncludedNote,
+	getClosestScrollableElement,
 	renderError,
 	staggeredRender,
 } from "collection-views/dom";
@@ -72,6 +73,52 @@ describe("fitToNoteDetailContainer", () => {
 		fitToNoteDetailContainer($element);
 		observer.resize(mockApi.$component);
 		expect($element).toHaveStyle({ height: "" });
+	});
+
+	test("does nothing if no scrollable element found", () => {
+		mockApi.$component.style.overflowY = "hidden";
+		api.$container.append($element);
+		fitToNoteDetailContainer($element);
+		observer.resize(mockApi.$component);
+		expect($element).toHaveStyle({ height: "" });
+	});
+});
+
+describe("getClosestScrollableElement", () => {
+	let $element: HTMLElement;
+	let $parent: HTMLElement;
+	let $grandparent: HTMLElement;
+
+	beforeEach(() => {
+		$element = document.createElement("div");
+		$parent = document.createElement("div");
+		$parent.append($element);
+		$grandparent = document.createElement("div");
+		$grandparent.append($parent);
+	});
+
+	test("returns null if null", () => {
+		const $scroll = getClosestScrollableElement(null);
+		expect($scroll).toBeNull();
+	});
+
+	test("returns null if no scrollable element", () => {
+		$parent.style.overflowY = "hidden";
+		$grandparent.style.overflowY = "clip";
+		const $scroll = getClosestScrollableElement($element);
+		expect($scroll).toBeNull();
+	});
+
+	test("returns element itself if scrollable", () => {
+		$element.style.overflowY = "auto";
+		const $scroll = getClosestScrollableElement($element);
+		expect($scroll).toBe($element);
+	});
+
+	test("returns closest scrollable ancestor", () => {
+		$parent.style.overflowY = $grandparent.style.overflowY = "scroll";
+		const $scroll = getClosestScrollableElement($element);
+		expect($scroll).toBe($parent);
 	});
 });
 

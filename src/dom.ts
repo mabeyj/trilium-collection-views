@@ -23,14 +23,16 @@ export function renderError(message: string): void {
 }
 
 /**
- * Observes the container containing the current note's contents and resizes an
- * element to fit the container's height when the container is resized (keeping
- * the horizontal scrollbar at the bottom of the visible area).
+ * Observes the scrollable element containing the current note's contents and
+ * resizes an element to fit the container's height when the container is
+ * resized (keeping the horizontal scrollbar at the bottom of the visible area).
  */
 export function fitToNoteDetailContainer($element: HTMLElement): void {
-	const $container = api.$container[0].closest(".note-detail")?.parentElement;
+	const $container = getClosestScrollableElement(
+		api.$container[0].closest(".note-detail")
+	);
 	if (!$container) {
-		throw new Error("note container element not found");
+		return;
 	}
 
 	// The offset is the amount of borders, padding, and margin between the
@@ -77,6 +79,25 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 		$element.style.height = height;
 		requestAnimationFrame(() => observer.observe($container));
 	}).observe($container);
+}
+
+/**
+ * Returns the closest element to the given element that can be vertically
+ * scrolled or null if no such element is found.
+ */
+export function getClosestScrollableElement(
+	$element: HTMLElement | null
+): HTMLElement | null {
+	while ($element) {
+		const style = getComputedStyle($element);
+		if (style.overflowY === "auto" || style.overflowY === "scroll") {
+			return $element;
+		}
+
+		$element = $element.parentElement;
+	}
+
+	return null;
 }
 
 /**
