@@ -3,6 +3,7 @@
 ## 1.2.1 - Unreleased
 
 - Fix scrolling issues (double scrollbar and scrolling down on load) that occur in Trilium v0.60+.
+- Fix a scrolling issue (view height slowly decreasing on load) that could occur with custom themes that change the parent scrollable container of notes to a different element.
 - Fix the `$dateCreated` and `$dateModified` properties displaying an empty value in Trilium v0.61+.
   - For Trilium v0.61.0 to v0.61.5, `$dateCreated` is not available and `$dateModified` will display the modification date of the note's content and not the note itself.
   - If you are using the v0.61 beta, upgrade to at least v0.61.6 for these dates to work as intended.
