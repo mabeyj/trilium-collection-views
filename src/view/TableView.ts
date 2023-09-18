@@ -31,6 +31,7 @@ export class TableView extends View {
 
 		const $scroll = document.createElement("div");
 		$scroll.className = "collection-view-scroll";
+		
 		$scroll.appendChild($table);
 		return $scroll;
 	}

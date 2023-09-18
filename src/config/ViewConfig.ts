@@ -27,6 +27,7 @@ export class ViewConfig {
 	columns?: number;
 	columnWidth?: number;
 	coverHeight?: number;
+	search?: boolean;
 
 	attributes: AttributeConfig[] = [];
 
@@ -42,6 +43,7 @@ export class ViewConfig {
 		this.parseAttributes(
 			note.getLabels("attribute").map((label) => label.value)
 		);
+		this.parseSearch(note.getLabelValue("search"));
 	}
 
 	/**
@@ -125,6 +127,13 @@ export class ViewConfig {
 	 */
 	parseAttributes(values: string[]): void {
 		this.attributes = values.map((value) => new AttributeConfig(value));
+	}
+
+	/**
+	 * Enable and disable the search function.
+	 */
+	parseSearch(value: string | null): void {
+		this.search = value === null ? false : true;
 	}
 
 	/**
