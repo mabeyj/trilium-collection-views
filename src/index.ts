@@ -57,7 +57,7 @@ async function render(): Promise<void> {
 
 	let $view;
 	switch (config.view) {
-		case ViewType.Board:
+		case ViewType.Board: {
 			if (!config.groupBy) {
 				renderError(
 					"This note must define a <code>groupBy</code> attribute."
@@ -68,6 +68,7 @@ async function render(): Promise<void> {
 			const groups = await groupNotes(notes, config.groupBy.path);
 			$view = await new BoardView(config, groups).render();
 			break;
+		}
 
 		case ViewType.Gallery:
 			$view = await new GalleryView(config, notes).render();
@@ -97,4 +98,4 @@ async function render(): Promise<void> {
 	}
 }
 
-render();
+void render();

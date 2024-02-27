@@ -39,7 +39,7 @@ export class AttributeConfig {
 		const settings = splitComma(value);
 		this.path = settings.shift() || "";
 
-		for (var setting of settings) {
+		for (const setting of settings) {
 			const parts = setting.split("=");
 			const key = (parts.shift() || "").trim();
 			const value = parts.join("=");

@@ -46,7 +46,7 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 	// This is necessary to avoid an extra scrollbar appearing inconsistently
 	// due to rounding causing the $element height to be one pixel too large.
 
-	var scrollBehavior = $container.style.scrollBehavior;
+	const scrollBehavior = $container.style.scrollBehavior;
 	$container.style.scrollBehavior = "auto";
 	$element.style.minHeight = "100vh";
 
@@ -77,7 +77,9 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 
 		observer.disconnect();
 		$element.style.height = height;
-		requestAnimationFrame(() => observer.observe($container));
+		requestAnimationFrame(() => {
+			observer.observe($container);
+		});
 	}).observe($container);
 }
 
@@ -143,31 +145,33 @@ export async function staggeredRender(
 
 	const $children = await Promise.all(initial.map(render));
 	appendChildren($parent, $children);
-	staggeredRenderAsync($parent, remaining, render);
+
+	if (remaining.length) {
+		setTimeout(() => {
+			void staggeredRenderChunk($parent, remaining, render);
+		});
+	}
 }
 
 /**
- * Returns immediately and will render notes and append the resulting elements
- * to a parent element in a staggered manner asynchronously.
+ * Renders notes in chunks over multiple animation frames until all notes are
+ * rendered, appending the resulting elements to a parent element.
  */
-function staggeredRenderAsync(
+async function staggeredRenderChunk(
 	$parent: HTMLElement,
 	notes: NoteShort[],
-	render: (note: NoteShort) => Promise<HTMLElement>
-) {
-	if (!notes.length) {
-		return;
-	}
+	render: (note: NoteShort) => Promise<HTMLElement>,
+): Promise<void> {
+	const chunk = notes.slice(0, staggeredSize);
+	const remaining = notes.slice(staggeredSize);
 
-	setTimeout(async () => {
-		const chunk = notes.slice(0, staggeredSize);
-		const remaining = notes.slice(staggeredSize);
+	const $children = await Promise.all(chunk.map(render));
 
-		const $children = await Promise.all(chunk.map(render));
+	requestAnimationFrame(() => {
+		appendChildren($parent, $children);
 
-		requestAnimationFrame(() => {
-			appendChildren($parent, $children);
-			staggeredRenderAsync($parent, remaining, render);
-		});
+		if (remaining.length) {
+			void staggeredRenderChunk($parent, remaining, render);
+		}
 	});
 }

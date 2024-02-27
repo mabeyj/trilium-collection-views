@@ -5,20 +5,23 @@ export const numberFormat = Intl.NumberFormat();
  * (inclusive) or undefined if not a number.
  */
 export function parseOptionalInt(
-	value: any,
+	value: unknown,
 	min: number,
 	max: number
 ): number | undefined {
-	if (typeof value === "string") {
-		value = value.trim();
+	if (typeof value === "number") {
+		return Math.floor(value);
 	}
-
-	const number = parseInt(value, 10);
-	if (isNaN(number)) {
+	if (typeof value !== "string") {
 		return undefined;
 	}
 
-	return clamp(number, min, max);
+	const intValue = parseInt(value, 10);
+	if (isNaN(intValue)) {
+		return undefined;
+	}
+
+	return clamp(intValue, min, max);
 }
 
 /**
@@ -28,12 +31,15 @@ export function parseOptionalInt(
  * Unlike parseFloat, strings with a non-numeric suffix (e.g., dates) are
  * considered NaN.
  */
-export function parseFloatStrict(value: any): number {
-	if (typeof value === "string") {
-		value = value.trim();
-		if (!value.match(/^[+-]?\d*(\.\d+)?$/)) {
-			return NaN;
-		}
+export function parseFloatStrict(value: unknown): number {
+	if (typeof value === "number") {
+		return value;
+	}
+	if (
+		typeof value !== "string" ||
+		!value.trim().match(/^[+-]?\d*(\.\d+)?$/)
+	) {
+		return NaN;
 	}
 
 	return parseFloat(value);

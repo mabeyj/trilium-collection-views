@@ -137,7 +137,6 @@ describe("fixIncludedNote", () => {
 		</div>
 	`;
 
-	let mockApi: MockApi;
 	let $include: HTMLElement;
 
 	function createIncludedNote(html: string): void {
@@ -150,7 +149,7 @@ describe("fixIncludedNote", () => {
 	}
 
 	beforeEach(() => {
-		mockApi = new MockApi();
+		new MockApi();
 		$include = document.createElement("section");
 	});
 
@@ -214,7 +213,7 @@ describe("staggeredRender", () => {
 		await staggeredRender(document.body, 2, notes, async (note) => {
 			const $p = document.createElement("p");
 			$p.textContent = note.title;
-			return $p;
+			return Promise.resolve($p);
 		});
 
 		getByTextRange(1, 2);

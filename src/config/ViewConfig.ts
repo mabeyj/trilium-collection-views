@@ -5,6 +5,7 @@ import {
 	SortAttribute,
 } from "collection-views/notes";
 import { AttributeConfig } from "collection-views/config/AttributeConfig";
+import { isEnumValue } from "collection-views/util";
 
 const tokens = ["$id", "$noteId", "$title", "$renderNote"];
 
@@ -49,11 +50,7 @@ export class ViewConfig {
 	 */
 	parseView(value: string): void {
 		value = value.trim();
-		if (
-			value === ViewType.Board ||
-			value === ViewType.Gallery ||
-			value === ViewType.Table
-		) {
+		if (isEnumValue(ViewType, value)) {
 			this.view = value;
 		}
 	}
@@ -159,7 +156,7 @@ export class ViewConfig {
 				continue;
 			}
 
-			let length = path.length;
+			const length = path.length;
 			if (path.startsWith("$renderNote")) {
 				path = path.split(".").slice(1).join(".");
 			}

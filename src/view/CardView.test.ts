@@ -4,7 +4,7 @@ import { CardView } from "collection-views/view";
 
 class TestView extends CardView {
 	async render(): Promise<HTMLElement> {
-		return document.createElement("div");
+		return Promise.resolve(document.createElement("div"));
 	}
 }
 

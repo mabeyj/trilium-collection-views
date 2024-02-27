@@ -79,24 +79,31 @@ export async function getAttributesByPath(
 		case "$noteId":
 			value = note.noteId;
 			break;
+
 		case "$type":
 			value = note.type;
 			break;
+
 		case "$mime":
 			value = note.mime;
 			break;
+
 		case "$title":
 			value = note.title;
 			break;
-		case "$contentSize":
+
+		case "$contentSize": {
 			const size = await getContentLength(note);
 			if (size !== null) {
 				value = `${size}`;
 			}
 			break;
+		}
+
 		case "$dateCreated":
 			value = await getDateCreated(note);
 			break;
+
 		case "$dateModified":
 			value = await getDateModified(note);
 			break;
@@ -181,14 +188,14 @@ export async function getCoverUrl(
 }
 
 interface NotesByAttributeType {
-	label: Record<string, NoteShort[]>;
-	relation: Record<string, NoteShort[]>;
+	label: Partial<Record<string, NoteShort[]>>;
+	relation: Partial<Record<string, NoteShort[]>>;
 	none: NoteShort[];
 }
 
 interface AddedFlags {
-	label: Record<string, boolean>;
-	relation: Record<string, boolean>;
+	label: Partial<Record<string, boolean>>;
+	relation: Partial<Record<string, boolean>>;
 }
 
 /**
@@ -222,11 +229,9 @@ export async function groupNotes(
 				continue;
 			}
 
-			const groups = types[attribute.type];
-			if (!groups[attribute.value]) {
-				groups[attribute.value] = [];
-			}
-			groups[attribute.value].push(note);
+			const groupNotes = (types[attribute.type][attribute.value] ??= []);
+			groupNotes.push(note);
+
 			added[attribute.type][attribute.value] = true;
 		}
 
@@ -240,7 +245,7 @@ export async function groupNotes(
 		groups.push({
 			name: value,
 			relatedNote: null,
-			notes: groupNotes,
+			notes: groupNotes ?? [],
 		});
 	}
 	for (const [noteId, groupNotes] of Object.entries(types.relation)) {
@@ -248,7 +253,7 @@ export async function groupNotes(
 		groups.push({
 			name: relatedNote ? relatedNote.title : noteId,
 			relatedNote,
-			notes: groupNotes,
+			notes: groupNotes ?? [],
 		});
 	}
 

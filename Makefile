@@ -1,3 +1,4 @@
+ESLINT := node_modules/.bin/eslint
 PRETTIER := node_modules/.bin/prettier
 WEBPACK := node_modules/.bin/webpack
 
@@ -12,8 +13,13 @@ clean:
 	rm -rf dist
 
 .PHONY: format
-format:
-	$(PRETTIER) --write src "*.{js,json,md}"
+format: node_modules
+	-$(ESLINT) --fix src
+	-$(PRETTIER) --write src "*.{js,json,md,mjs}"
+
+.PHONY: lint
+lint: node_modules
+	$(ESLINT) src
 
 .PHONY: test
 test: node_modules

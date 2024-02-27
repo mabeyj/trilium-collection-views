@@ -85,7 +85,7 @@ export abstract class View {
 			relatedNote = await api.getNote(attribute.value);
 		}
 
-		let value = relatedNote ? relatedNote.title : attribute.value;
+		const value = relatedNote ? relatedNote.title : attribute.value;
 
 		if (denominator) {
 			const $progressBar = this.renderProgressBar(

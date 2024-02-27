@@ -4,7 +4,7 @@ import { MockApi, MockNoteShort } from "collection-views/test";
 
 class TestView extends View {
 	async render(): Promise<HTMLElement> {
-		return document.createElement("div");
+		return Promise.resolve(document.createElement("div"));
 	}
 }
 
