@@ -140,7 +140,7 @@ export async function getAttributeValueByPath(
 	path: string
 ): Promise<string> {
 	const attribute = await getAttributeByPath(note, path);
-	return attribute?.value || "";
+	return attribute?.value ?? "";
 }
 
 /**
@@ -368,7 +368,7 @@ export async function getSortableAttributeValue(
  * Returns the sortable title of a note.
  */
 export function getSortableTitle(note: NoteShort): string {
-	const sortableTitle = note.getLabelValue("sortableTitle") || "";
+	const sortableTitle = note.getLabelValue("sortableTitle") ?? "";
 	const title = sortableTitle.trim() || note.title.trim();
 	return title.toLowerCase();
 }

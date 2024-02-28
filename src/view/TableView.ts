@@ -149,7 +149,7 @@ export class TableView extends View {
 	 * number of lines set in the given configuration.
 	 */
 	renderTruncated(
-		$children: Array<HTMLElement | Text>,
+		$children: (HTMLElement | Text)[],
 		attributeConfig: AttributeConfig
 	): HTMLElement {
 		const $container = document.createElement("div");

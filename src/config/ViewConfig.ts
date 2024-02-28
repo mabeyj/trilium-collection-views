@@ -22,7 +22,7 @@ export class ViewConfig {
 	note: NoteShort;
 
 	view: ViewType = ViewType.Table;
-	query: string = "";
+	query = "";
 	groupBy?: AttributeConfig;
 	sort: SortAttribute[] = [];
 	columns?: number;
@@ -33,13 +33,13 @@ export class ViewConfig {
 
 	constructor(note: NoteShort) {
 		this.note = note;
-		this.parseView(note.getLabelValue("view") || "");
-		this.parseQuery(note.getLabelValue("query") || "");
-		this.parseGroupBy(note.getLabelValue("groupBy") || "");
-		this.parseSort(note.getLabelValue("sort") || "");
-		this.parseColumns(note.getLabelValue("columns") || "");
-		this.parseColumnWidth(note.getLabelValue("columnWidth") || "");
-		this.parseCoverHeight(note.getLabelValue("coverHeight") || "");
+		this.parseView(note.getLabelValue("view") ?? "");
+		this.parseQuery(note.getLabelValue("query") ?? "");
+		this.parseGroupBy(note.getLabelValue("groupBy") ?? "");
+		this.parseSort(note.getLabelValue("sort") ?? "");
+		this.parseColumns(note.getLabelValue("columns") ?? "");
+		this.parseColumnWidth(note.getLabelValue("columnWidth") ?? "");
+		this.parseCoverHeight(note.getLabelValue("coverHeight") ?? "");
 		this.parseAttributes(
 			note.getLabels("attribute").map((label) => label.value)
 		);

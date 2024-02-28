@@ -26,7 +26,7 @@ export abstract class View {
 	async renderAttributeValues(
 		note: NoteShort,
 		attributeConfig: AttributeConfig
-	): Promise<Array<HTMLElement | Text>> {
+	): Promise<(HTMLElement | Text)[]> {
 		const attributes = await getAttributesByPath(
 			note,
 			attributeConfig.path
@@ -53,7 +53,7 @@ export abstract class View {
 			)
 		);
 
-		const $separated: Array<HTMLElement | Text> = [];
+		const $separated: (HTMLElement | Text)[] = [];
 		const separable = !($values[0]?.[0] instanceof HTMLDivElement);
 		for (let i = 0; i < $values.length; i++) {
 			let $separator;
@@ -79,7 +79,7 @@ export abstract class View {
 		attribute: Attribute,
 		denominator: string | null,
 		attributeConfig: AttributeConfig
-	): Promise<Array<HTMLElement | Text>> {
+	): Promise<(HTMLElement | Text)[]> {
 		let relatedNote: NoteShort | null = null;
 		if (attribute.type === "relation") {
 			relatedNote = await api.getNote(attribute.value);
@@ -111,7 +111,7 @@ export abstract class View {
 		value: string,
 		attributeConfig: AttributeConfig,
 		relatedNote: NoteShort | null
-	): Array<HTMLElement | Text> {
+	): (HTMLElement | Text)[] {
 		if (attributeConfig.boolean) {
 			return this.renderBoolean(value, attributeConfig);
 		}
@@ -137,7 +137,7 @@ export abstract class View {
 	renderBoolean(
 		value: string,
 		attributeConfig: AttributeConfig
-	): Array<HTMLElement | Text> {
+	): (HTMLElement | Text)[] {
 		const $checkbox = document.createElement("input");
 		$checkbox.className = "collection-view-checkbox";
 		$checkbox.type = "checkbox";
@@ -161,8 +161,8 @@ export abstract class View {
 		let background = attributeConfig.badgeBackground;
 		let color = attributeConfig.badgeColor;
 		if (note) {
-			background = note.getLabelValue("badgeBackground") || background;
-			color = note.getLabelValue("badgeColor") || color;
+			background = note.getLabelValue("badgeBackground") ?? background;
+			color = note.getLabelValue("badgeColor") ?? color;
 		}
 
 		const $badge = document.createElement("span");

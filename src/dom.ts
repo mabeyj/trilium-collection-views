@@ -5,7 +5,7 @@ const staggeredSize = 25;
  */
 export function appendChildren(
 	$parent: HTMLElement,
-	$children: Array<HTMLElement | Text>
+	$children: (HTMLElement | Text)[]
 ): void {
 	for (const $child of $children) {
 		$parent.appendChild($child);

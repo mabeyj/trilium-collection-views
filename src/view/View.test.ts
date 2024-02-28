@@ -277,7 +277,7 @@ describe("View", () => {
 		function render(
 			numerator: string,
 			denominator: string,
-			options: string = ""
+			options = ""
 		): {
 			$progress: HTMLElement | undefined;
 			$bar: HTMLElement | null | undefined;

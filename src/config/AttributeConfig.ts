@@ -13,35 +13,35 @@ const separatorAliases: Record<string, string> = {
  */
 export class AttributeConfig {
 	path: string;
-	denominatorPath: string = "";
+	denominatorPath = "";
 
-	align: string = "";
+	align = "";
 	truncate?: number;
 	width?: number;
-	wrap: boolean = false;
+	wrap = false;
 
 	header?: string;
 
-	badge: boolean = false;
-	badgeBackground: string = "";
-	badgeColor: string = "";
+	badge = false;
+	badgeBackground = "";
+	badgeColor = "";
 
-	boolean: boolean = false;
-	number: boolean = false;
+	boolean = false;
+	number = false;
 	precision?: number;
 
-	prefix: string = "";
-	repeat: string = "";
+	prefix = "";
+	repeat = "";
 	separator?: string;
-	suffix: string = "";
+	suffix = "";
 
 	constructor(value: string) {
 		const settings = splitComma(value);
-		this.path = settings.shift() || "";
+		this.path = settings.shift() ?? "";
 
 		for (const setting of settings) {
 			const parts = setting.split("=");
-			const key = (parts.shift() || "").trim();
+			const key = (parts.shift() ?? "").trim();
 			const value = parts.join("=");
 
 			switch (key) {
@@ -102,9 +102,7 @@ export class AttributeConfig {
 	 * Returns an array of elements or text nodes affixed with the configured
 	 * prefix and suffix.
 	 */
-	affixNodes(
-		...$nodes: Array<HTMLElement | Text>
-	): Array<HTMLElement | Text> {
+	affixNodes(...$nodes: (HTMLElement | Text)[]): (HTMLElement | Text)[] {
 		const $affixed = [];
 		if (this.prefix) {
 			$affixed.push(document.createTextNode(this.prefix));
