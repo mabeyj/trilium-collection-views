@@ -25,11 +25,11 @@ export abstract class View {
 	 */
 	async renderAttributeValues(
 		note: NoteShort,
-		attributeConfig: AttributeConfig
+		attributeConfig: AttributeConfig,
 	): Promise<(HTMLElement | Text)[]> {
 		const attributes = await getAttributesByPath(
 			note,
-			attributeConfig.path
+			attributeConfig.path,
 		);
 		if (attributeConfig.boolean && !attributes.length) {
 			attributes.push({ type: "label", value: "false" });
@@ -39,7 +39,7 @@ export abstract class View {
 		if (attributeConfig.denominatorPath) {
 			denominator = await getLabelValueByPath(
 				note,
-				attributeConfig.denominatorPath
+				attributeConfig.denominatorPath,
 			);
 		}
 
@@ -48,9 +48,9 @@ export abstract class View {
 				this.renderAttributeValue(
 					attribute,
 					denominator,
-					attributeConfig
-				)
-			)
+					attributeConfig,
+				),
+			),
 		);
 
 		const $separated: (HTMLElement | Text)[] = [];
@@ -78,7 +78,7 @@ export abstract class View {
 	async renderAttributeValue(
 		attribute: Attribute,
 		denominator: string | null,
-		attributeConfig: AttributeConfig
+		attributeConfig: AttributeConfig,
 	): Promise<(HTMLElement | Text)[]> {
 		let relatedNote: NoteShort | null = null;
 		if (attribute.type === "relation") {
@@ -91,7 +91,7 @@ export abstract class View {
 			const $progressBar = this.renderProgressBar(
 				value,
 				denominator,
-				attributeConfig
+				attributeConfig,
 			);
 			if ($progressBar) {
 				return [$progressBar];
@@ -110,7 +110,7 @@ export abstract class View {
 	renderValue(
 		value: string,
 		attributeConfig: AttributeConfig,
-		relatedNote: NoteShort | null
+		relatedNote: NoteShort | null,
 	): (HTMLElement | Text)[] {
 		if (attributeConfig.boolean) {
 			return this.renderBoolean(value, attributeConfig);
@@ -136,7 +136,7 @@ export abstract class View {
 	 */
 	renderBoolean(
 		value: string,
-		attributeConfig: AttributeConfig
+		attributeConfig: AttributeConfig,
 	): (HTMLElement | Text)[] {
 		const $checkbox = document.createElement("input");
 		$checkbox.className = "collection-view-checkbox";
@@ -156,7 +156,7 @@ export abstract class View {
 	renderBadge(
 		value: string,
 		attributeConfig: AttributeConfig,
-		note: NoteShort | null
+		note: NoteShort | null,
 	): HTMLElement {
 		let background = attributeConfig.badgeBackground;
 		let color = attributeConfig.badgeColor;
@@ -184,7 +184,7 @@ export abstract class View {
 	renderProgressBar(
 		numerator: string,
 		denominator: string,
-		attributeConfig: AttributeConfig
+		attributeConfig: AttributeConfig,
 	): HTMLElement | undefined {
 		const numeratorFloat = parseFloat(numerator);
 		const denominatorFloat = parseFloat(denominator);
@@ -204,8 +204,8 @@ export abstract class View {
 			attributeConfig.affixNodes(
 				this.renderProgressBarNumber(numeratorFloat),
 				document.createTextNode(" / "),
-				this.renderProgressBarNumber(denominatorFloat)
-			)
+				this.renderProgressBarNumber(denominatorFloat),
+			),
 		);
 
 		const $bar = document.createElement("div");
@@ -213,7 +213,7 @@ export abstract class View {
 		$bar.style.width = `${clamp(percent, 0, 100)}%`;
 		if (percent >= 1) {
 			$bar.appendChild(
-				document.createTextNode(`${Math.round(percent)}%`)
+				document.createTextNode(`${Math.round(percent)}%`),
 			);
 		}
 		if (percent >= 100) {

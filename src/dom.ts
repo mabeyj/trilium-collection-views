@@ -5,7 +5,7 @@ const staggeredSize = 25;
  */
 export function appendChildren(
 	$parent: HTMLElement,
-	$children: (HTMLElement | Text)[]
+	$children: (HTMLElement | Text)[],
 ): void {
 	for (const $child of $children) {
 		$parent.appendChild($child);
@@ -29,7 +29,7 @@ export function renderError(message: string): void {
  */
 export function fitToNoteDetailContainer($element: HTMLElement): void {
 	const $container = getClosestScrollableElement(
-		api.$container[0].closest(".note-detail")
+		api.$container[0].closest(".note-detail"),
 	);
 	if (!$container) {
 		return;
@@ -88,7 +88,7 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
  * scrolled or null if no such element is found.
  */
 export function getClosestScrollableElement(
-	$element: HTMLElement | null
+	$element: HTMLElement | null,
 ): HTMLElement | null {
 	while ($element) {
 		const style = getComputedStyle($element);
@@ -138,7 +138,7 @@ export async function staggeredRender(
 	$parent: HTMLElement,
 	initialSize: number,
 	notes: NoteShort[],
-	render: (note: NoteShort) => Promise<HTMLElement>
+	render: (note: NoteShort) => Promise<HTMLElement>,
 ): Promise<void> {
 	const initial = notes.slice(0, initialSize);
 	const remaining = notes.slice(initialSize);

@@ -130,7 +130,7 @@ export class AttributeConfig {
 			return document.createElement("br");
 		}
 		return document.createTextNode(
-			separatorAliases[separator] || separator
+			separatorAliases[separator] || separator,
 		);
 	}
 }

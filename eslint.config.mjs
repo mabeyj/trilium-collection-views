@@ -20,5 +20,5 @@ export default tseslint.config(
 				{ argsIgnorePattern: "^_" },
 			],
 		},
-	}
+	},
 );

@@ -46,7 +46,7 @@ export class MockApi {
 
 	public async getNote(noteId: string): Promise<NoteShort | null> {
 		return Promise.resolve(
-			this.notes.find((note) => note.noteId === noteId) ?? null
+			this.notes.find((note) => note.noteId === noteId) ?? null,
 		);
 	}
 
@@ -105,7 +105,7 @@ abstract class BaseMockFNote {
 		return this.attributes.filter(
 			(attribute) =>
 				(type === undefined || attribute.type === type) &&
-				(name === undefined || attribute.name === name)
+				(name === undefined || attribute.name === name),
 		);
 	}
 

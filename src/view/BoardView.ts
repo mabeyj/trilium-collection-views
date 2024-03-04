@@ -33,7 +33,7 @@ export class BoardView extends CardView {
 	 */
 	async renderColumns(): Promise<HTMLElement[]> {
 		return await Promise.all(
-			this.groups.map((group) => this.renderColumn(group))
+			this.groups.map((group) => this.renderColumn(group)),
 		);
 	}
 
@@ -53,7 +53,7 @@ export class BoardView extends CardView {
 			await Promise.all([
 				this.renderColumnHeader(group),
 				this.renderColumnCards(group),
-			])
+			]),
 		);
 		return $column;
 	}
@@ -131,7 +131,7 @@ export class BoardView extends CardView {
 		const $cards = document.createElement("div");
 		$cards.className = "collection-view-board-column-cards";
 		await staggeredRender($cards, initialRenderSize, group.notes, (note) =>
-			this.renderCard(note, false)
+			this.renderCard(note, false),
 		);
 		return $cards;
 	}

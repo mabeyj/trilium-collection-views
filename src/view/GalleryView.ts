@@ -27,7 +27,7 @@ export class GalleryView extends CardView {
 			$gallery.style.gridTemplateColumns = `repeat(${columns}, minmax(0, 1fr))`;
 		}
 		await staggeredRender($gallery, initialRenderSize, this.notes, (note) =>
-			this.renderCard(note, true)
+			this.renderCard(note, true),
 		);
 
 		const $scroll = document.createElement("div");

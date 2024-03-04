@@ -105,7 +105,7 @@ describe("getAttributesByPath", () => {
 	])("%s", async (_, path, expected) => {
 		const attributes = await getAttributesByPath(attributeNote, path);
 		expect(attributes.map((attribute) => attribute.value)).toEqual(
-			expected
+			expected,
 		);
 	});
 });

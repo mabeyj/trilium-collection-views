@@ -180,7 +180,7 @@ describe("fixIncludedNote", () => {
 		const $wrapper = $include.children[0];
 		expect($wrapper).toHaveClass(
 			"include-note-wrapper",
-			"collection-view-include-note"
+			"collection-view-include-note",
 		);
 		expect($wrapper.children).toHaveLength(2);
 		expect($wrapper.children[0]).toHaveClass("include-note-title");

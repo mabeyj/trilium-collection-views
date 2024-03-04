@@ -13,7 +13,7 @@ export abstract class CardView extends View {
 	 */
 	async renderCard(
 		note: NoteShort,
-		showEmptyCovers: boolean
+		showEmptyCovers: boolean,
 	): Promise<HTMLElement> {
 		const [$cover, $list] = await Promise.all([
 			this.renderCardCover(note, showEmptyCovers),
@@ -35,7 +35,7 @@ export abstract class CardView extends View {
 	 */
 	async renderCardCover(
 		note: NoteShort,
-		showEmpty: boolean
+		showEmpty: boolean,
 	): Promise<HTMLElement | undefined> {
 		const { coverHeight } = this.config;
 		if (coverHeight === 0) {
@@ -66,7 +66,7 @@ export abstract class CardView extends View {
 		const attributePromises: Promise<HTMLElement | null>[] = [];
 		for (const attributeConfig of this.config.attributes) {
 			attributePromises.push(
-				this.renderCardAttribute(note, attributeConfig)
+				this.renderCardAttribute(note, attributeConfig),
 			);
 		}
 
@@ -107,7 +107,7 @@ export abstract class CardView extends View {
 	 */
 	async renderCardAttribute(
 		note: NoteShort,
-		attributeConfig: AttributeConfig
+		attributeConfig: AttributeConfig,
 	): Promise<HTMLElement | null> {
 		const $values = await this.renderAttributeValues(note, attributeConfig);
 		if (!$values.length) {

@@ -3,7 +3,7 @@ import { parseFloatStrict } from "collection-views/math";
 const attributeNameRegex = "(\\$[a-z]+|[\\w:]+)";
 export const attributePathRegex = new RegExp(
 	`${attributeNameRegex}(\\.${attributeNameRegex})*`,
-	"i"
+	"i",
 );
 
 export interface Group {
@@ -56,7 +56,7 @@ export interface SortAttribute {
  */
 export async function getAttributesByPath(
 	note: NoteShort,
-	path: string
+	path: string,
 ): Promise<Attribute[]> {
 	if (!path) {
 		return [];
@@ -123,7 +123,7 @@ export async function getAttributesByPath(
  */
 export async function getAttributeByPath(
 	note: NoteShort,
-	path: string
+	path: string,
 ): Promise<Attribute | null> {
 	const attributes = await getAttributesByPath(note, path);
 	return attributes.length ? attributes[0] : null;
@@ -137,7 +137,7 @@ export async function getAttributeByPath(
  */
 export async function getAttributeValueByPath(
 	note: NoteShort,
-	path: string
+	path: string,
 ): Promise<string> {
 	const attribute = await getAttributeByPath(note, path);
 	return attribute?.value ?? "";
@@ -151,7 +151,7 @@ export async function getAttributeValueByPath(
  */
 export async function getLabelValueByPath(
 	note: NoteShort,
-	path: string
+	path: string,
 ): Promise<string> {
 	for (const attribute of await getAttributesByPath(note, path)) {
 		if (attribute.type === "label") {
@@ -165,7 +165,7 @@ export async function getLabelValueByPath(
  * Returns the URL for a note's cover image or undefined if it has none.
  */
 export async function getCoverUrl(
-	note: NoteShort
+	note: NoteShort,
 ): Promise<string | undefined> {
 	if (note.type === "image") {
 		return `api/images/${note.noteId}/${encodeURIComponent(note.title)}`;
@@ -203,7 +203,7 @@ interface AddedFlags {
  */
 export async function groupNotes(
 	notes: NoteShort[],
-	path: string
+	path: string,
 ): Promise<Group[]> {
 	const types: NotesByAttributeType = {
 		label: {},
@@ -258,7 +258,7 @@ export async function groupNotes(
 	}
 
 	groups.sort((a, b) =>
-		getSortableGroupName(a) < getSortableGroupName(b) ? -1 : 1
+		getSortableGroupName(a) < getSortableGroupName(b) ? -1 : 1,
 	);
 
 	if (types.none.length) {
@@ -273,7 +273,7 @@ export async function groupNotes(
  */
 export async function sortNotes(
 	notes: NoteShort[],
-	sortAttributes: SortAttribute[]
+	sortAttributes: SortAttribute[],
 ): Promise<void> {
 	const sortableValues: Record<string, Record<string, string>> = {};
 	for (const note of notes) {
@@ -281,7 +281,7 @@ export async function sortNotes(
 		for (const sortAttribute of sortAttributes) {
 			const value = await getSortableAttributeValue(
 				note,
-				sortAttribute.path
+				sortAttribute.path,
 			);
 			sortableValues[note.noteId][sortAttribute.path] = value;
 		}
@@ -346,7 +346,7 @@ export function getSortableGroupName(group: Group): string {
  */
 export async function getSortableAttributeValue(
 	note: NoteShort,
-	path: string
+	path: string,
 ): Promise<string> {
 	const attribute = await getAttributeByPath(note, path);
 	if (!attribute) {
@@ -393,7 +393,7 @@ export async function getContent(note: NoteShort): Promise<string | null> {
  * available.
  */
 export async function getContentLength(
-	note: NoteShort
+	note: NoteShort,
 ): Promise<number | null> {
 	if (note.getBlob) {
 		// Available since Trilium v0.61.

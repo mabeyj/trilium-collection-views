@@ -43,7 +43,7 @@ async function render(): Promise<void> {
 
 	if (mode === RenderMode.Text) {
 		api.$container.append(
-			$("<em>").text(descriptions[config.view] || "Collection view")
+			$("<em>").text(descriptions[config.view] || "Collection view"),
 		);
 		return;
 	}
@@ -60,7 +60,7 @@ async function render(): Promise<void> {
 		case ViewType.Board: {
 			if (!config.groupBy) {
 				renderError(
-					"This note must define a <code>groupBy</code> attribute."
+					"This note must define a <code>groupBy</code> attribute.",
 				);
 				return;
 			}

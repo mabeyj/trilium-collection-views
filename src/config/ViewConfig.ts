@@ -41,7 +41,7 @@ export class ViewConfig {
 		this.parseColumnWidth(note.getLabelValue("columnWidth") ?? "");
 		this.parseCoverHeight(note.getLabelValue("coverHeight") ?? "");
 		this.parseAttributes(
-			note.getLabels("attribute").map((label) => label.value)
+			note.getLabels("attribute").map((label) => label.value),
 		);
 	}
 

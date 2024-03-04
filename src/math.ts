@@ -7,7 +7,7 @@ export const numberFormat = Intl.NumberFormat();
 export function parseOptionalInt(
 	value: unknown,
 	min: number,
-	max: number
+	max: number,
 ): number | undefined {
 	if (typeof value === "number") {
 		return Math.floor(value);

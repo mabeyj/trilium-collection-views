@@ -39,7 +39,7 @@ describe("TableView", () => {
 		test("returns view", async () => {
 			const $view = await view.render();
 			expect($view).toHaveTextContent(
-				"Titlelabel1label2Title 1Label 1Label 2Title 2"
+				"Titlelabel1label2Title 1Label 1Label 2Title 2",
 			);
 		});
 	});
@@ -77,35 +77,35 @@ describe("TableView", () => {
 
 		test("returns table cell with empty header text", () => {
 			const $cell = view.renderHeaderCell(
-				new AttributeConfig("test,header=")
+				new AttributeConfig("test,header="),
 			);
 			expect($cell).toBeEmptyDOMElement();
 		});
 
 		test("returns table cell with custom header text", () => {
 			const $cell = view.renderHeaderCell(
-				new AttributeConfig("test,header=Header")
+				new AttributeConfig("test,header=Header"),
 			);
 			expect($cell).toHaveTextContent("Header");
 		});
 
 		test("returns table cell with text alignment", () => {
 			const $cell = view.renderHeaderCell(
-				new AttributeConfig("test,align=right")
+				new AttributeConfig("test,align=right"),
 			);
 			expect($cell).toHaveStyle({ textAlign: "right" });
 		});
 
 		test("returns table cell with custom width", () => {
 			const $cell = view.renderHeaderCell(
-				new AttributeConfig("test,width=100")
+				new AttributeConfig("test,width=100"),
 			);
 			expect($cell).toHaveStyle({ minWidth: "100px" });
 		});
 
 		test("returns table cell with wrapped text", () => {
 			const $cell = view.renderHeaderCell(
-				new AttributeConfig("test,wrap")
+				new AttributeConfig("test,wrap"),
 			);
 			expect($cell).toHaveStyle({ whiteSpace: "normal" });
 		});
@@ -137,7 +137,7 @@ describe("TableView", () => {
 		test("returns table cell with defaults", async () => {
 			const $cell = await view.renderAttributeCell(
 				attributeNote,
-				new AttributeConfig("label1")
+				new AttributeConfig("label1"),
 			);
 			expect($cell).toHaveStyle({ textAlign: "", whitespace: "" });
 			expect($cell).toHaveTextContent("Label 1");
@@ -147,7 +147,7 @@ describe("TableView", () => {
 		test("returns table cell with text alignment", async () => {
 			const $cell = await view.renderAttributeCell(
 				attributeNote,
-				new AttributeConfig("label1,align=right")
+				new AttributeConfig("label1,align=right"),
 			);
 			expect($cell).toHaveStyle({ textAlign: "right" });
 		});
@@ -155,7 +155,7 @@ describe("TableView", () => {
 		test("returns table cell with truncated content", async () => {
 			const $cell = await view.renderAttributeCell(
 				attributeNote,
-				new AttributeConfig("label1,truncate=3")
+				new AttributeConfig("label1,truncate=3"),
 			);
 			expect($cell.children).toHaveLength(1);
 			expect($cell.children[0]).toHaveClass("collection-view-truncate");
@@ -164,7 +164,7 @@ describe("TableView", () => {
 		test("returns table cell with wrapped text", async () => {
 			const $cell = await view.renderAttributeCell(
 				attributeNote,
-				new AttributeConfig("label1,wrap")
+				new AttributeConfig("label1,wrap"),
 			);
 			expect($cell).toHaveStyle({ whiteSpace: "normal" });
 		});
@@ -174,7 +174,7 @@ describe("TableView", () => {
 		test("returns truncated content", () => {
 			const $container = view.renderTruncated(
 				[document.createElement("div"), new Text("Content")],
-				new AttributeConfig("path,truncate=3")
+				new AttributeConfig("path,truncate=3"),
 			);
 			expect($container).toHaveStyle({ webkitLineClamp: "3" });
 			expect($container).toHaveTextContent("Content");
