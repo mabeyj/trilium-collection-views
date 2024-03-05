@@ -1,4 +1,5 @@
 ESLINT := node_modules/.bin/eslint
+JEST := node_modules/.bin/jest
 PRETTIER := node_modules/.bin/prettier
 WEBPACK := node_modules/.bin/webpack
 
@@ -29,7 +30,7 @@ lint: node_modules
 
 .PHONY: test
 test: node_modules
-	npx jest
+	$(JEST)
 
 dist: node_modules $(SCSS_FILES) $(TYPESCRIPT_FILES)
 	$(WEBPACK)
