@@ -20,7 +20,7 @@ export default tseslint.config(
 		},
 		rules: {
 			"@typescript-eslint/no-unused-vars": [
-				"warn",
+				"error",
 				{ argsIgnorePattern: "^_" },
 			],
 			"simple-import-sort/exports": "error",
