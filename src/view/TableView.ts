@@ -1,6 +1,6 @@
 import { AttributeConfig, ViewConfig } from "collection-views/config";
-import { View } from "collection-views/view/View";
 import { appendChildren, staggeredRender } from "collection-views/dom";
+import { View } from "collection-views/view/View";
 
 const initialRenderSize = 25;
 

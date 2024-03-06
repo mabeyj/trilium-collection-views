@@ -1,9 +1,5 @@
 import { screen } from "@testing-library/dom";
 import {
-	mockElementBoundingClientRect,
-	mockResizeObserver,
-} from "jsdom-testing-mocks";
-import {
 	appendChildren,
 	fitToNoteDetailContainer,
 	fixIncludedNote,
@@ -12,6 +8,10 @@ import {
 	staggeredRender,
 } from "collection-views/dom";
 import { clearBody, MockApi, MockNoteShort } from "collection-views/test";
+import {
+	mockElementBoundingClientRect,
+	mockResizeObserver,
+} from "jsdom-testing-mocks";
 
 describe("appendChildren", () => {
 	afterEach(clearBody);

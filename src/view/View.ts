@@ -1,3 +1,4 @@
+import { isTruthy } from "collection-views/boolean";
 import { AttributeConfig, ViewConfig } from "collection-views/config";
 import { appendChildren } from "collection-views/dom";
 import { clamp, numberFormat } from "collection-views/math";
@@ -5,7 +6,6 @@ import {
 	getAttributesByPath,
 	getLabelValueByPath,
 } from "collection-views/notes";
-import { isTruthy } from "collection-views/boolean";
 
 /**
  * Base view implementing common rendering of attributes.

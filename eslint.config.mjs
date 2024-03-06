@@ -1,6 +1,7 @@
 // @ts-check
 
 import eslint from "@eslint/js";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
@@ -14,11 +15,16 @@ export default tseslint.config(
 				tsconfigRootDir: import.meta.dirname,
 			},
 		},
+		plugins: {
+			"simple-import-sort": simpleImportSort,
+		},
 		rules: {
 			"@typescript-eslint/no-unused-vars": [
 				"warn",
 				{ argsIgnorePattern: "^_" },
 			],
+			"simple-import-sort/exports": "error",
+			"simple-import-sort/imports": "error",
 		},
 	},
 );

@@ -1,10 +1,10 @@
+import { AttributeConfig } from "collection-views/config/AttributeConfig";
 import { parseOptionalInt } from "collection-views/math";
 import {
 	attributePathRegex,
 	getAttributeValueByPath,
 	SortAttribute,
 } from "collection-views/notes";
-import { AttributeConfig } from "collection-views/config/AttributeConfig";
 import { isEnumValue } from "collection-views/util";
 
 const tokens = ["$id", "$noteId", "$title", "$renderNote"];

@@ -1,6 +1,6 @@
 import { AttributeConfig, ViewConfig } from "collection-views/config";
-import { View } from "collection-views/view";
 import { MockApi, MockNoteShort } from "collection-views/test";
+import { View } from "collection-views/view";
 
 class TestView extends View {
 	async render(): Promise<HTMLElement> {

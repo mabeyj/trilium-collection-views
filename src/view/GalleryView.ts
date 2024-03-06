@@ -1,6 +1,6 @@
-import { CardView } from "collection-views/view/CardView";
 import { ViewConfig } from "collection-views/config";
 import { staggeredRender } from "collection-views/dom";
+import { CardView } from "collection-views/view/CardView";
 
 const initialRenderSize = 20;
 

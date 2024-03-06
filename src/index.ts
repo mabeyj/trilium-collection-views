@@ -1,11 +1,11 @@
-import { ViewType, ViewConfig } from "collection-views/config";
+import { ViewConfig, ViewType } from "collection-views/config";
 import {
 	fitToNoteDetailContainer,
 	fixIncludedNote,
 	renderError,
 } from "collection-views/dom";
 import { groupNotes, sortNotes } from "collection-views/notes";
-import { TableView, GalleryView, BoardView } from "collection-views/view";
+import { BoardView, GalleryView, TableView } from "collection-views/view";
 
 const descriptions = {
 	[ViewType.Board]: "Board view",

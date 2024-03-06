@@ -1,8 +1,8 @@
 import { ViewConfig } from "collection-views/config";
-import { Group } from "collection-views/notes";
-import { numberFormat } from "collection-views/math";
-import { CardView } from "collection-views/view/CardView";
 import { appendChildren, staggeredRender } from "collection-views/dom";
+import { numberFormat } from "collection-views/math";
+import { Group } from "collection-views/notes";
+import { CardView } from "collection-views/view/CardView";
 
 const initialRenderSize = 10;
 

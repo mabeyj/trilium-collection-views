@@ -1,7 +1,7 @@
-import { View } from "collection-views/view/View";
-import { getCoverUrl } from "collection-views/notes";
 import { AttributeConfig } from "collection-views/config";
 import { appendChildren } from "collection-views/dom";
+import { getCoverUrl } from "collection-views/notes";
+import { View } from "collection-views/view/View";
 
 /**
  * Base view implementing common rendering of cards.
