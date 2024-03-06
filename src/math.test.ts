@@ -8,7 +8,7 @@ describe("parseOptionalInt", () => {
 	test.each([
 		[undefined, undefined],
 		[null, undefined],
-		[1.5, 1],
+		[1.9, 1],
 		["", undefined],
 		["-11", -10],
 		["5", 5],

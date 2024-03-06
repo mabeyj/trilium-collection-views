@@ -2,6 +2,7 @@ overrides:
   - files:
       - "*.js"
       - "*.json"
+      - "*.mjs"
       - "*.scss"
       - "*.ts"
     options:

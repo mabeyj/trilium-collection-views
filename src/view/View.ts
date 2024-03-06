@@ -1,3 +1,4 @@
+import { isTruthy } from "collection-views/boolean";
 import { AttributeConfig, ViewConfig } from "collection-views/config";
 import { appendChildren } from "collection-views/dom";
 import { clamp, numberFormat } from "collection-views/math";
@@ -5,7 +6,6 @@ import {
 	getAttributesByPath,
 	getLabelValueByPath,
 } from "collection-views/notes";
-import { isTruthy } from "collection-views/boolean";
 
 /**
  * Base view implementing common rendering of attributes.
@@ -25,11 +25,11 @@ export abstract class View {
 	 */
 	async renderAttributeValues(
 		note: NoteShort,
-		attributeConfig: AttributeConfig
-	): Promise<Array<HTMLElement | Text>> {
+		attributeConfig: AttributeConfig,
+	): Promise<(HTMLElement | Text)[]> {
 		const attributes = await getAttributesByPath(
 			note,
-			attributeConfig.path
+			attributeConfig.path,
 		);
 		if (attributeConfig.boolean && !attributes.length) {
 			attributes.push({ type: "label", value: "false" });
@@ -39,7 +39,7 @@ export abstract class View {
 		if (attributeConfig.denominatorPath) {
 			denominator = await getLabelValueByPath(
 				note,
-				attributeConfig.denominatorPath
+				attributeConfig.denominatorPath,
 			);
 		}
 
@@ -48,12 +48,12 @@ export abstract class View {
 				this.renderAttributeValue(
 					attribute,
 					denominator,
-					attributeConfig
-				)
-			)
+					attributeConfig,
+				),
+			),
 		);
 
-		const $separated: Array<HTMLElement | Text> = [];
+		const $separated: (HTMLElement | Text)[] = [];
 		const separable = !($values[0]?.[0] instanceof HTMLDivElement);
 		for (let i = 0; i < $values.length; i++) {
 			let $separator;
@@ -78,20 +78,20 @@ export abstract class View {
 	async renderAttributeValue(
 		attribute: Attribute,
 		denominator: string | null,
-		attributeConfig: AttributeConfig
-	): Promise<Array<HTMLElement | Text>> {
+		attributeConfig: AttributeConfig,
+	): Promise<(HTMLElement | Text)[]> {
 		let relatedNote: NoteShort | null = null;
 		if (attribute.type === "relation") {
 			relatedNote = await api.getNote(attribute.value);
 		}
 
-		let value = relatedNote ? relatedNote.title : attribute.value;
+		const value = relatedNote ? relatedNote.title : attribute.value;
 
 		if (denominator) {
 			const $progressBar = this.renderProgressBar(
 				value,
 				denominator,
-				attributeConfig
+				attributeConfig,
 			);
 			if ($progressBar) {
 				return [$progressBar];
@@ -110,8 +110,8 @@ export abstract class View {
 	renderValue(
 		value: string,
 		attributeConfig: AttributeConfig,
-		relatedNote: NoteShort | null
-	): Array<HTMLElement | Text> {
+		relatedNote: NoteShort | null,
+	): (HTMLElement | Text)[] {
 		if (attributeConfig.boolean) {
 			return this.renderBoolean(value, attributeConfig);
 		}
@@ -136,8 +136,8 @@ export abstract class View {
 	 */
 	renderBoolean(
 		value: string,
-		attributeConfig: AttributeConfig
-	): Array<HTMLElement | Text> {
+		attributeConfig: AttributeConfig,
+	): (HTMLElement | Text)[] {
 		const $checkbox = document.createElement("input");
 		$checkbox.className = "collection-view-checkbox";
 		$checkbox.type = "checkbox";
@@ -156,13 +156,13 @@ export abstract class View {
 	renderBadge(
 		value: string,
 		attributeConfig: AttributeConfig,
-		note: NoteShort | null
+		note: NoteShort | null,
 	): HTMLElement {
 		let background = attributeConfig.badgeBackground;
 		let color = attributeConfig.badgeColor;
 		if (note) {
-			background = note.getLabelValue("badgeBackground") || background;
-			color = note.getLabelValue("badgeColor") || color;
+			background = note.getLabelValue("badgeBackground") ?? background;
+			color = note.getLabelValue("badgeColor") ?? color;
 		}
 
 		const $badge = document.createElement("span");
@@ -184,7 +184,7 @@ export abstract class View {
 	renderProgressBar(
 		numerator: string,
 		denominator: string,
-		attributeConfig: AttributeConfig
+		attributeConfig: AttributeConfig,
 	): HTMLElement | undefined {
 		const numeratorFloat = parseFloat(numerator);
 		const denominatorFloat = parseFloat(denominator);
@@ -204,8 +204,8 @@ export abstract class View {
 			attributeConfig.affixNodes(
 				this.renderProgressBarNumber(numeratorFloat),
 				document.createTextNode(" / "),
-				this.renderProgressBarNumber(denominatorFloat)
-			)
+				this.renderProgressBarNumber(denominatorFloat),
+			),
 		);
 
 		const $bar = document.createElement("div");
@@ -213,7 +213,7 @@ export abstract class View {
 		$bar.style.width = `${clamp(percent, 0, 100)}%`;
 		if (percent >= 1) {
 			$bar.appendChild(
-				document.createTextNode(`${Math.round(percent)}%`)
+				document.createTextNode(`${Math.round(percent)}%`),
 			);
 		}
 		if (percent >= 100) {

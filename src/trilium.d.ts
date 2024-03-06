@@ -3,7 +3,7 @@ declare namespace api {
 	const originEntity: NoteShort | null;
 	async function createNoteLink(
 		notePath: string,
-		noteTitle?: string
+		noteTitle?: string,
 	): Promise<JQuery>;
 	async function getNote(noteId: string): Promise<NoteShort | null>;
 	async function searchForNotes(searchString: string): Promise<NoteShort[]>;

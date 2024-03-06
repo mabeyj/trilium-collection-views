@@ -49,7 +49,7 @@ describe("AttributeConfig", () => {
 			(value) => {
 				const config = new AttributeConfig(value);
 				expect(config.wrap).toBe(true);
-			}
+			},
 		);
 
 		test.each([
@@ -66,7 +66,7 @@ describe("AttributeConfig", () => {
 			(value) => {
 				const config = new AttributeConfig(value);
 				expect(config.badge).toBe(true);
-			}
+			},
 		);
 
 		test("sets badgeBackground", () => {
@@ -86,7 +86,7 @@ describe("AttributeConfig", () => {
 			(value) => {
 				const config = new AttributeConfig(value);
 				expect(config.boolean).toBe(true);
-			}
+			},
 		);
 
 		test.each(["path,number", "path,number=anything"])(
@@ -94,7 +94,7 @@ describe("AttributeConfig", () => {
 			(value) => {
 				const config = new AttributeConfig(value);
 				expect(config.number).toBe(true);
-			}
+			},
 		);
 
 		test.each([
@@ -138,7 +138,7 @@ describe("AttributeConfig", () => {
 	describe("affix", () => {
 		test("returns affixed string", () => {
 			const config = new AttributeConfig(
-				"path,prefix=Prefix,suffix=Suffix"
+				"path,prefix=Prefix,suffix=Suffix",
 			);
 			expect(config.affix("Text")).toBe("PrefixTextSuffix");
 		});
@@ -167,7 +167,7 @@ describe("AttributeConfig", () => {
 			],
 		])("%s", (_, prefix, suffix, expected) => {
 			const config = new AttributeConfig(
-				`path,prefix=${prefix},suffix=${suffix}`
+				`path,prefix=${prefix},suffix=${suffix}`,
 			);
 			expect(config.affixNodes(...nodes)).toEqual(expected);
 		});

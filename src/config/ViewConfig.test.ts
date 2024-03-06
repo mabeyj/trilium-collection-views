@@ -22,7 +22,7 @@ describe("ViewConfig", () => {
 
 		test("sets query", () => {
 			const config = new ViewConfig(
-				getNote("query", "  #one and #two  ")
+				getNote("query", "  #one and #two  "),
 			);
 			expect(config.query).toBe("#one and #two");
 		});
@@ -76,7 +76,7 @@ describe("ViewConfig", () => {
 			(value, expected) => {
 				const config = new ViewConfig(getNote("columnWidth", value));
 				expect(config.columnWidth).toBe(expected);
-			}
+			},
 		);
 
 		test.each([
@@ -90,7 +90,7 @@ describe("ViewConfig", () => {
 			(value, expected) => {
 				const config = new ViewConfig(getNote("coverHeight", value));
 				expect(config.coverHeight).toBe(expected);
-			}
+			},
 		);
 
 		test("sets attributes from attribute labels", () => {

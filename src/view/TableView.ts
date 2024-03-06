@@ -1,6 +1,6 @@
 import { AttributeConfig, ViewConfig } from "collection-views/config";
-import { View } from "collection-views/view/View";
 import { appendChildren, staggeredRender } from "collection-views/dom";
+import { View } from "collection-views/view/View";
 
 const initialRenderSize = 25;
 
@@ -25,7 +25,7 @@ export class TableView extends View {
 			"table-bordered",
 			"table-hover",
 			"table-sm",
-			"collection-view-table"
+			"collection-view-table",
 		);
 		appendChildren($table, [this.renderHeader(), await this.renderBody()]);
 
@@ -56,7 +56,7 @@ export class TableView extends View {
 	 */
 	renderHeaderCells(): HTMLElement[] {
 		return this.config.attributes.map((attributeConfig) =>
-			this.renderHeaderCell(attributeConfig)
+			this.renderHeaderCell(attributeConfig),
 		);
 	}
 
@@ -84,7 +84,7 @@ export class TableView extends View {
 	async renderBody(): Promise<HTMLElement> {
 		const $body = document.createElement("tbody");
 		await staggeredRender($body, initialRenderSize, this.notes, (note) =>
-			this.renderRow(note)
+			this.renderRow(note),
 		);
 		return $body;
 	}
@@ -124,7 +124,7 @@ export class TableView extends View {
 	 */
 	async renderAttributeCell(
 		note: NoteShort,
-		attributeConfig: AttributeConfig
+		attributeConfig: AttributeConfig,
 	): Promise<HTMLElement> {
 		const $cell = document.createElement("td");
 		if (attributeConfig.align) {
@@ -149,8 +149,8 @@ export class TableView extends View {
 	 * number of lines set in the given configuration.
 	 */
 	renderTruncated(
-		$children: Array<HTMLElement | Text>,
-		attributeConfig: AttributeConfig
+		$children: (HTMLElement | Text)[],
+		attributeConfig: AttributeConfig,
 	): HTMLElement {
 		const $container = document.createElement("div");
 		$container.className = "collection-view-truncate";

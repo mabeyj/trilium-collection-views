@@ -1,10 +1,11 @@
+import { AttributeConfig } from "collection-views/config/AttributeConfig";
 import { parseOptionalInt } from "collection-views/math";
 import {
 	attributePathRegex,
 	getAttributeValueByPath,
 	SortAttribute,
 } from "collection-views/notes";
-import { AttributeConfig } from "collection-views/config/AttributeConfig";
+import { isEnumValue } from "collection-views/util";
 
 const tokens = ["$id", "$noteId", "$title", "$renderNote"];
 
@@ -21,7 +22,7 @@ export class ViewConfig {
 	note: NoteShort;
 
 	view: ViewType = ViewType.Table;
-	query: string = "";
+	query = "";
 	groupBy?: AttributeConfig;
 	sort: SortAttribute[] = [];
 	columns?: number;
@@ -32,15 +33,15 @@ export class ViewConfig {
 
 	constructor(note: NoteShort) {
 		this.note = note;
-		this.parseView(note.getLabelValue("view") || "");
-		this.parseQuery(note.getLabelValue("query") || "");
-		this.parseGroupBy(note.getLabelValue("groupBy") || "");
-		this.parseSort(note.getLabelValue("sort") || "");
-		this.parseColumns(note.getLabelValue("columns") || "");
-		this.parseColumnWidth(note.getLabelValue("columnWidth") || "");
-		this.parseCoverHeight(note.getLabelValue("coverHeight") || "");
+		this.parseView(note.getLabelValue("view") ?? "");
+		this.parseQuery(note.getLabelValue("query") ?? "");
+		this.parseGroupBy(note.getLabelValue("groupBy") ?? "");
+		this.parseSort(note.getLabelValue("sort") ?? "");
+		this.parseColumns(note.getLabelValue("columns") ?? "");
+		this.parseColumnWidth(note.getLabelValue("columnWidth") ?? "");
+		this.parseCoverHeight(note.getLabelValue("coverHeight") ?? "");
 		this.parseAttributes(
-			note.getLabels("attribute").map((label) => label.value)
+			note.getLabels("attribute").map((label) => label.value),
 		);
 	}
 
@@ -49,11 +50,7 @@ export class ViewConfig {
 	 */
 	parseView(value: string): void {
 		value = value.trim();
-		if (
-			value === ViewType.Board ||
-			value === ViewType.Gallery ||
-			value === ViewType.Table
-		) {
+		if (isEnumValue(ViewType, value)) {
 			this.view = value;
 		}
 	}
@@ -159,7 +156,7 @@ export class ViewConfig {
 				continue;
 			}
 
-			let length = path.length;
+			const length = path.length;
 			if (path.startsWith("$renderNote")) {
 				path = path.split(".").slice(1).join(".");
 			}

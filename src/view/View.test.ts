@@ -1,10 +1,10 @@
 import { AttributeConfig, ViewConfig } from "collection-views/config";
-import { View } from "collection-views/view";
 import { MockApi, MockNoteShort } from "collection-views/test";
+import { View } from "collection-views/view";
 
 class TestView extends View {
 	async render(): Promise<HTMLElement> {
-		return document.createElement("div");
+		return Promise.resolve(document.createElement("div"));
 	}
 }
 
@@ -37,7 +37,7 @@ describe("View", () => {
 		test("returns empty array for non-Boolean attribute with no values", async () => {
 			const $values = await view.renderAttributeValues(
 				note,
-				new AttributeConfig("none")
+				new AttributeConfig("none"),
 			);
 			expect($values).toHaveLength(0);
 		});
@@ -45,7 +45,7 @@ describe("View", () => {
 		test("returns unchecked checkbox for Boolean attribute with no values", async () => {
 			const $values = await view.renderAttributeValues(
 				note,
-				new AttributeConfig("none,boolean")
+				new AttributeConfig("none,boolean"),
 			);
 			expect($values).toHaveLength(1);
 			expect($values[0]).not.toBeChecked();
@@ -54,7 +54,7 @@ describe("View", () => {
 		test("returns values separated", async () => {
 			const $values = await view.renderAttributeValues(
 				note,
-				new AttributeConfig("test")
+				new AttributeConfig("test"),
 			);
 			expect($values).toHaveLength(3);
 			expect($values[0]).toHaveTextContent("Label");
@@ -65,7 +65,7 @@ describe("View", () => {
 		test("returns progress bars unseparated", async () => {
 			const $values = await view.renderAttributeValues(
 				note,
-				new AttributeConfig("count,progressBar=total")
+				new AttributeConfig("count,progressBar=total"),
 			);
 			expect($values).toHaveLength(2);
 			expect($values[0]).toHaveClass("collection-view-progress");
@@ -77,7 +77,7 @@ describe("View", () => {
 		test("returns related note's values", async () => {
 			const $values = await view.renderAttributeValues(
 				note,
-				new AttributeConfig("test.label")
+				new AttributeConfig("test.label"),
 			);
 			expect($values).toHaveLength(1);
 			expect($values[0]).toHaveTextContent("Related label");
@@ -86,7 +86,7 @@ describe("View", () => {
 		test("returns progress bar using related note's value", async () => {
 			const $values = await view.renderAttributeValues(
 				note,
-				new AttributeConfig("count,progressBar=test.total")
+				new AttributeConfig("count,progressBar=test.total"),
 			);
 			expect($values).toHaveLength(2);
 			expect($values[0]).toHaveClass("collection-view-progress");
@@ -108,7 +108,7 @@ describe("View", () => {
 			const $value = await view.renderAttributeValue(
 				{ type, value: "Value" },
 				null,
-				config
+				config,
 			);
 			expect($value).toHaveLength(1);
 			expect($value[0]).toHaveTextContent(expected);
@@ -122,7 +122,7 @@ describe("View", () => {
 			const $value = await view.renderAttributeValue(
 				{ type: "label", value: "1" },
 				denominator,
-				config
+				config,
 			);
 			expect($value).toHaveLength(1);
 			expect($value[0]).toBeInstanceOf(Text);
@@ -132,7 +132,7 @@ describe("View", () => {
 			const $value = await view.renderAttributeValue(
 				{ type: "label", value: "1" },
 				"2",
-				config
+				config,
 			);
 			expect($value).toHaveLength(1);
 			expect($value[0]).toHaveClass("collection-view-progress");
@@ -148,7 +148,7 @@ describe("View", () => {
 
 		test("returns checkbox for Boolean attribute", () => {
 			const config = new AttributeConfig(
-				"path,boolean,repeat=*,number,badge"
+				"path,boolean,repeat=*,number,badge",
 			);
 
 			const $value = view.renderValue("true", config, null);
@@ -168,7 +168,7 @@ describe("View", () => {
 			["returns text by default", "value", "", "value"],
 		])("%s", (_, value, options, expected) => {
 			const config = new AttributeConfig(
-				`path,prefix=Prefix,suffix=Suffix,${options}`
+				`path,prefix=Prefix,suffix=Suffix,${options}`,
 			);
 
 			const $value = view.renderValue(value, config, null);
@@ -182,7 +182,7 @@ describe("View", () => {
 			["returns badge with formatted number", "1000", "number", "1,000"],
 		])("%s", (_, value, options, expected) => {
 			const config = new AttributeConfig(
-				`path,badge,prefix=Prefix,suffix=Suffix,${options}`
+				`path,badge,prefix=Prefix,suffix=Suffix,${options}`,
 			);
 
 			const $value = view.renderValue(value, config, note);
@@ -210,7 +210,7 @@ describe("View", () => {
 
 		test("returns affixed checkbox", () => {
 			const config = new AttributeConfig(
-				"path,prefix=Prefix,suffix=Suffix"
+				"path,prefix=Prefix,suffix=Suffix",
 			);
 
 			const $value = view.renderBoolean("true", config);
@@ -277,7 +277,7 @@ describe("View", () => {
 		function render(
 			numerator: string,
 			denominator: string,
-			options: string = ""
+			options = "",
 		): {
 			$progress: HTMLElement | undefined;
 			$bar: HTMLElement | null | undefined;
@@ -286,7 +286,7 @@ describe("View", () => {
 			const $progress = view.renderProgressBar(
 				numerator,
 				denominator,
-				config
+				config,
 			);
 			return {
 				$progress,
@@ -309,7 +309,7 @@ describe("View", () => {
 		])("%s", (_, numerator, denominator) => {
 			const { $progress, $bar } = render(numerator, denominator);
 			expect($progress).toHaveTextContent(
-				`${numerator} / ${denominator}`
+				`${numerator} / ${denominator}`,
 			);
 			expect($progress).not.toHaveTextContent("%");
 			expect($bar).toHaveStyle({ width: "0%" });
@@ -342,7 +342,7 @@ describe("View", () => {
 			const { $progress } = render(
 				"1",
 				"2",
-				"prefix=Prefix,suffix=Suffix"
+				"prefix=Prefix,suffix=Suffix",
 			);
 			expect($progress).toHaveTextContent("Prefix1 / 2Suffix");
 		});

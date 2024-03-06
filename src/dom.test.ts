@@ -1,9 +1,5 @@
 import { screen } from "@testing-library/dom";
 import {
-	mockElementBoundingClientRect,
-	mockResizeObserver,
-} from "jsdom-testing-mocks";
-import {
 	appendChildren,
 	fitToNoteDetailContainer,
 	fixIncludedNote,
@@ -12,6 +8,10 @@ import {
 	staggeredRender,
 } from "collection-views/dom";
 import { clearBody, MockApi, MockNoteShort } from "collection-views/test";
+import {
+	mockElementBoundingClientRect,
+	mockResizeObserver,
+} from "jsdom-testing-mocks";
 
 describe("appendChildren", () => {
 	afterEach(clearBody);
@@ -137,7 +137,6 @@ describe("fixIncludedNote", () => {
 		</div>
 	`;
 
-	let mockApi: MockApi;
 	let $include: HTMLElement;
 
 	function createIncludedNote(html: string): void {
@@ -150,7 +149,7 @@ describe("fixIncludedNote", () => {
 	}
 
 	beforeEach(() => {
-		mockApi = new MockApi();
+		new MockApi();
 		$include = document.createElement("section");
 	});
 
@@ -181,7 +180,7 @@ describe("fixIncludedNote", () => {
 		const $wrapper = $include.children[0];
 		expect($wrapper).toHaveClass(
 			"include-note-wrapper",
-			"collection-view-include-note"
+			"collection-view-include-note",
 		);
 		expect($wrapper.children).toHaveLength(2);
 		expect($wrapper.children[0]).toHaveClass("include-note-title");
@@ -214,7 +213,7 @@ describe("staggeredRender", () => {
 		await staggeredRender(document.body, 2, notes, async (note) => {
 			const $p = document.createElement("p");
 			$p.textContent = note.title;
-			return $p;
+			return Promise.resolve($p);
 		});
 
 		getByTextRange(1, 2);

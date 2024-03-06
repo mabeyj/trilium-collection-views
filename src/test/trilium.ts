@@ -34,10 +34,7 @@ export class MockApi {
 		this.notes = notes;
 	}
 
-	public async createNoteLink(
-		notePath: string,
-		noteTitle?: string
-	): Promise<JQuery> {
+	public async createNoteLink(notePath: string, _?: string): Promise<JQuery> {
 		const note = await this.getNote(notePath);
 		if (!note) {
 			throw new Error("Note not found");
@@ -48,11 +45,13 @@ export class MockApi {
 	}
 
 	public async getNote(noteId: string): Promise<NoteShort | null> {
-		return this.notes.find((note) => note.noteId === noteId) ?? null;
+		return Promise.resolve(
+			this.notes.find((note) => note.noteId === noteId) ?? null,
+		);
 	}
 
-	public async searchForNotes(searchString: string): Promise<NoteShort[]> {
-		return this.notes;
+	public async searchForNotes(_?: string): Promise<NoteShort[]> {
+		return Promise.resolve(this.notes);
 	}
 }
 
@@ -74,12 +73,12 @@ interface MockAttribute {
 abstract class BaseMockFNote {
 	public noteId: string;
 	public type: string;
-	public mime: string = "text/html";
+	public mime = "text/html";
 	public title: string;
 	protected content: string | null;
 	protected contentLength: number;
-	protected dateCreated: string = "2020-01-02 03:04:05.678Z";
-	protected dateModified: string = "2020-02-03 04:05:06.789Z";
+	protected dateCreated = "2020-01-02 03:04:05.678Z";
+	protected dateModified = "2020-02-03 04:05:06.789Z";
 	private attributes: MockAttribute[];
 
 	constructor({
@@ -106,7 +105,7 @@ abstract class BaseMockFNote {
 		return this.attributes.filter(
 			(attribute) =>
 				(type === undefined || attribute.type === type) &&
-				(name === undefined || attribute.name === name)
+				(name === undefined || attribute.name === name),
 		);
 	}
 
@@ -136,11 +135,11 @@ abstract class BaseMockFNote {
  */
 export class MockFNote0615 extends BaseMockFNote {
 	public async getBlob(): Promise<FBlob> {
-		return {
+		return Promise.resolve({
 			content: this.content,
 			contentLength: this.contentLength,
 			utcDateModified: this.dateModified,
-		};
+		});
 	}
 
 	public async getNoteComplement(): Promise<FBlob> {
@@ -153,10 +152,10 @@ export class MockFNote0615 extends BaseMockFNote {
  */
 export class MockFNote extends MockFNote0615 {
 	public async getMetadata(): Promise<FNoteMetadata> {
-		return {
+		return Promise.resolve({
 			utcDateCreated: this.dateCreated,
 			utcDateModified: this.dateModified,
-		};
+		});
 	}
 }
 
@@ -165,11 +164,11 @@ export class MockFNote extends MockFNote0615 {
  */
 export class MockNoteShort extends BaseMockFNote {
 	public async getNoteComplement(): Promise<NoteComplement> {
-		return {
+		return Promise.resolve({
 			content: this.content ?? undefined,
 			contentLength: this.contentLength,
 			utcDateCreated: this.dateCreated,
 			combinedUtcDateModified: this.dateModified,
-		};
+		});
 	}
 }

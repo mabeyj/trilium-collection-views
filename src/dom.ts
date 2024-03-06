@@ -5,7 +5,7 @@ const staggeredSize = 25;
  */
 export function appendChildren(
 	$parent: HTMLElement,
-	$children: Array<HTMLElement | Text>
+	$children: (HTMLElement | Text)[],
 ): void {
 	for (const $child of $children) {
 		$parent.appendChild($child);
@@ -29,7 +29,7 @@ export function renderError(message: string): void {
  */
 export function fitToNoteDetailContainer($element: HTMLElement): void {
 	const $container = getClosestScrollableElement(
-		api.$container[0].closest(".note-detail")
+		api.$container[0].closest(".note-detail"),
 	);
 	if (!$container) {
 		return;
@@ -46,7 +46,7 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 	// This is necessary to avoid an extra scrollbar appearing inconsistently
 	// due to rounding causing the $element height to be one pixel too large.
 
-	var scrollBehavior = $container.style.scrollBehavior;
+	const scrollBehavior = $container.style.scrollBehavior;
 	$container.style.scrollBehavior = "auto";
 	$element.style.minHeight = "100vh";
 
@@ -77,7 +77,9 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
 
 		observer.disconnect();
 		$element.style.height = height;
-		requestAnimationFrame(() => observer.observe($container));
+		requestAnimationFrame(() => {
+			observer.observe($container);
+		});
 	}).observe($container);
 }
 
@@ -86,7 +88,7 @@ export function fitToNoteDetailContainer($element: HTMLElement): void {
  * scrolled or null if no such element is found.
  */
 export function getClosestScrollableElement(
-	$element: HTMLElement | null
+	$element: HTMLElement | null,
 ): HTMLElement | null {
 	while ($element) {
 		const style = getComputedStyle($element);
@@ -136,38 +138,40 @@ export async function staggeredRender(
 	$parent: HTMLElement,
 	initialSize: number,
 	notes: NoteShort[],
-	render: (note: NoteShort) => Promise<HTMLElement>
+	render: (note: NoteShort) => Promise<HTMLElement>,
 ): Promise<void> {
 	const initial = notes.slice(0, initialSize);
 	const remaining = notes.slice(initialSize);
 
 	const $children = await Promise.all(initial.map(render));
 	appendChildren($parent, $children);
-	staggeredRenderAsync($parent, remaining, render);
+
+	if (remaining.length) {
+		setTimeout(() => {
+			void staggeredRenderChunk($parent, remaining, render);
+		});
+	}
 }
 
 /**
- * Returns immediately and will render notes and append the resulting elements
- * to a parent element in a staggered manner asynchronously.
+ * Renders notes in chunks over multiple animation frames until all notes are
+ * rendered, appending the resulting elements to a parent element.
  */
-function staggeredRenderAsync(
+async function staggeredRenderChunk(
 	$parent: HTMLElement,
 	notes: NoteShort[],
-	render: (note: NoteShort) => Promise<HTMLElement>
-) {
-	if (!notes.length) {
-		return;
-	}
+	render: (note: NoteShort) => Promise<HTMLElement>,
+): Promise<void> {
+	const chunk = notes.slice(0, staggeredSize);
+	const remaining = notes.slice(staggeredSize);
 
-	setTimeout(async () => {
-		const chunk = notes.slice(0, staggeredSize);
-		const remaining = notes.slice(staggeredSize);
+	const $children = await Promise.all(chunk.map(render));
 
-		const $children = await Promise.all(chunk.map(render));
+	requestAnimationFrame(() => {
+		appendChildren($parent, $children);
 
-		requestAnimationFrame(() => {
-			appendChildren($parent, $children);
-			staggeredRenderAsync($parent, remaining, render);
-		});
+		if (remaining.length) {
+			void staggeredRenderChunk($parent, remaining, render);
+		}
 	});
 }

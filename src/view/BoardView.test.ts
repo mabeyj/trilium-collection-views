@@ -30,7 +30,7 @@ describe("BoardView", () => {
 		test("returns view", async () => {
 			const $view = await view.render();
 			expect($view).toHaveTextContent(
-				"None2Note 1Note 2Named group2Note 1Note 2"
+				"None2Note 1Note 2Named group2Note 1Note 2",
 			);
 		});
 	});
